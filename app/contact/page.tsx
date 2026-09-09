@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { Mail, MessageSquare, ArrowRight, CheckCircle2, Sparkles, Send, RefreshCcw, AlertCircle, ShieldCheck } from "lucide-react";
+import { Mail, MessageSquare, ArrowRight, CheckCircle2, Sparkles, Send, RefreshCcw, AlertCircle, ShieldCheck, MessageCircle } from "lucide-react";
 
 export default function ContactPage() {
   const [name, setName] = useState("");
@@ -86,20 +86,68 @@ export default function ContactPage() {
 
             <div className="bg-white border border-brand-border rounded-3xl p-8 shadow-card space-y-4">
               <div className="text-xs font-bold uppercase tracking-wider text-brand-subtle">
-                Direct Channels
+                Direct Channels &amp; Instant Access
               </div>
-              <div className="flex items-start gap-3 text-sm text-brand-charcoal">
-                <Mail className="w-5 h-5 text-brand-accent mt-0.5 flex-shrink-0" />
-                <div>
-                  <div className="font-bold text-brand-dark">Official Inquiries</div>
-                  <div className="text-xs text-brand-muted font-mono">contact@impact-technologies.com</div>
+
+              {/* WhatsApp Direct */}
+              <div className="p-4 rounded-2xl bg-[#25D366]/10 border border-[#25D366]/30 space-y-2">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-8 h-8 rounded-lg bg-[#25D366] text-white flex items-center justify-center shadow-xs">
+                      <MessageCircle className="w-4 h-4 fill-current" />
+                    </div>
+                    <div>
+                      <div className="font-bold text-brand-dark text-sm">WhatsApp Direct</div>
+                      <div className="text-xs font-mono text-brand-muted">+92 314 7893907</div>
+                    </div>
+                  </div>
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#25D366]/20 text-[#128C7E]">
+                    Fastest
+                  </span>
                 </div>
+                <a
+                  href="https://wa.me/923147893907?text=Hello%20IMPACT%20Enterprise,%20I%20would%20like%20to%20discuss%20a%20project."
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full inline-flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-[#25D366] hover:bg-[#1EBE5D] text-white font-bold text-xs uppercase tracking-wider shadow-xs transition-all"
+                >
+                  <MessageCircle className="w-3.5 h-3.5 fill-current" />
+                  <span>Start WhatsApp Chat</span>
+                </a>
               </div>
-              <div className="flex items-start gap-3 text-sm text-brand-charcoal pt-3 border-t border-brand-border">
-                <ShieldCheck className="w-5 h-5 text-brand-teal mt-0.5 flex-shrink-0" />
+
+              {/* Gmail Direct */}
+              <div className="p-4 rounded-2xl bg-red-50 border border-red-200 space-y-2">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-8 h-8 rounded-lg bg-[#EA4335] text-white flex items-center justify-center shadow-xs">
+                      <Mail className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <div className="font-bold text-brand-dark text-sm">Direct Gmail</div>
+                      <div className="text-xs font-mono text-brand-muted truncate max-w-[170px]">
+                        impactenterprise527@gmail.com
+                      </div>
+                    </div>
+                  </div>
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-red-100 text-[#EA4335]">
+                    Official
+                  </span>
+                </div>
+                <a
+                  href="mailto:impactenterprise527@gmail.com?subject=Project%20Inquiry%20-%20IMPACT%20Enterprise"
+                  className="w-full inline-flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-[#EA4335] hover:bg-[#D93025] text-white font-bold text-xs uppercase tracking-wider shadow-xs transition-all"
+                >
+                  <Mail className="w-3.5 h-3.5" />
+                  <span>Send via Gmail</span>
+                </a>
+              </div>
+
+              <div className="flex items-start gap-3 text-xs text-brand-charcoal pt-3 border-t border-brand-border">
+                <ShieldCheck className="w-4 h-4 text-brand-teal mt-0.5 flex-shrink-0" />
                 <div>
                   <div className="font-bold text-brand-dark">Confidentiality Assured</div>
-                  <div className="text-xs text-brand-muted">Mutual NDAs available upon request for proprietary ideas.</div>
+                  <div className="text-brand-muted">Mutual NDAs provided upon request for all proprietary concepts.</div>
                 </div>
               </div>
             </div>

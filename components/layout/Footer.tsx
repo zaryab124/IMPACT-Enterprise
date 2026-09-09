@@ -1,7 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import { ImpactLogo } from "../brand/ImpactLogo";
-import { ArrowRight, Sparkles, ShieldCheck, Mail, MapPin } from "lucide-react";
+import { ArrowRight, Sparkles, ShieldCheck, Mail, MapPin, MessageCircle } from "lucide-react";
 
 export const Footer: React.FC = () => {
   return (
@@ -22,7 +22,7 @@ export const Footer: React.FC = () => {
                 Let&apos;s turn it into a working, high-impact intelligent product. Take our guided 2-minute project intake to outline your requirements.
               </p>
             </div>
-            <div className="lg:col-span-4 flex flex-col sm:flex-row lg:flex-col gap-3 justify-end">
+            <div className="lg:col-span-4 flex flex-col gap-2.5 justify-end">
               <Link
                 href="/start-a-project"
                 className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-brand-accent hover:bg-brand-accentHover text-white font-bold text-base shadow-sm transition-all text-center"
@@ -30,12 +30,26 @@ export const Footer: React.FC = () => {
                 <span>START A PROJECT</span>
                 <ArrowRight className="w-4 h-4" />
               </Link>
-              <Link
-                href="/contact"
-                className="inline-flex items-center justify-center px-6 py-3 rounded-xl border border-brand-border bg-brand-surface hover:bg-brand-border text-brand-dark font-semibold text-sm transition-all text-center"
-              >
-                TALK TO IMPACT
-              </Link>
+              <div className="grid grid-cols-2 gap-2">
+                <a
+                  href="https://wa.me/923147893907?text=Hello%20IMPACT%20Enterprise,%20I%20would%20like%20to%20discuss%20a%20project."
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl bg-[#25D366] hover:bg-[#1EBE5D] text-white font-bold text-xs shadow-xs transition-all text-center"
+                  title="WhatsApp: +92 314 7893907"
+                >
+                  <MessageCircle className="w-3.5 h-3.5 fill-current" />
+                  <span>WhatsApp</span>
+                </a>
+                <a
+                  href="mailto:impactenterprise527@gmail.com?subject=Project%20Inquiry%20-%20IMPACT%20Enterprise"
+                  className="inline-flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl bg-[#EA4335] hover:bg-[#D93025] text-white font-bold text-xs shadow-xs transition-all text-center"
+                  title="Gmail: impactenterprise527@gmail.com"
+                >
+                  <Mail className="w-3.5 h-3.5" />
+                  <span>Gmail</span>
+                </a>
+              </div>
             </div>
           </div>
         </div>
@@ -150,6 +164,26 @@ export const Footer: React.FC = () => {
                 <Link href="/start-a-project" className="text-brand-accent font-semibold hover:underline">
                   Start a Project Form
                 </Link>
+              </li>
+              <li className="pt-2 border-t border-brand-border/60">
+                <a
+                  href="https://wa.me/923147893907?text=Hello%20IMPACT%20Enterprise,%20I%20would%20like%20to%20discuss%20a%20project."
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#128C7E] hover:underline"
+                >
+                  <MessageCircle className="w-3.5 h-3.5 fill-current" />
+                  <span>WhatsApp: +92 314 7893907</span>
+                </a>
+              </li>
+              <li>
+                <a
+                  href="mailto:impactenterprise527@gmail.com?subject=Project%20Inquiry%20-%20IMPACT%20Enterprise"
+                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#EA4335] hover:underline"
+                >
+                  <Mail className="w-3.5 h-3.5" />
+                  <span>impactenterprise527@gmail.com</span>
+                </a>
               </li>
             </ul>
           </div>

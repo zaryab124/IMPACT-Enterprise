@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ImpactLogo } from "../brand/ImpactLogo";
-import { Menu, X, ArrowRight, ChevronDown, Sparkles, Bot, Workflow, Code2, Layers, FolderKanban, Users } from "lucide-react";
+import { Menu, X, ArrowRight, ChevronDown, Sparkles, Bot, Workflow, Code2, Layers, FolderKanban, Users, MessageCircle, Mail } from "lucide-react";
 
 export const Navbar: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -162,19 +162,41 @@ export const Navbar: React.FC = () => {
           </nav>
 
           {/* CTAs */}
-          <div className="hidden sm:flex items-center gap-3">
+          <div className="hidden sm:flex items-center gap-2 xl:gap-2.5">
+            {/* WhatsApp Quick Chat */}
+            <a
+              href="https://wa.me/923147893907?text=Hello%20IMPACT%20Enterprise,%20I%20would%20like%20to%20discuss%20a%20project."
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-bold text-[#128C7E] bg-[#25D366]/15 hover:bg-[#25D366] hover:text-white border border-[#25D366]/30 rounded-lg transition-all shadow-xs"
+              title="Chat on WhatsApp: +92 314 7893907"
+            >
+              <MessageCircle className="w-3.5 h-3.5 fill-current" />
+              <span className="hidden xl:inline">WhatsApp</span>
+            </a>
+
+            {/* Gmail Quick Email */}
+            <a
+              href="mailto:impactenterprise527@gmail.com?subject=Project%20Inquiry%20-%20IMPACT%20Enterprise"
+              className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-bold text-[#EA4335] bg-red-50 hover:bg-[#EA4335] hover:text-white border border-red-200 rounded-lg transition-all shadow-xs"
+              title="Email: impactenterprise527@gmail.com"
+            >
+              <Mail className="w-3.5 h-3.5" />
+              <span className="hidden xl:inline">Gmail</span>
+            </a>
+
             <Link
               href="/contact"
-              className="px-4 py-2.5 text-xs xl:text-sm font-semibold text-brand-text hover:text-brand-accent border border-brand-border hover:border-brand-accent/40 rounded-lg transition-all bg-white hover:bg-brand-surface"
+              className="px-3.5 py-2 text-xs font-semibold text-brand-text hover:text-brand-accent border border-brand-border hover:border-brand-accent/40 rounded-lg transition-all bg-white hover:bg-brand-surface"
             >
               TALK TO IMPACT
             </Link>
             <Link
               href="/start-a-project"
-              className="inline-flex items-center gap-2 px-4 py-2.5 text-xs xl:text-sm font-bold text-white bg-brand-accent hover:bg-brand-accentHover rounded-lg shadow-sm hover:shadow-cardHover transition-all"
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-bold text-white bg-brand-accent hover:bg-brand-accentHover rounded-lg shadow-sm hover:shadow-cardHover transition-all"
             >
               <span>START A PROJECT</span>
-              <ArrowRight className="w-4 h-4" />
+              <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
 
@@ -281,7 +303,27 @@ export const Navbar: React.FC = () => {
             </Link>
           </div>
 
-          <div className="mt-6 pt-4 border-t border-brand-border space-y-2">
+          <div className="mt-6 pt-4 border-t border-brand-border space-y-2.5">
+            {/* Direct Contact Buttons in Mobile Drawer */}
+            <div className="grid grid-cols-2 gap-2">
+              <a
+                href="https://wa.me/923147893907?text=Hello%20IMPACT%20Enterprise,%20I%20would%20like%20to%20discuss%20a%20project."
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center gap-2 py-3 px-3 rounded-xl bg-[#25D366] text-white font-bold text-xs shadow-xs"
+              >
+                <MessageCircle className="w-4 h-4 fill-current" />
+                <span>WhatsApp</span>
+              </a>
+              <a
+                href="mailto:impactenterprise527@gmail.com?subject=Project%20Inquiry%20-%20IMPACT%20Enterprise"
+                className="flex items-center justify-center gap-2 py-3 px-3 rounded-xl bg-[#EA4335] text-white font-bold text-xs shadow-xs"
+              >
+                <Mail className="w-4 h-4" />
+                <span>Gmail</span>
+              </a>
+            </div>
+
             <Link
               href="/start-a-project"
               className="flex items-center justify-center gap-2 w-full px-4 py-3 rounded-xl bg-brand-accent text-white font-bold text-sm shadow-sm"

@@ -59,6 +59,13 @@ npm run start -p 3005
 
 ---
 
+## 📬 Direct Contact
+
+- **WhatsApp Direct:** [+92 314 7893907](https://wa.me/923147893907)
+- **Official Gmail:** [impactenterprise527@gmail.com](mailto:impactenterprise527@gmail.com)
+
+---
+
 ## 📄 License & IP
 
 All software, architecture models, and branding are proprietary to IMPACT Technologies.

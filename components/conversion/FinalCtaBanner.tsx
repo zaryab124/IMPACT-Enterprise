@@ -1,6 +1,6 @@
 import React from "react";
 import Link from "next/link";
-import { ArrowRight, Sparkles, CheckCircle2, ShieldCheck } from "lucide-react";
+import { ArrowRight, Sparkles, CheckCircle2, ShieldCheck, MessageCircle, Mail } from "lucide-react";
 
 interface FinalCtaBannerProps {
   customSubtitle?: string;
@@ -41,6 +41,28 @@ export const FinalCtaBanner: React.FC<FinalCtaBannerProps> = ({
             >
               TALK TO IMPACT
             </Link>
+          </div>
+
+          {/* Quick Direct WhatsApp & Gmail Access */}
+          <div className="mt-4 flex flex-wrap items-center justify-center gap-2.5">
+            <a
+              href="https://wa.me/923147893907?text=Hello%20IMPACT%20Enterprise,%20I%20would%20like%20to%20discuss%20a%20project."
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#25D366]/10 hover:bg-[#25D366] text-brand-dark hover:text-white border border-[#25D366]/30 font-bold text-xs transition-all shadow-xs"
+              title="WhatsApp: +92 314 7893907"
+            >
+              <MessageCircle className="w-4 h-4 fill-current text-[#25D366]" />
+              <span>WhatsApp: +92 314 7893907</span>
+            </a>
+            <a
+              href="mailto:impactenterprise527@gmail.com?subject=Project%20Inquiry%20-%20IMPACT%20Enterprise"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-red-50 hover:bg-[#EA4335] text-brand-dark hover:text-white border border-red-200 font-bold text-xs transition-all shadow-xs"
+              title="Gmail: impactenterprise527@gmail.com"
+            >
+              <Mail className="w-4 h-4 text-[#EA4335]" />
+              <span>impactenterprise527@gmail.com</span>
+            </a>
           </div>
 
           <div className="mt-8 pt-6 border-t border-brand-border/60 flex flex-wrap items-center justify-center gap-6 text-xs text-brand-muted font-medium">
