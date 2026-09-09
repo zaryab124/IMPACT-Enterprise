@@ -12,11 +12,15 @@ Official production website and client project-intake platform for **IMPACT Tech
 IMPACT Enterprise is an AI and intelligent technology platform engineered for high-conversion client onboarding and technical demonstration.
 
 ### Key Capabilities & Architecture:
+- **The IMPACT Engine™ (WebGL 3D Core):** Interactive Three.js dynamic sculpture telling the continuous lifecycle story (`IDEA → INTELLIGENCE → AUTOMATION → PRODUCT → IMPACT`) with physical translucent materials, orbital pipelines, and 60 FPS physics.
+- **Interactive AI Agent Workflow (7 Steps):** Deep architectural walkthrough from human intent to deterministic result (`USER → AI AGENT → TOOLS → DATA → DECISION → ACTION → RESULT`) with live telemetry and payload inspection.
+- **Automation Pipeline Visualization (6 Steps):** Sub-second velocity vs legacy comparison (`LEAD → QUALIFICATION → CRM → FOLLOW-UP → SALES → CONVERSION`).
+- **Applications 3D Showcase:** Realistic perspective application windows (Kitchen KDS, Enterprise Admin, Customer Portal, Mobile Native, Observability Monitor, SaaS Platform).
 - **Client Journey Navigator:** 5 tailored situation entry points (*"I have an idea."*, *"I need automation."*, *"I need an AI agent."*, *"I need an application."*, *"I need to improve an existing system."*).
 - **Interactive Idea Builder:** Guided scoping tool allowing founders and operators to define project goals and receive immediate architectural direction.
-- **7-Step Project Intake Engine:** Validated dynamic inquiry pipeline with multi-select capability scoping, budget tiers, timelines, and automated persistence.
+- **Start a Project Intake Engine:** Dynamic inquiry pipeline with multi-select capability scoping, budget tiers, timelines, and unique Project ID generation.
 - **Provable Engineering Trust:** Concrete technical commitments (zero-hallucination bounds, 8-tier RBAC, HMAC token verification, idempotent webhooks, Redis WebSockets).
-- **Projects Portfolio & Diagrammatic Case Studies:** 6 category filters, 5-question structured anatomy per project, and 6-stage architecture diagrams (Problem → Approach → Architecture → Product → Workflow → Result).
+- **Featured Case Study:** Restaurant Technology Platform featuring confirmed 7-stage workflow (`CUSTOMER → QR MENU → ORDER → ADMIN → KITCHEN → RIDER → CUSTOMER`).
 
 ---
 

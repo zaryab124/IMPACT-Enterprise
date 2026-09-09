@@ -4,6 +4,7 @@ import "./globals.css";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { FloatingContactWidget } from "@/components/layout/FloatingContactWidget";
+import { ImpactLoader } from "@/components/layout/ImpactLoader";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -12,10 +13,11 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "IMPACT Technologies | AI, Automation & Software",
+  title: "IMPACT Enterprise | AI, Automation & Software",
   description:
-    "IMPACT Technologies builds AI systems, intelligent agents, business automation, custom applications and digital products that turn ideas into impact.",
+    "IMPACT Enterprise builds AI systems, intelligent agents, business automation, custom applications and digital products that turn ideas into impact.",
   keywords: [
+    "IMPACT Enterprise",
     "IMPACT Technologies",
     "AI Engineering",
     "AI Agents",
@@ -28,22 +30,22 @@ export const metadata: Metadata = {
     "Next.js",
     "Product Studio",
   ],
-  authors: [{ name: "IMPACT Technologies" }],
-  creator: "IMPACT Technologies",
-  publisher: "IMPACT Technologies",
-  metadataBase: new URL("https://impact-technologies.com"),
+  authors: [{ name: "IMPACT Enterprise" }],
+  creator: "IMPACT Enterprise",
+  publisher: "IMPACT Enterprise",
+  metadataBase: new URL("https://impact-enterprise.com"),
   openGraph: {
-    title: "IMPACT Technologies | AI, Automation & Software",
+    title: "IMPACT Enterprise | AI, Automation & Software",
     description:
       "Turning Ideas Into Impact. AI systems, autonomous agents, business automation, and custom digital platforms engineered around real business problems.",
-    url: "https://impact-technologies.com",
-    siteName: "IMPACT Technologies",
+    url: "https://impact-enterprise.com",
+    siteName: "IMPACT Enterprise",
     images: [
       {
         url: "/brand/impact-logo.png",
         width: 451,
         height: 441,
-        alt: "IMPACT Technologies Logo",
+        alt: "IMPACT Enterprise Logo",
       },
     ],
     locale: "en_US",
@@ -51,7 +53,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "IMPACT Technologies | AI, Automation & Software",
+    title: "IMPACT Enterprise | AI, Automation & Software",
     description: "Turning Ideas Into Impact. AI, autonomous agents, automation & digital products.",
     images: ["/brand/impact-logo.png"],
   },
@@ -74,6 +76,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={inter.variable}>
       <body className="min-h-screen flex flex-col bg-[#FAF9F6] text-brand-dark antialiased">
+        <ImpactLoader />
         <Navbar />
         <main className="flex-1">{children}</main>
         <Footer />

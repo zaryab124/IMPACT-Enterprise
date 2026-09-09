@@ -118,12 +118,13 @@ export const ProjectsPreviewSection: React.FC = () => {
 
                 <div className="mt-4 space-y-2">
                   {[
-                    { step: "01", node: "CUSTOMER", detail: "Scans HMAC QR at dine-in table or opens web portal" },
-                    { step: "02", node: "DIGITAL MENU", detail: "Selects dishes, builds custom deals with 25% cap" },
-                    { step: "03", node: "ORDER MANAGEMENT", detail: "Branch-isolated order created & validated in FastAPI" },
-                    { step: "04", node: "KITCHEN (KDS)", detail: "Real-time Redis WebSocket alert with timer board" },
-                    { step: "05", node: "DISPATCH & RIDER", detail: "Rider assignment, delivery route status updates" },
-                    { step: "06", node: "EXECUTIVE ANALYTICS", detail: "Owner sees real-time revenue, P&L, and feedback" },
+                    { step: "01", node: "CUSTOMER", detail: "Scans encrypted QR at dine-in table or opens delivery web portal" },
+                    { step: "02", node: "QR MENU", detail: "Selects dishes, builds custom deals with 25% cap validation" },
+                    { step: "03", node: "ORDER", detail: "Branch-isolated order created with cryptographic HMAC integrity" },
+                    { step: "04", node: "ADMIN", detail: "Store manager real-time order review, branch routing & approvals" },
+                    { step: "05", node: "KITCHEN (KDS)", detail: "Real-time Redis WebSocket alert with station timer board" },
+                    { step: "06", node: "RIDER", detail: "Automated delivery dispatch with live GPS route status updates" },
+                    { step: "07", node: "CUSTOMER", detail: "Final meal delivery with automated receipt and feedback rating" },
                   ].map((flow, idx) => (
                     <div
                       key={flow.step}
