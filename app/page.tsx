@@ -1,5 +1,6 @@
 import React from "react";
 import { HeroSection } from "@/components/home/HeroSection";
+import { AgentExecutionConsole } from "@/components/home/AgentExecutionConsole";
 import { ClientJourneySelector } from "@/components/home/ClientJourneySelector";
 import { IdeaBuilder } from "@/components/conversion/IdeaBuilder";
 import { TrustBar } from "@/components/home/TrustBar";
@@ -12,10 +13,13 @@ import { FinalCtaBanner } from "@/components/conversion/FinalCtaBanner";
 export default function HomePage() {
   return (
     <div className="flex flex-col min-h-screen">
-      {/* 1. Hero Section */}
+      {/* 1. Hero Section (With 3D Neural Particle Canvas & 3D Tilt Lifecycle) */}
       <HeroSection />
 
-      {/* 2. Client Journey Entry Points (5 Situations) */}
+      {/* 2. Realtime Autonomous Agent Execution Stream & AI Workbench */}
+      <AgentExecutionConsole />
+
+      {/* 3. Client Journey Entry Points (5 Situations) */}
       <ClientJourneySelector />
 
       {/* 3. Interactive Idea Builder (What are you trying to achieve?) */}

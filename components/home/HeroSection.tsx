@@ -2,7 +2,9 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { ArrowRight, Lightbulb, Cpu, Cog, Layers, TrendingUp, CheckCircle2, ChevronRight } from "lucide-react";
+import { ArrowRight, Lightbulb, Cpu, Cog, Layers, TrendingUp, CheckCircle2, ChevronRight, Sparkles } from "lucide-react";
+import { NeuralCanvas } from "@/components/visuals/NeuralCanvas";
+import { Tilt3DCard } from "@/components/ui/Tilt3DCard";
 
 export const HeroSection: React.FC = () => {
   const [activeStep, setActiveStep] = useState<number>(0);
@@ -51,7 +53,13 @@ export const HeroSection: React.FC = () => {
   ];
 
   return (
-    <section className="relative overflow-hidden pt-12 pb-20 lg:pt-20 lg:pb-28 border-b border-brand-border bg-[#FAF9F6] bg-tech-grid">
+    <section className="relative overflow-hidden pt-12 pb-20 lg:pt-20 lg:pb-28 border-b border-brand-border bg-[#FAF9F6]">
+      {/* 3D Interactive Neural Particle Mesh */}
+      <NeuralCanvas />
+
+      {/* Subtle tech grid background with depth */}
+      <div className="absolute inset-0 bg-tech-grid opacity-60 pointer-events-none" />
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
           {/* Left Column: Core Value Proposition */}
@@ -113,82 +121,84 @@ export const HeroSection: React.FC = () => {
 
           {/* Right Column: Interactive Abstract Flow Progression */}
           <div className="lg:col-span-5">
-            <div className="bg-white border border-brand-border rounded-2xl p-6 sm:p-7 shadow-cardHover">
-              <div className="flex items-center justify-between pb-4 border-b border-brand-border">
-                <div className="text-xs font-bold uppercase tracking-wider text-brand-subtle">
-                  The Transformation Lifecycle
+            <Tilt3DCard>
+              <div className="bg-white border border-brand-border rounded-2xl p-6 sm:p-7 shadow-cardHover">
+                <div className="flex items-center justify-between pb-4 border-b border-brand-border">
+                  <div className="text-xs font-bold uppercase tracking-wider text-brand-subtle">
+                    The Transformation Lifecycle
+                  </div>
+                  <div className="text-xs font-semibold px-2 py-0.5 rounded bg-brand-accentSoft text-brand-accent">
+                    Interactive Pipeline
+                  </div>
                 </div>
-                <div className="text-xs font-semibold px-2 py-0.5 rounded bg-brand-accentSoft text-brand-accent">
-                  Interactive Pipeline
-                </div>
-              </div>
 
-              {/* Step progression buttons */}
-              <div className="mt-4 grid grid-cols-5 gap-1.5">
-                {steps.map((step, idx) => {
-                  const isActive = activeStep === idx;
-                  const Icon = step.icon;
-                  return (
+                {/* Step progression buttons */}
+                <div className="mt-4 grid grid-cols-5 gap-1.5">
+                  {steps.map((step, idx) => {
+                    const isActive = activeStep === idx;
+                    const Icon = step.icon;
+                    return (
+                      <button
+                        key={step.name}
+                        onClick={() => setActiveStep(idx)}
+                        className={`flex flex-col items-center p-2 rounded-lg text-center transition-all ${
+                          isActive
+                            ? "bg-brand-accent text-white shadow-xs font-bold"
+                            : "bg-brand-surface hover:bg-brand-surfaceAlt text-brand-muted hover:text-brand-dark"
+                        }`}
+                      >
+                        <Icon className="w-4 h-4 mb-1" />
+                        <span className="text-[10px] tracking-tight">{step.name}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {/* Active Step Card */}
+                <div className="mt-5 p-5 rounded-xl bg-brand-surface border border-brand-border/80 transition-all">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-xs font-black uppercase tracking-widest text-brand-accent">
+                      Step {steps[activeStep].num} — {steps[activeStep].name}
+                    </span>
+                    <span className="text-xs font-mono font-bold text-brand-muted">
+                      {activeStep + 1} of 5
+                    </span>
+                  </div>
+                  <h3 className="text-lg font-bold text-brand-dark">
+                    {steps[activeStep].title}
+                  </h3>
+                  <p className="text-sm text-brand-muted mt-2 leading-relaxed">
+                    {steps[activeStep].desc}
+                  </p>
+                  <div className="mt-4 pt-3 border-t border-brand-border/60 flex items-center justify-between text-xs">
+                    <span className="font-semibold text-brand-charcoal">
+                      {steps[activeStep].highlight}
+                    </span>
                     <button
-                      key={step.name}
-                      onClick={() => setActiveStep(idx)}
-                      className={`flex flex-col items-center p-2 rounded-lg text-center transition-all ${
-                        isActive
-                          ? "bg-brand-accent text-white shadow-xs font-bold"
-                          : "bg-brand-surface hover:bg-brand-surfaceAlt text-brand-muted hover:text-brand-dark"
-                      }`}
+                      onClick={() => setActiveStep((prev) => (prev + 1) % steps.length)}
+                      className="inline-flex items-center gap-1 font-bold text-brand-accent hover:underline"
                     >
-                      <Icon className="w-4 h-4 mb-1" />
-                      <span className="text-[10px] tracking-tight">{step.name}</span>
+                      Next Stage <ChevronRight className="w-3.5 h-3.5" />
                     </button>
-                  );
-                })}
-              </div>
+                  </div>
+                </div>
 
-              {/* Active Step Card */}
-              <div className="mt-5 p-5 rounded-xl bg-brand-surface border border-brand-border/80 transition-all">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs font-black uppercase tracking-widest text-brand-accent">
-                    Step {steps[activeStep].num} — {steps[activeStep].name}
-                  </span>
-                  <span className="text-xs font-mono font-bold text-brand-muted">
-                    {activeStep + 1} of 5
-                  </span>
-                </div>
-                <h3 className="text-lg font-bold text-brand-dark">
-                  {steps[activeStep].title}
-                </h3>
-                <p className="text-sm text-brand-muted mt-2 leading-relaxed">
-                  {steps[activeStep].desc}
-                </p>
-                <div className="mt-4 pt-3 border-t border-brand-border/60 flex items-center justify-between text-xs">
-                  <span className="font-semibold text-brand-charcoal">
-                    {steps[activeStep].highlight}
-                  </span>
-                  <button
-                    onClick={() => setActiveStep((prev) => (prev + 1) % steps.length)}
-                    className="inline-flex items-center gap-1 font-bold text-brand-accent hover:underline"
-                  >
-                    Next Stage <ChevronRight className="w-3.5 h-3.5" />
-                  </button>
+                {/* Linear Flow Diagram */}
+                <div className="mt-5 pt-4 border-t border-brand-border text-center">
+                  <div className="text-[11px] font-mono font-bold text-brand-muted tracking-wider flex items-center justify-center gap-1.5 flex-wrap">
+                    <span className={activeStep === 0 ? "text-brand-accent font-black underline" : ""}>IDEA</span>
+                    <span>→</span>
+                    <span className={activeStep === 1 ? "text-brand-accent font-black underline" : ""}>INTELLIGENCE</span>
+                    <span>→</span>
+                    <span className={activeStep === 2 ? "text-brand-accent font-black underline" : ""}>AUTOMATION</span>
+                    <span>→</span>
+                    <span className={activeStep === 3 ? "text-brand-accent font-black underline" : ""}>PRODUCT</span>
+                    <span>→</span>
+                    <span className={activeStep === 4 ? "text-brand-accent font-black underline" : ""}>IMPACT</span>
+                  </div>
                 </div>
               </div>
-
-              {/* Linear Flow Diagram */}
-              <div className="mt-5 pt-4 border-t border-brand-border text-center">
-                <div className="text-[11px] font-mono font-bold text-brand-muted tracking-wider flex items-center justify-center gap-1.5 flex-wrap">
-                  <span className={activeStep === 0 ? "text-brand-accent font-black underline" : ""}>IDEA</span>
-                  <span>→</span>
-                  <span className={activeStep === 1 ? "text-brand-accent font-black underline" : ""}>INTELLIGENCE</span>
-                  <span>→</span>
-                  <span className={activeStep === 2 ? "text-brand-accent font-black underline" : ""}>AUTOMATION</span>
-                  <span>→</span>
-                  <span className={activeStep === 3 ? "text-brand-accent font-black underline" : ""}>PRODUCT</span>
-                  <span>→</span>
-                  <span className={activeStep === 4 ? "text-brand-accent font-black underline" : ""}>IMPACT</span>
-                </div>
-              </div>
-            </div>
+            </Tilt3DCard>
           </div>
         </div>
       </div>

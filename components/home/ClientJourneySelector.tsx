@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { Lightbulb, Workflow, Bot, Laptop, Wrench, ArrowRight, CheckCircle2, Sparkles } from "lucide-react";
+import { Tilt3DCard } from "@/components/ui/Tilt3DCard";
 
 export const ClientJourneySelector: React.FC = () => {
   const [selectedJourney, setSelectedJourney] = useState<number>(0);
@@ -190,75 +191,77 @@ export const ClientJourneySelector: React.FC = () => {
         </div>
 
         {/* Active Journey Detail Card */}
-        <div className="bg-[#FAF9F6] border border-brand-border rounded-3xl p-6 sm:p-10 shadow-card">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-            {/* Left Narrative */}
-            <div className="lg:col-span-8 space-y-4">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-brand-accent text-white flex items-center justify-center font-bold shadow-xs">
-                  <CurrentIcon className="w-5 h-5" />
+        <Tilt3DCard maxTilt={4}>
+          <div className="bg-[#FAF9F6] border border-brand-border rounded-3xl p-6 sm:p-10 shadow-card">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+              {/* Left Narrative */}
+              <div className="lg:col-span-8 space-y-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-brand-accent text-white flex items-center justify-center font-bold shadow-xs">
+                    <CurrentIcon className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <span className="text-xs font-mono font-bold uppercase tracking-wider text-brand-accent">
+                      Solution Path: {current.badge}
+                    </span>
+                    <h3 className="text-xl sm:text-2xl font-black text-brand-dark tracking-tight">
+                      {current.tagline}
+                    </h3>
+                  </div>
                 </div>
-                <div>
-                  <span className="text-xs font-mono font-bold uppercase tracking-wider text-brand-accent">
-                    Solution Path: {current.badge}
-                  </span>
-                  <h3 className="text-xl sm:text-2xl font-black text-brand-dark tracking-tight">
-                    {current.tagline}
-                  </h3>
+
+                <p className="text-sm sm:text-base text-brand-charcoal leading-relaxed">
+                  {current.description}
+                </p>
+
+                <div className="pt-3 border-t border-brand-border/70">
+                  <div className="text-xs font-bold uppercase tracking-wider text-brand-subtle mb-2">
+                    What IMPACT Provides for This Situation:
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                    {current.recommendation.map((rec, rIdx) => (
+                      <div
+                        key={rIdx}
+                        className="flex items-start gap-2 p-2.5 rounded-xl bg-white border border-brand-border text-xs font-semibold text-brand-dark"
+                      >
+                        <CheckCircle2 className="w-4 h-4 text-brand-teal mt-0.5 flex-shrink-0" />
+                        <span>{rec}</span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
 
-              <p className="text-sm sm:text-base text-brand-charcoal leading-relaxed">
-                {current.description}
-              </p>
-
-              <div className="pt-3 border-t border-brand-border/70">
-                <div className="text-xs font-bold uppercase tracking-wider text-brand-subtle mb-2">
-                  What IMPACT Provides for This Situation:
+              {/* Right Action Box */}
+              <div className="lg:col-span-4 bg-white p-6 rounded-2xl border border-brand-border flex flex-col justify-center space-y-3 text-center shadow-xs">
+                <span className="text-[11px] font-mono font-bold text-brand-subtle uppercase">
+                  Recommended Next Step
+                </span>
+                <div className="text-base font-bold text-brand-dark">
+                  Ready to take action on this?
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-                  {current.recommendation.map((rec, rIdx) => (
-                    <div
-                      key={rIdx}
-                      className="flex items-start gap-2 p-2.5 rounded-xl bg-white border border-brand-border text-xs font-semibold text-brand-dark"
-                    >
-                      <CheckCircle2 className="w-4 h-4 text-brand-teal mt-0.5 flex-shrink-0" />
-                      <span>{rec}</span>
-                    </div>
-                  ))}
+                <p className="text-xs text-brand-muted">
+                  Complete a guided project intake with your selected requirements pre-configured.
+                </p>
+                <div className="pt-2 space-y-2">
+                  <Link
+                    href={current.primaryAction.href}
+                    className="w-full inline-flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-brand-accent hover:bg-brand-accentHover text-white font-bold text-xs uppercase tracking-wider shadow-sm transition-all"
+                  >
+                    <span>{current.primaryAction.label}</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </Link>
+                  <Link
+                    href={current.secondaryAction.href}
+                    className="w-full inline-flex items-center justify-center py-2.5 px-4 rounded-xl border border-brand-border bg-brand-surface hover:bg-white text-brand-charcoal font-semibold text-xs transition-colors"
+                  >
+                    {current.secondaryAction.label}
+                  </Link>
                 </div>
-              </div>
-            </div>
-
-            {/* Right Action Box */}
-            <div className="lg:col-span-4 bg-white p-6 rounded-2xl border border-brand-border flex flex-col justify-center space-y-3 text-center shadow-xs">
-              <span className="text-[11px] font-mono font-bold text-brand-subtle uppercase">
-                Recommended Next Step
-              </span>
-              <div className="text-base font-bold text-brand-dark">
-                Ready to take action on this?
-              </div>
-              <p className="text-xs text-brand-muted">
-                Complete a guided project intake with your selected requirements pre-configured.
-              </p>
-              <div className="pt-2 space-y-2">
-                <Link
-                  href={current.primaryAction.href}
-                  className="w-full inline-flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-brand-accent hover:bg-brand-accentHover text-white font-bold text-xs uppercase tracking-wider shadow-sm transition-all"
-                >
-                  <span>{current.primaryAction.label}</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </Link>
-                <Link
-                  href={current.secondaryAction.href}
-                  className="w-full inline-flex items-center justify-center py-2.5 px-4 rounded-xl border border-brand-border bg-brand-surface hover:bg-white text-brand-charcoal font-semibold text-xs transition-colors"
-                >
-                  {current.secondaryAction.label}
-                </Link>
               </div>
             </div>
           </div>
-        </div>
+        </Tilt3DCard>
       </div>
     </section>
   );
