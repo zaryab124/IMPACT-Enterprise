@@ -97,11 +97,11 @@ export const HeroSection: React.FC = () => {
           </div>
 
           {/* Right Column: WebGL 3D IMPACT Engine Sculpture */}
-          <div className="lg:col-span-6 w-full">
+          <div className="lg:col-span-6 w-full mt-4 lg:mt-0">
             <ImpactEngine3D
               currentStage={activeStep}
               onStageChange={(idx) => setActiveStep(idx)}
-              height={440}
+              className="w-full"
             />
           </div>
         </div>
