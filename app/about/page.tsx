@@ -13,25 +13,25 @@ export const metadata: Metadata = {
 export default function AboutPage() {
   const leadership = [
     {
-      name: "RIYADH",
+      name: "MUHAMMAD ZARYAB HASSAN",
       role: "CEO",
-      initials: "R",
-      focusAreas: ["Vision", "Strategy", "Growth", "Partnerships"],
-      desc: "Directs company vision, strategic market positioning, and international client partnerships.",
+      initials: "ZH",
+      focusAreas: ["Vision", "Strategy", "AI Systems", "Client Partnerships"],
+      desc: "Directs company vision, strategic technology positioning, client partnerships, and intelligent system innovation.",
     },
     {
-      name: "MOHADISIZ",
-      role: "CTO",
-      initials: "M",
-      focusAreas: ["Technology", "AI", "Architecture", "Engineering"],
-      desc: "Leads technical architecture, AI systems engineering, and production software standards.",
+      name: "MAHAD AZIZ",
+      role: "CGO",
+      initials: "MA",
+      focusAreas: ["Growth Strategy", "Market Expansion", "Solutions", "Operations"],
+      desc: "Leads commercial growth, enterprise partnerships, strategic distribution, and market expansion.",
     },
     {
-      name: "MOHAMMED SMILE",
+      name: "MUHAMMAD ISMAIL",
       role: "CFO",
-      initials: "MS",
-      focusAreas: ["Finance", "Commercial Strategy", "Operations"],
-      desc: "Oversees commercial strategy, capital efficiency, operational governance, and financial planning.",
+      initials: "MI",
+      focusAreas: ["Finance", "Commercial Strategy", "Capital Allocation", "Operations"],
+      desc: "Oversees financial strategy, capital efficiency, operational governance, and commercial planning.",
     },
   ];
 

@@ -53,9 +53,9 @@ npm run start -p 3005
 
 ## 👥 Authentic Leadership
 
-- **Riyadh** — Chief Executive Officer (CEO)
-- **Mohadisiz** — Chief Technology Officer (CTO)
-- **Mohammed Smile** — Chief Financial Officer (CFO)
+- **Muhammad Zaryab Hassan** — Chief Executive Officer (CEO)
+- **Mahad Aziz** — Chief Growth Officer (CGO)
+- **Muhammad Ismail** — Chief Financial Officer (CFO)
 
 ---
 
