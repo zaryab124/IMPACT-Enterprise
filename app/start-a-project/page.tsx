@@ -3,7 +3,20 @@
 import React, { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { ArrowLeft, ArrowRight, CheckCircle2, Sparkles, ShieldCheck, Send, AlertCircle, RefreshCcw, HelpCircle, Check } from "lucide-react";
+import {
+  ArrowLeft,
+  ArrowRight,
+  CheckCircle2,
+  Sparkles,
+  ShieldCheck,
+  Send,
+  AlertCircle,
+  RefreshCcw,
+  Check,
+  RotateCcw,
+  MessageSquare,
+  Mail,
+} from "lucide-react";
 
 function IntakeFormInner() {
   const searchParams = useSearchParams();
@@ -43,25 +56,29 @@ function IntakeFormInner() {
       setProjectType("AI Agent");
       setGoal("Create an AI assistant");
     } else if (solutionParam === "automation") {
-      setProjectType("Automation");
+      setProjectType("Automation & Workflows");
       setGoal("Automate operations");
     } else if (solutionParam === "web-app") {
       setProjectType("Web Application");
       setGoal("Build a new product");
+    } else if (solutionParam === "integration" || solutionParam === "software") {
+      setProjectType("App & System Integration");
+      setGoal("Modernize existing software");
     }
 
     if (situationParam === "idea") {
       setCurrentSituation("Idea only");
     } else if (situationParam === "existing") {
       setCurrentSituation("Existing application");
+      if (!projectType) setProjectType("App & System Integration");
     }
 
     if (objectiveParam) {
       if (objectiveParam === "Build something new") setProjectType("Web Application");
-      else if (objectiveParam === "Automate something") setProjectType("Automation");
+      else if (objectiveParam === "Automate something") setProjectType("Automation & Workflows");
       else if (objectiveParam === "Add AI") setProjectType("AI Agent");
-      else if (objectiveParam === "Improve an existing system") setProjectType("Custom Software");
-      else if (objectiveParam === "Create a digital product") setProjectType("SaaS Product");
+      else if (objectiveParam === "Improve an existing system") setProjectType("App & System Integration");
+      else if (objectiveParam === "Create a digital product") setProjectType("SaaS Platform");
 
       const note = `Objective: ${objectiveParam}. ${usersParam ? `Target Users: ${usersParam}. ` : ""}${frictionParam ? `Primary Friction: ${frictionParam}.` : ""}`;
       setDescription((prev) => (prev ? prev : note));
@@ -70,56 +87,112 @@ function IntakeFormInner() {
 
   // Step 1 Options
   const projectTypes = [
-    { label: "AI System", desc: "LLMs, RAG, computer vision, or predictive data models" },
-    { label: "AI Agent", desc: "Autonomous reasoning, customer support, sales, or voice agents" },
-    { label: "Automation", desc: "Lead, CRM, or business process workflow automation" },
-    { label: "Web Application", desc: "Modern full-stack web platforms and interactive apps" },
-    { label: "Mobile Application", desc: "iOS & Android mobile apps engineered for scale" },
-    { label: "SaaS Product", desc: "Multi-tenant software-as-a-service with user accounts & billing" },
-    { label: "Business Platform", desc: "Multi-role operations system (e.g. branch, staff, dispatch)" },
-    { label: "Custom Software", desc: "Bespoke internal tools, databases, or API microservices" },
+    { label: "App & System Integration", desc: "Connect existing web/mobile apps, APIs, CRMs, and payment gateways" },
+    { label: "Web Application", desc: "Modern full-stack web platforms, customer portals, and dashboards" },
+    { label: "Mobile Application", desc: "Native iOS & Android mobile apps engineered for speed and scale" },
+    { label: "AI Agent", desc: "Autonomous reasoning, voice call agents, sales qualification, or support bots" },
+    { label: "Automation & Workflows", desc: "End-to-end lead conversion, CRM sync, and operational pipelines" },
+    { label: "AI System & Engineering", desc: "LLMs, RAG knowledge bases, computer vision, or predictive models" },
+    { label: "SaaS Platform", desc: "Multi-tenant software-as-a-service with seat billing and user roles" },
+    { label: "Enterprise Platform", desc: "Multi-branch, staff, order dispatch, and financial governance systems" },
+    { label: "Custom Software & APIs", desc: "Bespoke backend microservices, databases, or internal team tools" },
     { label: "Other", desc: "A unique or cross-disciplinary technical requirement" },
   ];
 
   // Step 2 Options
   const goals = [
-    { label: "Generate leads", desc: "Automate inbound capture and qualification" },
-    { label: "Automate operations", desc: "Eliminate repetitive manual tasks across your team" },
-    { label: "Improve customer service", desc: "Deploy 24/7 intelligent response systems" },
-    { label: "Build a new product", desc: "Bring an ambitious digital concept to market" },
-    { label: "Replace manual work", desc: "Convert spreadsheets and paper into clean software" },
-    { label: "Analyze data", desc: "Extract actionable intelligence from complex files" },
-    { label: "Create an AI assistant", desc: "Empower staff or customers with domain AI" },
+    { label: "Connect & automate existing systems", desc: "Bridge disjointed apps, sync CRMs, and eliminate manual re-entry" },
+    { label: "Build a new digital product", desc: "Translate an ambitious concept into a working production software product" },
+    { label: "Deploy an AI agent / assistant", desc: "Empower staff or customers with 24/7 autonomous intelligence and voice" },
+    { label: "Generate & convert leads", desc: "Automate multi-channel inbound lead capture, qualification, and follow-up" },
+    { label: "Streamline team operations", desc: "Replace spreadsheets and manual paper tickets with automated workflows" },
+    { label: "Modernize legacy software", desc: "Refactor outdated codebases, speed up APIs, and upgrade databases" },
+    { label: "Analyze & extract intelligence", desc: "Transform complex operational data into actionable dashboards" },
     { label: "Other", desc: "Another specific commercial or operational outcome" },
+  ];
+
+  // Step 3 Suggestion Chips
+  const promptSuggestions = [
+    "Connect our existing mobile app and CRM with automated real-time webhooks",
+    "Build a modern Next.js web application with user accounts and Stripe billing",
+    "Deploy an autonomous AI agent to answer customer inquiries via WhatsApp & voice",
+    "Automate our lead intake pipeline so leads are qualified and replied to in under 90s",
+    "Create a multi-role administrative portal with granular branch access controls",
   ];
 
   // Step 4 Options
   const situations = [
     { label: "Idea only", desc: "Starting fresh from a concept or business opportunity" },
-    { label: "Existing website", desc: "Have a web presence needing intelligence or overhaul" },
-    { label: "Existing application", desc: "Running software that requires expansion or rewriting" },
-    { label: "Existing software", desc: "Legacy tool or desktop software to modernize" },
-    { label: "Existing workflow", desc: "Manual business process currently run on spreadsheets" },
-    { label: "Existing API/data", desc: "Have proprietary databases or APIs needing frontends or agents" },
+    { label: "Existing application", desc: "Running web or mobile software that requires expansion or rewriting" },
+    { label: "Existing website", desc: "Have an online presence needing intelligence, automation, or overhaul" },
+    { label: "Existing software / legacy tool", desc: "Legacy desktop tool or internal software needing modernization" },
+    { label: "Existing workflow on spreadsheets", desc: "Manual business process currently running on Excel or Google Sheets" },
+    { label: "Existing APIs & databases", desc: "Have proprietary databases or APIs needing modern frontends or AI" },
   ];
 
   // Step 5 Options
   const timelines = [
-    { label: "ASAP", desc: "Urgent launch or rapid sprint within 30 days" },
-    { label: "1–3 months", desc: "Standard production release window" },
-    { label: "3–6 months", desc: "Comprehensive enterprise build and rollout" },
-    { label: "Flexible", desc: "Discovery and design first; timeline is open" },
+    { label: "ASAP (< 30 days)", desc: "Urgent launch or rapid sprint to meet an immediate deadline" },
+    { label: "1–3 months", desc: "Standard production release window with iterative milestones" },
+    { label: "3–6 months", desc: "Comprehensive enterprise build, integration, and rollout" },
+    { label: "Flexible", desc: "Discovery and design first; open to scoping recommendations" },
   ];
 
   // Step 6 Options
   const budgetRanges = [
-    { label: "$5,000 – $10,000", desc: "Focused automation, standalone agent, or lightweight MVP" },
-    { label: "$10,000 – $25,000", desc: "Production web/mobile application or advanced multi-agent system" },
-    { label: "$25,000 – $50,000", desc: "Complete multi-role platform, SaaS MVP, or multi-branch engine" },
-    { label: "$50,000+", desc: "Enterprise infrastructure, high-throughput ecosystem, or ongoing product studio" },
+    { label: "$5,000 – $10,000", desc: "Targeted integration, standalone AI agent, or focused MVP" },
+    { label: "$10,000 – $25,000", desc: "Production web/mobile application or advanced automation engine" },
+    { label: "$25,000 – $50,000", desc: "Complete multi-role platform, SaaS MVP, or multi-branch system" },
+    { label: "$50,000+", desc: "Enterprise infrastructure, high-throughput ecosystem, or dedicated studio" },
     { label: "Undisclosed / Flexible", desc: "Open to scoping based on architectural recommendations" },
   ];
 
+  // Auto-advance handlers (Smooth, instant 240ms transition on option click)
+  const handleSelectProjectType = (val: string) => {
+    setProjectType(val);
+    setErrorMessage("");
+    if (val !== "Other") {
+      setTimeout(() => {
+        setCurrentStep(2);
+      }, 240);
+    }
+  };
+
+  const handleSelectGoal = (val: string) => {
+    setGoal(val);
+    setErrorMessage("");
+    if (val !== "Other") {
+      setTimeout(() => {
+        setCurrentStep(3);
+      }, 240);
+    }
+  };
+
+  const handleSelectSituation = (val: string) => {
+    setCurrentSituation(val);
+    setErrorMessage("");
+    setTimeout(() => {
+      setCurrentStep(5);
+    }, 240);
+  };
+
+  const handleSelectTimeline = (val: string) => {
+    setTimeline(val);
+    setErrorMessage("");
+    setTimeout(() => {
+      setCurrentStep(6);
+    }, 240);
+  };
+
+  const handleSelectBudget = (val: string) => {
+    setBudgetRange(val);
+    setErrorMessage("");
+    setTimeout(() => {
+      setCurrentStep(7);
+    }, 240);
+  };
+
+  // Manual Next Button Navigation
   const handleNext = () => {
     setErrorMessage("");
     if (currentStep === 1) {
@@ -141,9 +214,11 @@ function IntakeFormInner() {
         return;
       }
     } else if (currentStep === 3) {
+      // If empty, supply clean default so user is never blocked
       if (!description.trim()) {
-        setErrorMessage("Please provide a brief description of your idea.");
-        return;
+        setDescription(
+          `Project Scope: ${projectType || "Software Solution"}. Primary Goal: ${goal || "System Modernization"}. Detailed specifications to be refined during architectural discovery.`
+        );
       }
     } else if (currentStep === 4) {
       if (!currentSituation) {
@@ -179,7 +254,7 @@ function IntakeFormInner() {
     setErrorMessage("");
 
     if (!name.trim() || !email.trim()) {
-      setErrorMessage("Please provide at least your Name and Email address.");
+      setErrorMessage("Please provide at least your Name and Work Email address.");
       return;
     }
 
@@ -200,7 +275,7 @@ function IntakeFormInner() {
         body: JSON.stringify({
           projectType: projectType === "Other" ? `Other: ${customProjectType}` : projectType,
           goal: goal === "Other" ? `Other: ${customGoal}` : goal,
-          description,
+          description: description || "Detailed requirements to be refined during discovery call",
           currentSituation,
           timeline,
           budgetRange,
@@ -214,584 +289,640 @@ function IntakeFormInner() {
 
       const data = await response.json();
 
-      if (!response.ok) {
-        throw new Error(data.error || "Failed to submit project.");
+      if (response.ok && data.success) {
+        setSubmissionId(data.submissionId);
+        setIsSubmitted(true);
+      } else {
+        setErrorMessage(data.error || "Submission could not be completed. Please try again or message us on WhatsApp.");
       }
-
-      setSubmissionId(data.submissionId);
-      setIsSubmitted(true);
-    } catch (err: any) {
-      setErrorMessage(err.message || "An unexpected error occurred. Please try again.");
+    } catch (err) {
+      setErrorMessage("Network error during submission. Please try again or email us directly at impactenterprise527@gmail.com.");
     } finally {
       setIsSubmitting(false);
     }
   };
 
+  const stepNames = [
+    "Project Type",
+    "Primary Goal",
+    "Idea Scope",
+    "Starting Point",
+    "Timeline",
+    "Budget",
+    "Contact Info",
+  ];
+
   return (
     <div className="py-12 sm:py-20 bg-[#FAF9F6] min-h-screen">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header Breadcrumb */}
-        <div className="mb-6 flex items-center justify-between">
-          <Link
-            href="/"
-            className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-brand-muted hover:text-brand-accent transition-colors"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            <span>Return to Home</span>
-          </Link>
-          <div className="text-xs font-mono font-bold text-brand-subtle">
-            IMPACT Client Intake
+        {/* Top Header */}
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-brand-accentSoft text-brand-accent text-xs font-bold uppercase tracking-wider mb-3">
+            <Sparkles className="w-3.5 h-3.5" />
+            <span>IMPACT Project Intake Platform</span>
           </div>
+          <h1 className="text-3xl sm:text-5xl font-black text-brand-dark tracking-tight">
+            START A PROJECT
+          </h1>
+          <p className="mt-2 text-base text-brand-muted max-w-xl mx-auto">
+            Tell us about your idea or system requirements. We will engineer the intelligence, automation, and software to make it real.
+          </p>
         </div>
 
-        {/* Confirmation Screen on Success */}
+        {/* SUBMISSION CONFIRMATION VIEW */}
         {isSubmitted ? (
           <div className="bg-white border border-brand-border rounded-3xl p-8 sm:p-14 shadow-card text-center animate-in fade-in duration-300">
-            <div className="w-16 h-16 rounded-2xl bg-brand-surface text-brand-teal border border-brand-border flex items-center justify-center mx-auto mb-6">
+            <div className="w-16 h-16 rounded-2xl bg-emerald-50 text-emerald-600 border border-emerald-200 flex items-center justify-center mx-auto mb-6">
               <CheckCircle2 className="w-10 h-10" />
             </div>
 
             <span className="px-3 py-1 rounded-full bg-brand-surface border border-brand-border text-xs font-mono font-bold text-brand-charcoal uppercase tracking-wider">
-              Reference ID: {submissionId}
+              Project Reference ID: {submissionId}
             </span>
 
-            <h1 className="text-3xl sm:text-4xl font-black text-brand-dark tracking-tight mt-4">
-              Your idea has been received.
-            </h1>
+            <h2 className="text-3xl sm:text-4xl font-black text-brand-dark tracking-tight mt-4">
+              Your project inquiry has been received.
+            </h2>
 
-            <p className="text-lg font-semibold text-brand-accent mt-2">
-              An IMPACT team member will review your requirements.
+            <p className="text-base font-semibold text-brand-accent mt-2">
+              Our engineering team is analyzing your specifications.
             </p>
 
             <p className="text-sm text-brand-muted max-w-lg mx-auto mt-4 leading-relaxed">
-              Thank you for trusting IMPACT Technologies with your project vision. Our technical leadership team will analyze your submission and prepare an architectural outline and next steps.
+              Thank you for choosing IMPACT Enterprise. An executive team member will review your scope and follow up with a technical roadmap and next steps.
             </p>
 
-            {/* Next Steps Roadmap */}
-            <div className="mt-8 p-6 rounded-2xl bg-brand-surface border border-brand-border text-left max-w-xl mx-auto">
-              <div className="text-xs font-bold uppercase tracking-wider text-brand-subtle mb-3">
-                What happens next:
-              </div>
-              <div className="space-y-3 text-xs text-brand-charcoal">
-                <div className="flex items-start gap-3">
-                  <span className="w-5 h-5 rounded-full bg-brand-accent text-white flex items-center justify-center text-[10px] font-bold flex-shrink-0 mt-0.5">
-                    1
-                  </span>
-                  <div>
-                    <strong className="text-brand-dark">Technical Review:</strong> We review the technical feasibility, AI/agent requirements, and system scope within 24–48 business hours.
-                  </div>
-                </div>
-                <div className="flex items-start gap-3">
-                  <span className="w-5 h-5 rounded-full bg-brand-accent text-white flex items-center justify-center text-[10px] font-bold flex-shrink-0 mt-0.5">
-                    2
-                  </span>
-                  <div>
-                    <strong className="text-brand-dark">Scoping Discovery:</strong> We will reach out to <span className="font-mono font-semibold">{email}</span> to schedule a discovery call or share preliminary notes.
-                  </div>
-                </div>
-                <div className="flex items-start gap-3">
-                  <span className="w-5 h-5 rounded-full bg-brand-accent text-white flex items-center justify-center text-[10px] font-bold flex-shrink-0 mt-0.5">
-                    3
-                  </span>
-                  <div>
-                    <strong className="text-brand-dark">Confidentiality Guarantee:</strong> All proprietary ideas, data models, and business concepts remain strictly confidential.
-                  </div>
-                </div>
-              </div>
+            {/* Direct Escalation Buttons */}
+            <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+              <a
+                href={`https://wa.me/923147893907?text=Hi%20IMPACT%20Enterprise,%20I%20just%20submitted%20project%20inquiry%20${encodeURIComponent(submissionId)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold text-xs shadow-xs transition-all"
+              >
+                <MessageSquare className="w-4 h-4 fill-current" />
+                <span>Notify Leadership on WhatsApp</span>
+              </a>
+              <a
+                href={`mailto:impactenterprise527@gmail.com?subject=Project%20Inquiry%20Ref:%20${encodeURIComponent(submissionId)}`}
+                className="inline-flex items-center gap-2 px-5 py-3 rounded-xl border border-brand-border bg-brand-surface hover:bg-brand-surfaceAlt text-brand-dark font-bold text-xs transition-all"
+              >
+                <Mail className="w-4 h-4" />
+                <span>Send Additional Specs via Email</span>
+              </a>
             </div>
 
-            <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
+            <div className="mt-8 pt-6 border-t border-brand-border flex items-center justify-center gap-4">
               <Link
                 href="/projects"
-                className="w-full sm:w-auto px-6 py-3 rounded-xl bg-brand-accent hover:bg-brand-accentHover text-white font-bold text-sm shadow-sm transition-all"
+                className="px-6 py-2.5 rounded-xl bg-brand-dark hover:bg-brand-black text-white text-xs font-bold transition-all"
               >
-                Explore Real-World Projects
+                Explore Case Studies
               </Link>
               <Link
                 href="/"
-                className="w-full sm:w-auto px-6 py-3 rounded-xl border border-brand-border bg-white text-brand-dark font-semibold text-sm hover:bg-brand-surface transition-all"
+                className="px-6 py-2.5 rounded-xl border border-brand-border text-brand-muted hover:text-brand-dark text-xs font-semibold hover:bg-brand-surface transition-all"
               >
                 Return to Homepage
               </Link>
             </div>
           </div>
         ) : (
-          /* Intake Form Card */
-          <div className="bg-white border border-brand-border rounded-3xl p-6 sm:p-12 shadow-card">
-            {/* Progress Bar & Counter */}
-            <div className="mb-8">
-              <div className="flex items-center justify-between text-xs font-bold uppercase tracking-wider text-brand-subtle mb-2">
-                <span>Step {currentStep} of {totalSteps}</span>
+          /* INTAKE FORM WIZARD CONTAINER */
+          <div className="bg-white border border-brand-border rounded-3xl p-6 sm:p-10 shadow-card">
+            {/* Interactive Step Navigator at Top */}
+            <div className="mb-8 pb-6 border-b border-brand-border">
+              <div className="flex items-center justify-between text-xs font-bold uppercase tracking-wider text-brand-subtle mb-3">
+                <span className="text-brand-dark font-black">
+                  Step 0{currentStep} of 0{totalSteps}: {stepNames[currentStep - 1]}
+                </span>
                 <span className="text-brand-accent font-mono">
                   {Math.round((currentStep / totalSteps) * 100)}% Completed
                 </span>
               </div>
-              <div className="w-full h-2 rounded-full bg-brand-surface border border-brand-border overflow-hidden">
-                <div
-                  className="h-full bg-brand-accent transition-all duration-300 rounded-full"
-                  style={{ width: `${(currentStep / totalSteps) * 100}%` }}
-                />
+
+              {/* Clickable Step Pills */}
+              <div className="grid grid-cols-7 gap-1.5 sm:gap-2">
+                {stepNames.map((sName, idx) => {
+                  const sNum = idx + 1;
+                  const isActive = currentStep === sNum;
+                  const isPast = currentStep > sNum;
+                  return (
+                    <button
+                      key={sName}
+                      type="button"
+                      onClick={() => setCurrentStep(sNum)}
+                      className={`py-1.5 px-1 rounded-xl text-center flex flex-col items-center justify-center transition-all ${
+                        isActive
+                          ? "bg-brand-accent text-white shadow-xs font-bold scale-105"
+                          : isPast
+                          ? "bg-brand-accentSoft text-brand-accent hover:bg-brand-accent hover:text-white"
+                          : "bg-brand-surface text-brand-subtle hover:text-brand-dark"
+                      }`}
+                      title={`Jump to Step ${sNum}: ${sName}`}
+                    >
+                      <span className="text-[9px] font-mono tracking-tighter">0{sNum}</span>
+                      <span className="text-[10px] font-bold truncate w-full hidden md:inline">
+                        {sName.split(" ")[0]}
+                      </span>
+                    </button>
+                  );
+                })}
               </div>
             </div>
 
             {/* Error Banner */}
             {errorMessage && (
-              <div className="mb-6 p-4 rounded-xl bg-red-50 border border-red-200 text-red-800 text-xs font-semibold flex items-center gap-2">
+              <div className="mb-6 p-4 rounded-2xl bg-red-50 border border-red-200 text-red-800 text-xs font-semibold flex items-center gap-2 animate-in fade-in">
                 <AlertCircle className="w-4 h-4 flex-shrink-0" />
                 <span>{errorMessage}</span>
               </div>
             )}
 
-            {/* Form Steps */}
-            <div>
-              {/* STEP 1: What do you want to build? */}
-              {currentStep === 1 && (
-                <div className="space-y-6">
-                  <div>
-                    <span className="text-xs font-bold uppercase tracking-wider text-brand-accent">
-                      Step 1 • Project Category
-                    </span>
-                    <h2 className="text-2xl sm:text-3xl font-black text-brand-dark tracking-tight mt-1">
-                      WHAT DO YOU WANT TO BUILD?
-                    </h2>
-                    <p className="text-sm text-brand-muted mt-1">
-                      Select the core category that best represents your system.
-                    </p>
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-                    {projectTypes.map((item) => {
-                      const isSelected = projectType === item.label;
-                      return (
-                        <button
-                          type="button"
-                          key={item.label}
-                          onClick={() => setProjectType(item.label)}
-                          className={`p-4 rounded-2xl text-left border transition-all flex flex-col justify-between ${
-                            isSelected
-                              ? "bg-brand-accentSoft border-brand-accent text-brand-dark ring-2 ring-brand-accent/20"
-                              : "bg-brand-surface border-brand-border hover:bg-white hover:border-brand-accent/40"
-                          }`}
-                        >
-                          <div>
-                            <div className="flex items-center justify-between mb-1">
-                              <span className="font-bold text-sm text-brand-dark">
-                                {item.label}
-                              </span>
-                              {isSelected && (
-                                <Check className="w-4 h-4 text-brand-accent font-black" />
-                              )}
-                            </div>
-                            <p className="text-[11px] text-brand-muted leading-relaxed">
-                              {item.desc}
-                            </p>
-                          </div>
-                        </button>
-                      );
-                    })}
-                  </div>
-
-                  {projectType === "Other" && (
-                    <div className="mt-3">
-                      <label className="block text-xs font-bold text-brand-dark uppercase tracking-wider mb-1">
-                        Please specify what you want to build:
-                      </label>
-                      <input
-                        type="text"
-                        value={customProjectType}
-                        onChange={(e) => setCustomProjectType(e.target.value)}
-                        placeholder="e.g. AI-driven logistics tracker, custom hardware API bridge..."
-                        className="w-full px-4 py-3 rounded-xl border border-brand-border bg-white text-brand-dark text-sm focus:border-brand-accent focus:ring-1 focus:ring-brand-accent"
-                      />
-                    </div>
-                  )}
+            {/* STEP 1: WHAT DO YOU WANT TO BUILD? */}
+            {currentStep === 1 && (
+              <div className="space-y-6 animate-in fade-in duration-200">
+                <div>
+                  <span className="text-xs font-bold uppercase tracking-wider text-brand-accent">
+                    Step 1 of 7 • Category
+                  </span>
+                  <h2 className="text-2xl sm:text-3xl font-black text-brand-dark tracking-tight mt-1">
+                    WHAT DO YOU WANT TO BUILD?
+                  </h2>
+                  <p className="text-sm text-brand-muted mt-1">
+                    Click any option below to select and auto-advance to Step 2.
+                  </p>
                 </div>
-              )}
 
-              {/* STEP 2: What is the main goal? */}
-              {currentStep === 2 && (
-                <div className="space-y-6">
-                  <div>
-                    <span className="text-xs font-bold uppercase tracking-wider text-brand-accent">
-                      Step 2 • Primary Objective
-                    </span>
-                    <h2 className="text-2xl sm:text-3xl font-black text-brand-dark tracking-tight mt-1">
-                      WHAT IS THE MAIN GOAL?
-                    </h2>
-                    <p className="text-sm text-brand-muted mt-1">
-                      What is the primary commercial or operational outcome you need to achieve?
-                    </p>
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    {goals.map((item) => {
-                      const isSelected = goal === item.label;
-                      return (
-                        <button
-                          type="button"
-                          key={item.label}
-                          onClick={() => setGoal(item.label)}
-                          className={`p-4 rounded-2xl text-left border transition-all flex items-start justify-between ${
-                            isSelected
-                              ? "bg-brand-accentSoft border-brand-accent text-brand-dark ring-2 ring-brand-accent/20"
-                              : "bg-brand-surface border-brand-border hover:bg-white hover:border-brand-accent/40"
-                          }`}
-                        >
-                          <div>
-                            <div className="font-bold text-sm text-brand-dark">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+                  {projectTypes.map((item) => {
+                    const isSelected = projectType === item.label;
+                    return (
+                      <button
+                        type="button"
+                        key={item.label}
+                        onClick={() => handleSelectProjectType(item.label)}
+                        className={`p-4 rounded-2xl text-left border transition-all flex flex-col justify-between group ${
+                          isSelected
+                            ? "bg-brand-accentSoft border-brand-accent text-brand-dark ring-2 ring-brand-accent/20"
+                            : "bg-brand-surface border-brand-border hover:bg-white hover:border-brand-accent/40"
+                        }`}
+                      >
+                        <div>
+                          <div className="flex items-center justify-between mb-1">
+                            <span className="font-bold text-sm text-brand-dark group-hover:text-brand-accent transition-colors">
                               {item.label}
-                            </div>
-                            <p className="text-xs text-brand-muted mt-0.5">
-                              {item.desc}
-                            </p>
+                            </span>
+                            {isSelected && (
+                              <Check className="w-4 h-4 text-brand-accent font-black" />
+                            )}
                           </div>
-                          {isSelected && (
-                            <Check className="w-4 h-4 text-brand-accent font-black flex-shrink-0 mt-0.5 ml-2" />
-                          )}
-                        </button>
-                      );
-                    })}
-                  </div>
-
-                  {goal === "Other" && (
-                    <div className="mt-3">
-                      <label className="block text-xs font-bold text-brand-dark uppercase tracking-wider mb-1">
-                        Please specify your main goal:
-                      </label>
-                      <input
-                        type="text"
-                        value={customGoal}
-                        onChange={(e) => setCustomGoal(e.target.value)}
-                        placeholder="e.g. Comply with new regulatory data audits..."
-                        className="w-full px-4 py-3 rounded-xl border border-brand-border bg-white text-brand-dark text-sm focus:border-brand-accent focus:ring-1 focus:ring-brand-accent"
-                      />
-                    </div>
-                  )}
+                          <p className="text-[11px] text-brand-muted leading-relaxed">
+                            {item.desc}
+                          </p>
+                        </div>
+                      </button>
+                    );
+                  })}
                 </div>
-              )}
 
-              {/* STEP 3: Describe your idea */}
-              {currentStep === 3 && (
-                <div className="space-y-6">
-                  <div>
-                    <span className="text-xs font-bold uppercase tracking-wider text-brand-accent">
-                      Step 3 • Detailed Scope
-                    </span>
-                    <h2 className="text-2xl sm:text-3xl font-black text-brand-dark tracking-tight mt-1">
-                      DESCRIBE YOUR IDEA.
-                    </h2>
-                    <p className="text-sm text-brand-muted mt-1">
-                      Tell us what you want to build. You don&apos;t need to use technical language.
-                    </p>
-                  </div>
-
-                  <div>
-                    <textarea
-                      rows={6}
-                      value={description}
-                      onChange={(e) => setDescription(e.target.value)}
-                      placeholder="Tell us what you want to build. You don't need to use technical language. Explain what the user does, what problem you want solved, or what systems you need connected."
-                      className="w-full p-4 rounded-2xl border border-brand-border bg-white text-brand-dark text-sm leading-relaxed focus:border-brand-accent focus:ring-1 focus:ring-brand-accent resize-y"
+                {projectType === "Other" && (
+                  <div className="mt-3 p-4 rounded-2xl bg-brand-surface border border-brand-border">
+                    <label className="block text-xs font-bold text-brand-dark uppercase tracking-wider mb-1">
+                      Please specify your custom project requirement:
+                    </label>
+                    <input
+                      type="text"
+                      value={customProjectType}
+                      onChange={(e) => setCustomProjectType(e.target.value)}
+                      placeholder="e.g. AI-driven logistics tracker, custom hardware API bridge..."
+                      className="w-full px-4 py-3 rounded-xl border border-brand-border bg-white text-brand-dark text-sm focus:border-brand-accent focus:ring-1 focus:ring-brand-accent"
                     />
-                    <div className="mt-2 text-xs text-brand-muted flex items-center justify-between">
-                      <span>Be as detailed or as brief as you wish.</span>
-                      <span className="font-mono">{description.length} characters</span>
-                    </div>
                   </div>
+                )}
+              </div>
+            )}
+
+            {/* STEP 2: WHAT IS THE MAIN GOAL? */}
+            {currentStep === 2 && (
+              <div className="space-y-6 animate-in fade-in duration-200">
+                <div>
+                  <span className="text-xs font-bold uppercase tracking-wider text-brand-accent">
+                    Step 2 of 7 • Primary Objective
+                  </span>
+                  <h2 className="text-2xl sm:text-3xl font-black text-brand-dark tracking-tight mt-1">
+                    WHAT IS THE MAIN GOAL?
+                  </h2>
+                  <p className="text-sm text-brand-muted mt-1">
+                    Click the primary commercial outcome to auto-advance to Step 3.
+                  </p>
                 </div>
-              )}
 
-              {/* STEP 4: Current situation */}
-              {currentStep === 4 && (
-                <div className="space-y-6">
-                  <div>
-                    <span className="text-xs font-bold uppercase tracking-wider text-brand-accent">
-                      Step 4 • Starting Point
-                    </span>
-                    <h2 className="text-2xl sm:text-3xl font-black text-brand-dark tracking-tight mt-1">
-                      CURRENT SITUATION
-                    </h2>
-                    <p className="text-sm text-brand-muted mt-1">
-                      Do you already have existing assets, code, or workflows?
-                    </p>
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    {situations.map((item) => {
-                      const isSelected = currentSituation === item.label;
-                      return (
-                        <button
-                          type="button"
-                          key={item.label}
-                          onClick={() => setCurrentSituation(item.label)}
-                          className={`p-4 rounded-2xl text-left border transition-all flex items-start justify-between ${
-                            isSelected
-                              ? "bg-brand-accentSoft border-brand-accent text-brand-dark ring-2 ring-brand-accent/20"
-                              : "bg-brand-surface border-brand-border hover:bg-white hover:border-brand-accent/40"
-                          }`}
-                        >
-                          <div>
-                            <div className="font-bold text-sm text-brand-dark">
-                              {item.label}
-                            </div>
-                            <p className="text-xs text-brand-muted mt-0.5">
-                              {item.desc}
-                            </p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {goals.map((item) => {
+                    const isSelected = goal === item.label;
+                    return (
+                      <button
+                        type="button"
+                        key={item.label}
+                        onClick={() => handleSelectGoal(item.label)}
+                        className={`p-4 rounded-2xl text-left border transition-all flex items-start justify-between group ${
+                          isSelected
+                            ? "bg-brand-accentSoft border-brand-accent text-brand-dark ring-2 ring-brand-accent/20"
+                            : "bg-brand-surface border-brand-border hover:bg-white hover:border-brand-accent/40"
+                        }`}
+                      >
+                        <div>
+                          <div className="font-bold text-sm text-brand-dark group-hover:text-brand-accent transition-colors">
+                            {item.label}
                           </div>
-                          {isSelected && (
-                            <Check className="w-4 h-4 text-brand-accent font-black flex-shrink-0 mt-0.5 ml-2" />
-                          )}
-                        </button>
-                      );
-                    })}
+                          <p className="text-xs text-brand-muted mt-0.5">
+                            {item.desc}
+                          </p>
+                        </div>
+                        {isSelected && (
+                          <Check className="w-4 h-4 text-brand-accent font-black flex-shrink-0 mt-0.5 ml-2" />
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {goal === "Other" && (
+                  <div className="mt-3 p-4 rounded-2xl bg-brand-surface border border-brand-border">
+                    <label className="block text-xs font-bold text-brand-dark uppercase tracking-wider mb-1">
+                      Please specify your main goal:
+                    </label>
+                    <input
+                      type="text"
+                      value={customGoal}
+                      onChange={(e) => setCustomGoal(e.target.value)}
+                      placeholder="e.g. Integrate POS orders with delivery routing..."
+                      className="w-full px-4 py-3 rounded-xl border border-brand-border bg-white text-brand-dark text-sm focus:border-brand-accent focus:ring-1 focus:ring-brand-accent"
+                    />
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* STEP 3: DESCRIBE YOUR IDEA */}
+            {currentStep === 3 && (
+              <div className="space-y-6 animate-in fade-in duration-200">
+                <div>
+                  <span className="text-xs font-bold uppercase tracking-wider text-brand-accent">
+                    Step 3 of 7 • Scope & Requirements
+                  </span>
+                  <h2 className="text-2xl sm:text-3xl font-black text-brand-dark tracking-tight mt-1">
+                    DESCRIBE YOUR PROJECT VISION
+                  </h2>
+                  <p className="text-sm text-brand-muted mt-1">
+                    You do not need to use technical jargon. Type freely or click a prompt suggestion below.
+                  </p>
+                </div>
+
+                {/* Prompt suggestion chips */}
+                <div>
+                  <span className="text-[11px] font-bold text-brand-subtle uppercase tracking-wider block mb-2">
+                    Quick Suggestions (Click to fill):
+                  </span>
+                  <div className="flex flex-wrap gap-2">
+                    {promptSuggestions.map((prompt, i) => (
+                      <button
+                        key={i}
+                        type="button"
+                        onClick={() => setDescription(prompt)}
+                        className="text-xs px-3 py-1.5 rounded-xl bg-brand-surface hover:bg-brand-accentSoft border border-brand-border hover:border-brand-accent text-brand-charcoal text-left transition-all"
+                      >
+                        + {prompt}
+                      </button>
+                    ))}
                   </div>
                 </div>
-              )}
 
-              {/* STEP 5: Timeline */}
-              {currentStep === 5 && (
-                <div className="space-y-6">
-                  <div>
-                    <span className="text-xs font-bold uppercase tracking-wider text-brand-accent">
-                      Step 5 • Delivery Window
-                    </span>
-                    <h2 className="text-2xl sm:text-3xl font-black text-brand-dark tracking-tight mt-1">
-                      EXPECTED TIMELINE
-                    </h2>
-                    <p className="text-sm text-brand-muted mt-1">
-                      When do you ideally need this system operational?
-                    </p>
+                <div>
+                  <textarea
+                    rows={5}
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                    placeholder="Tell us what you want to build. What problem are you solving? What systems or users need to connect? (Optional: You can also leave this blank and discuss on our call)."
+                    className="w-full p-4 rounded-2xl border border-brand-border bg-white text-brand-dark text-sm leading-relaxed focus:border-brand-accent focus:ring-1 focus:ring-brand-accent resize-y"
+                  />
+                  <div className="mt-2 text-xs text-brand-muted flex items-center justify-between">
+                    <span>Be as detailed or brief as you like.</span>
+                    <span className="font-mono">{description.length} characters</span>
                   </div>
+                </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    {timelines.map((item) => {
-                      const isSelected = timeline === item.label;
-                      return (
-                        <button
-                          type="button"
-                          key={item.label}
-                          onClick={() => setTimeline(item.label)}
-                          className={`p-4 rounded-2xl text-left border transition-all flex items-start justify-between ${
-                            isSelected
-                              ? "bg-brand-accentSoft border-brand-accent text-brand-dark ring-2 ring-brand-accent/20"
-                              : "bg-brand-surface border-brand-border hover:bg-white hover:border-brand-accent/40"
-                          }`}
-                        >
-                          <div>
-                            <div className="font-bold text-sm text-brand-dark">
-                              {item.label}
-                            </div>
-                            <p className="text-xs text-brand-muted mt-0.5">
-                              {item.desc}
-                            </p>
+                <div className="pt-2">
+                  <button
+                    type="button"
+                    onClick={handleNext}
+                    className="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-brand-accent hover:bg-brand-accentHover text-white font-bold text-sm shadow-sm transition-all flex items-center justify-center gap-2"
+                  >
+                    <span>Continue to Step 4 (Current Situation)</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* STEP 4: CURRENT SITUATION */}
+            {currentStep === 4 && (
+              <div className="space-y-6 animate-in fade-in duration-200">
+                <div>
+                  <span className="text-xs font-bold uppercase tracking-wider text-brand-accent">
+                    Step 4 of 7 • Current Starting Point
+                  </span>
+                  <h2 className="text-2xl sm:text-3xl font-black text-brand-dark tracking-tight mt-1">
+                    WHAT IS YOUR STARTING POINT?
+                  </h2>
+                  <p className="text-sm text-brand-muted mt-1">
+                    Click your current technical setup to auto-advance to Step 5.
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {situations.map((item) => {
+                    const isSelected = currentSituation === item.label;
+                    return (
+                      <button
+                        type="button"
+                        key={item.label}
+                        onClick={() => handleSelectSituation(item.label)}
+                        className={`p-4 rounded-2xl text-left border transition-all flex items-start justify-between group ${
+                          isSelected
+                            ? "bg-brand-accentSoft border-brand-accent text-brand-dark ring-2 ring-brand-accent/20"
+                            : "bg-brand-surface border-brand-border hover:bg-white hover:border-brand-accent/40"
+                        }`}
+                      >
+                        <div>
+                          <div className="font-bold text-sm text-brand-dark group-hover:text-brand-accent transition-colors">
+                            {item.label}
                           </div>
-                          {isSelected && (
-                            <Check className="w-4 h-4 text-brand-accent font-black flex-shrink-0 mt-0.5 ml-2" />
-                          )}
-                        </button>
-                      );
-                    })}
-                  </div>
+                          <p className="text-xs text-brand-muted mt-0.5">
+                            {item.desc}
+                          </p>
+                        </div>
+                        {isSelected && (
+                          <Check className="w-4 h-4 text-brand-accent font-black flex-shrink-0 mt-0.5 ml-2" />
+                        )}
+                      </button>
+                    );
+                  })}
                 </div>
-              )}
+              </div>
+            )}
 
-              {/* STEP 6: Budget Range */}
-              {currentStep === 6 && (
-                <div className="space-y-6">
-                  <div>
-                    <span className="text-xs font-bold uppercase tracking-wider text-brand-accent">
-                      Step 6 • Commercial Scope
-                    </span>
-                    <h2 className="text-2xl sm:text-3xl font-black text-brand-dark tracking-tight mt-1">
-                      BUDGET RANGE
-                    </h2>
-                    <p className="text-sm text-brand-muted mt-1">
-                      Select a comfortable tier. This helps us recommend the right technical architecture without over-engineering.
-                    </p>
-                  </div>
+            {/* STEP 5: EXPECTED TIMELINE */}
+            {currentStep === 5 && (
+              <div className="space-y-6 animate-in fade-in duration-200">
+                <div>
+                  <span className="text-xs font-bold uppercase tracking-wider text-brand-accent">
+                    Step 5 of 7 • Delivery Window
+                  </span>
+                  <h2 className="text-2xl sm:text-3xl font-black text-brand-dark tracking-tight mt-1">
+                    EXPECTED TIMELINE
+                  </h2>
+                  <p className="text-sm text-brand-muted mt-1">
+                    Click your preferred delivery window to auto-advance to Step 6.
+                  </p>
+                </div>
 
-                  <div className="space-y-3">
-                    {budgetRanges.map((item) => {
-                      const isSelected = budgetRange === item.label;
-                      return (
-                        <button
-                          type="button"
-                          key={item.label}
-                          onClick={() => setBudgetRange(item.label)}
-                          className={`w-full p-4 rounded-2xl text-left border transition-all flex items-center justify-between ${
-                            isSelected
-                              ? "bg-brand-accentSoft border-brand-accent text-brand-dark ring-2 ring-brand-accent/20"
-                              : "bg-brand-surface border-brand-border hover:bg-white hover:border-brand-accent/40"
-                          }`}
-                        >
-                          <div>
-                            <div className="font-bold text-sm text-brand-dark">
-                              {item.label}
-                            </div>
-                            <p className="text-xs text-brand-muted mt-0.5">
-                              {item.desc}
-                            </p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {timelines.map((item) => {
+                    const isSelected = timeline === item.label;
+                    return (
+                      <button
+                        type="button"
+                        key={item.label}
+                        onClick={() => handleSelectTimeline(item.label)}
+                        className={`p-4 rounded-2xl text-left border transition-all flex items-start justify-between group ${
+                          isSelected
+                            ? "bg-brand-accentSoft border-brand-accent text-brand-dark ring-2 ring-brand-accent/20"
+                            : "bg-brand-surface border-brand-border hover:bg-white hover:border-brand-accent/40"
+                        }`}
+                      >
+                        <div>
+                          <div className="font-bold text-sm text-brand-dark group-hover:text-brand-accent transition-colors">
+                            {item.label}
                           </div>
-                          {isSelected && (
-                            <Check className="w-4 h-4 text-brand-accent font-black flex-shrink-0 ml-2" />
-                          )}
-                        </button>
-                      );
-                    })}
+                          <p className="text-xs text-brand-muted mt-0.5">
+                            {item.desc}
+                          </p>
+                        </div>
+                        {isSelected && (
+                          <Check className="w-4 h-4 text-brand-accent font-black flex-shrink-0 mt-0.5 ml-2" />
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* STEP 6: BUDGET RANGE */}
+            {currentStep === 6 && (
+              <div className="space-y-6 animate-in fade-in duration-200">
+                <div>
+                  <span className="text-xs font-bold uppercase tracking-wider text-brand-accent">
+                    Step 6 of 7 • Commercial Scope
+                  </span>
+                  <h2 className="text-2xl sm:text-3xl font-black text-brand-dark tracking-tight mt-1">
+                    BUDGET RANGE
+                  </h2>
+                  <p className="text-sm text-brand-muted mt-1">
+                    Select a tier to calculate the right system architecture without over-engineering.
+                  </p>
+                </div>
+
+                <div className="space-y-3">
+                  {budgetRanges.map((item) => {
+                    const isSelected = budgetRange === item.label;
+                    return (
+                      <button
+                        type="button"
+                        key={item.label}
+                        onClick={() => handleSelectBudget(item.label)}
+                        className={`w-full p-4 rounded-2xl text-left border transition-all flex items-center justify-between group ${
+                          isSelected
+                            ? "bg-brand-accentSoft border-brand-accent text-brand-dark ring-2 ring-brand-accent/20"
+                            : "bg-brand-surface border-brand-border hover:bg-white hover:border-brand-accent/40"
+                        }`}
+                      >
+                        <div>
+                          <div className="font-bold text-sm text-brand-dark group-hover:text-brand-accent transition-colors">
+                            {item.label}
+                          </div>
+                          <p className="text-xs text-brand-muted mt-0.5">
+                            {item.desc}
+                          </p>
+                        </div>
+                        {isSelected && (
+                          <Check className="w-4 h-4 text-brand-accent font-black flex-shrink-0 ml-2" />
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* STEP 7: CONTACT INFORMATION & FINAL SUBMIT */}
+            {currentStep === 7 && (
+              <form onSubmit={handleSubmit} className="space-y-6 animate-in fade-in duration-200">
+                <div>
+                  <span className="text-xs font-bold uppercase tracking-wider text-brand-accent">
+                    Step 7 of 7 • Final Step
+                  </span>
+                  <h2 className="text-2xl sm:text-3xl font-black text-brand-dark tracking-tight mt-1">
+                    WHERE SHOULD WE SEND YOUR ARCHITECTURAL OUTLINE?
+                  </h2>
+                  <p className="text-sm text-brand-muted mt-1">
+                    Please provide your contact details so our leadership team can send your project evaluation.
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-bold text-brand-dark uppercase tracking-wider mb-1">
+                      Your Full Name *
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      placeholder="e.g. Alex Morgan"
+                      className="w-full px-4 py-3 rounded-xl border border-brand-border bg-white text-brand-dark text-sm focus:border-brand-accent focus:ring-1 focus:ring-brand-accent"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-brand-dark uppercase tracking-wider mb-1">
+                      Company / Organization Name
+                    </label>
+                    <input
+                      type="text"
+                      value={company}
+                      onChange={(e) => setCompany(e.target.value)}
+                      placeholder="e.g. Morgan Systems or New Venture"
+                      className="w-full px-4 py-3 rounded-xl border border-brand-border bg-white text-brand-dark text-sm focus:border-brand-accent focus:ring-1 focus:ring-brand-accent"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-brand-dark uppercase tracking-wider mb-1">
+                      Work Email Address *
+                    </label>
+                    <input
+                      type="email"
+                      required
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="alex@company.com"
+                      className="w-full px-4 py-3 rounded-xl border border-brand-border bg-white text-brand-dark text-sm focus:border-brand-accent focus:ring-1 focus:ring-brand-accent"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-brand-dark uppercase tracking-wider mb-1">
+                      Phone / WhatsApp Number
+                    </label>
+                    <input
+                      type="tel"
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
+                      placeholder="+1 (555) 000-0000 or +92 300 0000000"
+                      className="w-full px-4 py-3 rounded-xl border border-brand-border bg-white text-brand-dark text-sm focus:border-brand-accent focus:ring-1 focus:ring-brand-accent"
+                    />
+                  </div>
+
+                  <div className="sm:col-span-2">
+                    <label className="block text-xs font-bold text-brand-dark uppercase tracking-wider mb-1">
+                      Country / Region
+                    </label>
+                    <input
+                      type="text"
+                      value={country}
+                      onChange={(e) => setCountry(e.target.value)}
+                      placeholder="e.g. United States, United Kingdom, UAE, Pakistan..."
+                      className="w-full px-4 py-3 rounded-xl border border-brand-border bg-white text-brand-dark text-sm focus:border-brand-accent focus:ring-1 focus:ring-brand-accent"
+                    />
                   </div>
                 </div>
-              )}
 
-              {/* STEP 7: Contact Information */}
-              {currentStep === 7 && (
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  <div>
-                    <span className="text-xs font-bold uppercase tracking-wider text-brand-accent">
-                      Step 7 • Final Step
+                {/* Live Summary of All Answers */}
+                <div className="p-4 rounded-2xl bg-brand-surface border border-brand-border text-xs space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="font-bold text-brand-dark uppercase tracking-wider">
+                      Your Project Summary:
                     </span>
-                    <h2 className="text-2xl sm:text-3xl font-black text-brand-dark tracking-tight mt-1">
-                      CONTACT INFORMATION
-                    </h2>
-                    <p className="text-sm text-brand-muted mt-1">
-                      Where should our engineering team send your project analysis?
-                    </p>
+                    <span className="text-brand-teal font-semibold">Ready for Review</span>
                   </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-xs font-bold text-brand-dark uppercase tracking-wider mb-1">
-                        Your Full Name *
-                      </label>
-                      <input
-                        type="text"
-                        required
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        placeholder="e.g. Alex Morgan"
-                        className="w-full px-4 py-3 rounded-xl border border-brand-border bg-white text-brand-dark text-sm focus:border-brand-accent focus:ring-1 focus:ring-brand-accent"
-                      />
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-brand-charcoal">
+                    <div className="p-2.5 rounded-lg bg-white border border-brand-border/70">
+                      <span className="text-brand-subtle block text-[10px]">BUILD:</span>
+                      <strong className="font-bold truncate block">{projectType || "Not specified"}</strong>
                     </div>
-
-                    <div>
-                      <label className="block text-xs font-bold text-brand-dark uppercase tracking-wider mb-1">
-                        Company / Project Name
-                      </label>
-                      <input
-                        type="text"
-                        value={company}
-                        onChange={(e) => setCompany(e.target.value)}
-                        placeholder="e.g. Morgan Dynamics or Stealth Startup"
-                        className="w-full px-4 py-3 rounded-xl border border-brand-border bg-white text-brand-dark text-sm focus:border-brand-accent focus:ring-1 focus:ring-brand-accent"
-                      />
+                    <div className="p-2.5 rounded-lg bg-white border border-brand-border/70">
+                      <span className="text-brand-subtle block text-[10px]">GOAL:</span>
+                      <strong className="font-bold truncate block">{goal || "Not specified"}</strong>
                     </div>
-
-                    <div>
-                      <label className="block text-xs font-bold text-brand-dark uppercase tracking-wider mb-1">
-                        Work Email Address *
-                      </label>
-                      <input
-                        type="email"
-                        required
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        placeholder="alex@company.com"
-                        className="w-full px-4 py-3 rounded-xl border border-brand-border bg-white text-brand-dark text-sm focus:border-brand-accent focus:ring-1 focus:ring-brand-accent"
-                      />
+                    <div className="p-2.5 rounded-lg bg-white border border-brand-border/70">
+                      <span className="text-brand-subtle block text-[10px]">TIMELINE:</span>
+                      <strong className="font-bold truncate block">{timeline || "Not specified"}</strong>
                     </div>
-
-                    <div>
-                      <label className="block text-xs font-bold text-brand-dark uppercase tracking-wider mb-1">
-                        Phone / WhatsApp
-                      </label>
-                      <input
-                        type="tel"
-                        value={phone}
-                        onChange={(e) => setPhone(e.target.value)}
-                        placeholder="+1 (555) 000-0000"
-                        className="w-full px-4 py-3 rounded-xl border border-brand-border bg-white text-brand-dark text-sm focus:border-brand-accent focus:ring-1 focus:ring-brand-accent"
-                      />
-                    </div>
-
-                    <div className="sm:col-span-2">
-                      <label className="block text-xs font-bold text-brand-dark uppercase tracking-wider mb-1">
-                        Country / Location
-                      </label>
-                      <input
-                        type="text"
-                        value={country}
-                        onChange={(e) => setCountry(e.target.value)}
-                        placeholder="e.g. United States, United Kingdom, UAE, Pakistan..."
-                        className="w-full px-4 py-3 rounded-xl border border-brand-border bg-white text-brand-dark text-sm focus:border-brand-accent focus:ring-1 focus:ring-brand-accent"
-                      />
+                    <div className="p-2.5 rounded-lg bg-white border border-brand-border/70">
+                      <span className="text-brand-subtle block text-[10px]">BUDGET:</span>
+                      <strong className="font-bold truncate block">{budgetRange || "Not specified"}</strong>
                     </div>
                   </div>
+                </div>
 
-                  {/* Summary Review Card */}
-                  <div className="p-4 rounded-xl bg-brand-surface border border-brand-border text-xs space-y-2">
-                    <div className="font-bold text-brand-dark uppercase tracking-wider">
-                      Project Intake Summary:
-                    </div>
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-brand-charcoal">
-                      <div>
-                        <span className="text-brand-subtle block">Build:</span>
-                        <strong className="font-semibold">{projectType || "N/A"}</strong>
-                      </div>
-                      <div>
-                        <span className="text-brand-subtle block">Goal:</span>
-                        <strong className="font-semibold">{goal || "N/A"}</strong>
-                      </div>
-                      <div>
-                        <span className="text-brand-subtle block">Timeline:</span>
-                        <strong className="font-semibold">{timeline || "N/A"}</strong>
-                      </div>
-                      <div>
-                        <span className="text-brand-subtle block">Budget:</span>
-                        <strong className="font-semibold">{budgetRange || "N/A"}</strong>
-                      </div>
-                    </div>
-                  </div>
+                {/* Submit Button */}
+                <div className="pt-2">
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="w-full py-4 px-6 rounded-2xl bg-brand-accent hover:bg-brand-accentHover text-white font-black text-base shadow-md hover:shadow-cardHover transition-all flex items-center justify-center gap-2 disabled:opacity-50 tracking-wider uppercase"
+                  >
+                    {isSubmitting ? (
+                      <>
+                        <RefreshCcw className="w-5 h-5 animate-spin" />
+                        <span>Transmitting Your Project Data...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Send className="w-5 h-5" />
+                        <span>SUBMIT PROJECT TO IMPACT ENGINEERING</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+              </form>
+            )}
 
-                  {/* Submit Button */}
-                  <div className="pt-2">
-                    <button
-                      type="submit"
-                      disabled={isSubmitting}
-                      className="w-full py-4 px-6 rounded-xl bg-brand-accent hover:bg-brand-accentHover text-white font-black text-base shadow-sm hover:shadow-cardHover transition-all flex items-center justify-center gap-2 disabled:opacity-50"
-                    >
-                      {isSubmitting ? (
-                        <>
-                          <RefreshCcw className="w-5 h-5 animate-spin" />
-                          <span>Submitting Your Requirements...</span>
-                        </>
-                      ) : (
-                        <>
-                          <Send className="w-5 h-5" />
-                          <span>SUBMIT PROJECT</span>
-                        </>
-                      )}
-                    </button>
-                  </div>
-                </form>
-              )}
-            </div>
-
-            {/* Step Navigation Controls (for steps 1-6) */}
+            {/* Persistent Step Navigation Controls (Available for steps 1-6) */}
             {currentStep < 7 && (
-              <div className="mt-8 pt-6 border-t border-brand-border flex items-center justify-between">
+              <div className="mt-8 pt-6 border-t border-brand-border flex flex-col sm:flex-row items-center justify-between gap-3">
                 <button
                   type="button"
                   onClick={handlePrev}
                   disabled={currentStep === 1}
-                  className="px-5 py-2.5 rounded-xl border border-brand-border text-xs font-bold text-brand-dark disabled:opacity-30 disabled:cursor-not-allowed hover:bg-brand-surface transition-all flex items-center gap-1.5"
+                  className="w-full sm:w-auto px-5 py-2.5 rounded-xl border border-brand-border text-xs font-bold text-brand-dark disabled:opacity-30 disabled:cursor-not-allowed hover:bg-brand-surface transition-all flex items-center justify-center gap-1.5"
                 >
                   <ArrowLeft className="w-3.5 h-3.5" />
-                  <span>Previous</span>
+                  <span>Previous Step</span>
                 </button>
+
+                <div className="text-xs text-brand-muted text-center">
+                  💡 Click any option above to auto-advance, or press Continue
+                </div>
 
                 <button
                   type="button"
                   onClick={handleNext}
-                  className="px-7 py-3 rounded-xl bg-brand-dark hover:bg-brand-accent text-white text-xs font-bold uppercase tracking-wider shadow-sm transition-all flex items-center gap-2"
+                  className="w-full sm:w-auto px-7 py-3 rounded-xl bg-brand-dark hover:bg-brand-accent text-white text-xs font-bold uppercase tracking-wider shadow-sm transition-all flex items-center justify-center gap-2"
                 >
                   <span>Continue</span>
                   <ArrowRight className="w-4 h-4" />
