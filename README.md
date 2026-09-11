@@ -60,8 +60,13 @@ npm run start -p 3005
 - **Muhammad Zaryab Hassan** — Chief Executive Officer (CEO)
 - **Mahad Aziz** — Chief Growth Officer (CGO)
 - **Muhammad Ismail** — Chief Financial Officer (CFO)
+- M. Ansar Abbas Jafri
+     Branch Manager
+📞 +92 333 6457747
+
 
 ---
+
 
 ## 📬 Direct Contact
 
