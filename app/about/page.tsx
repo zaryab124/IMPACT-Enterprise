@@ -1,6 +1,6 @@
 import React from "react";
 import Link from "next/link";
-import { ArrowRight, Sparkles, CheckCircle2, ShieldCheck, Users, Target, Rocket, Lightbulb, Compass, Award } from "lucide-react";
+import { ArrowRight, Sparkles, CheckCircle2, ShieldCheck, Users, Target, Rocket, Lightbulb, Compass, Award, Phone, MessageCircle } from "lucide-react";
 import { Metadata } from "next";
 import { FinalCtaBanner } from "@/components/conversion/FinalCtaBanner";
 
@@ -32,6 +32,14 @@ export default function AboutPage() {
       initials: "MI",
       focusAreas: ["Finance", "Commercial Strategy", "Capital Allocation", "Operations"],
       desc: "Oversees financial strategy, capital efficiency, operational governance, and commercial planning.",
+    },
+    {
+      name: "M. ANSAR ABBAS JAFRI",
+      role: "BRANCH MANAGER",
+      initials: "AJ",
+      phone: "+92 333 6457747",
+      focusAreas: ["Branch Operations", "Client Relations", "Project Delivery", "Regional Support"],
+      desc: "Manages regional branch operations, on-ground client relationships, deployment coordination, and local project execution.",
     },
   ];
 
@@ -182,23 +190,45 @@ export default function AboutPage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {leadership.map((member) => (
               <div
                 key={member.name}
-                className="bg-white border border-brand-border rounded-3xl p-8 shadow-card hover:shadow-cardHover transition-all flex flex-col justify-between"
+                className="bg-white border border-brand-border rounded-3xl p-6 sm:p-7 shadow-card hover:shadow-cardHover transition-all flex flex-col justify-between"
               >
                 <div>
-                  <div className="w-16 h-16 rounded-2xl bg-brand-surface border border-brand-border text-brand-dark flex items-center justify-center font-black text-2xl mb-6 shadow-xs">
+                  <div className="w-14 h-14 rounded-2xl bg-brand-surface border border-brand-border text-brand-dark flex items-center justify-center font-black text-xl mb-5 shadow-xs">
                     {member.initials}
                   </div>
 
-                  <h3 className="text-2xl font-black text-brand-dark tracking-tight">
+                  <h3 className="text-xl font-black text-brand-dark tracking-tight">
                     {member.name}
                   </h3>
-                  <div className="text-xs font-bold uppercase tracking-widest text-brand-accent mb-4">
+                  <div className="text-xs font-bold uppercase tracking-widest text-brand-accent mb-3">
                     {member.role}
                   </div>
+
+                  {member.phone && (
+                    <div className="mb-4 flex flex-wrap items-center gap-1.5">
+                      <a
+                        href={`tel:${member.phone.replace(/\s+/g, '')}`}
+                        className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-emerald-800 text-xs font-mono font-bold transition-colors"
+                        title="Call Branch Manager"
+                      >
+                        <Phone className="w-3 h-3 text-emerald-600" />
+                        <span>{member.phone}</span>
+                      </a>
+                      <a
+                        href={`https://wa.me/${member.phone.replace(/[^0-9]/g, '')}?text=Hello%20M.%20Ansar%20Abbas%20Jafri,%20I%20would%20like%20to%20connect%20regarding%20IMPACT%20Enterprise.`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="p-1 rounded-lg bg-[#25D366]/15 hover:bg-[#25D366]/25 border border-[#25D366]/30 text-[#128C7E] transition-colors"
+                        title="Chat on WhatsApp"
+                      >
+                        <MessageCircle className="w-3.5 h-3.5 fill-current" />
+                      </a>
+                    </div>
+                  )}
 
                   <p className="text-xs text-brand-muted leading-relaxed mb-6">
                     {member.desc}

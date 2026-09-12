@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Mail, MessageCircle, X, ChevronUp, Sparkles } from 'lucide-react';
+import { Mail, MessageCircle, X, ChevronUp, Sparkles, Phone } from 'lucide-react';
 
 export const FloatingContactWidget: React.FC = () => {
   const [isOpen, setIsOpen] = useState(true);
@@ -87,6 +87,33 @@ export const FloatingContactWidget: React.FC = () => {
                 Direct
               </span>
             </a>
+
+            {/* Branch Operations: M. Ansar Abbas Jafri */}
+            <div className="p-2.5 rounded-xl bg-emerald-50/80 border border-emerald-200">
+              <div className="flex items-center justify-between mb-1.5">
+                <span className="text-[10px] font-bold text-brand-dark uppercase tracking-wider">Branch Manager</span>
+                <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800">M. Ansar Abbas</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <a
+                  href="tel:+923336457747"
+                  className="flex-1 inline-flex items-center justify-center gap-1 py-1.5 px-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-bold transition-all shadow-xs"
+                >
+                  <Phone className="w-3 h-3" />
+                  <span>Call Direct</span>
+                </a>
+                <a
+                  href="https://wa.me/923336457747?text=Hello%20M.%20Ansar%20Abbas%20Jafri,%20I%20would%20like%20to%20connect%20regarding%20IMPACT%20Enterprise."
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex-1 inline-flex items-center justify-center gap-1 py-1.5 px-2 rounded-lg bg-[#25D366] hover:bg-[#1EBE5D] text-white text-[11px] font-bold transition-all shadow-xs"
+                >
+                  <MessageCircle className="w-3 h-3 fill-current" />
+                  <span>WhatsApp</span>
+                </a>
+              </div>
+              <div className="text-[10px] font-mono text-brand-muted text-center mt-1">+92 333 6457747</div>
+            </div>
           </div>
 
           <div className="mt-3 pt-2.5 border-t border-brand-border/60 text-center">
