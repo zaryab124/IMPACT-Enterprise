@@ -24,6 +24,17 @@ IMPACT Enterprise is an AI and intelligent technology platform engineered for hi
 
 ---
 
+## 🤖 AI Sales & Communication Agent (Phase-Gated Engineering)
+
+Antigravity controlled production-grade AI Sales & Omnichannel Communication Agent engineered directly into IMPACT Enterprise.
+
+- 📐 [**System Architecture**](docs/ARCHITECTURE.md) — High-level architecture, omnichannel ingestion, Gemini reasoning engine, and directory blueprint.
+- 📋 [**Development Phases (0–15)**](docs/DEVELOPMENT_PHASES.md) — Strict phase-gated milestone roadmap, hard gates, and verification criteria.
+- 🧪 [**Smoke Tests Runbook**](docs/SMOKE_TESTS.md) — Complete suite of automated, direct API, and browser-based smoke tests.
+- 🛡️ [**Security Specification**](docs/SECURITY.md) — Server-side RBAC matrix, secret zero-exposure protocol, and prompt injection hardening.
+
+---
+
 ## 🛠️ Tech Stack
 
 - **Framework:** Next.js 14+ (App Router)
