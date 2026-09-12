@@ -165,6 +165,12 @@ export const Footer: React.FC = () => {
                   Start a Project Form
                 </Link>
               </li>
+              <li>
+                <Link href="/requests" className="text-brand-muted hover:text-brand-accent transition-colors flex items-center gap-1.5">
+                  <span>Client Requests Portal</span>
+                  <span className="text-[9px] px-1.5 py-0.2 rounded bg-brand-accentSoft text-brand-accent font-bold uppercase">Portal</span>
+                </Link>
+              </li>
               <li className="pt-2 border-t border-brand-border/60">
                 <a
                   href="https://wa.me/923147893907?text=Hello%20IMPACT%20Enterprise,%20I%20would%20like%20to%20discuss%20a%20project."

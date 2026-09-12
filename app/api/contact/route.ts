@@ -64,3 +64,19 @@ export async function POST(req: NextRequest) {
     );
   }
 }
+
+export async function GET() {
+  try {
+    const filePath = path.join(process.cwd(), "data", "inquiries.json");
+    if (fs.existsSync(filePath)) {
+      const content = fs.readFileSync(filePath, "utf8");
+      const parsed = JSON.parse(content);
+      if (Array.isArray(parsed)) {
+        return NextResponse.json({ total: parsed.length, inquiries: parsed });
+      }
+    }
+  } catch (err) {
+    console.warn("Could not read inquiries file:", err);
+  }
+  return NextResponse.json({ total: 0, inquiries: [] });
+}
