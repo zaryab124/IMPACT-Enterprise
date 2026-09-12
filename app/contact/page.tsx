@@ -143,7 +143,7 @@ export default function ContactPage() {
                 </a>
               </div>
 
-              {/* Branch Operations: M. Ansar Abbas Jafri */}
+              {/* Branch Operations: Ansar Abbas Jafri */}
               <div className="p-4 rounded-2xl bg-emerald-50/70 border border-emerald-200 space-y-2.5">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2.5">
@@ -153,7 +153,7 @@ export default function ContactPage() {
                     <div>
                       <div className="font-bold text-brand-dark text-sm">Branch Operations</div>
                       <div className="text-xs font-medium text-brand-charcoal">
-                        M. Ansar Abbas Jafri <span className="text-brand-muted font-normal">• Branch Manager</span>
+                        Ansar Abbas Jafri <span className="text-brand-muted font-normal">• Branch Manager</span>
                       </div>
                       <div className="text-xs font-mono text-emerald-800 font-bold">+92 333 6457747</div>
                     </div>
@@ -171,7 +171,7 @@ export default function ContactPage() {
                     <span>Call Direct</span>
                   </a>
                   <a
-                    href="https://wa.me/923336457747?text=Hello%20M.%20Ansar%20Abbas%20Jafri,%20I%20would%20like%20to%20connect%20regarding%20IMPACT%20Enterprise."
+                    href="https://wa.me/923336457747?text=Hello%20Ansar%20Abbas%20Jafri,%20I%20would%20like%20to%20connect%20regarding%20IMPACT%20Enterprise."
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-[#25D366] hover:bg-[#1EBE5D] text-white font-bold text-xs uppercase tracking-wider shadow-xs transition-all"

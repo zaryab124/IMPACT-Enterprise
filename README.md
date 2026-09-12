@@ -60,7 +60,7 @@ npm run start -p 3005
 - **Muhammad Zaryab Hassan** — Chief Executive Officer (CEO)
 - **Mahad Aziz** — Chief Growth Officer (CGO)
 - **Muhammad Ismail** — Chief Financial Officer (CFO)
-- **M. Ansar Abbas Jafri** — Branch Manager (📞 +92 333 6457747)
+- **Ansar Abbas Jafri** — Branch Manager (📞 +92 333 6457747)
 
 ---
 
@@ -68,7 +68,7 @@ npm run start -p 3005
 ## 📬 Direct Contact
 
 - **WhatsApp Direct (HQ):** [+92 314 7893907](https://wa.me/923147893907)
-- **Branch Operations (M. Ansar Abbas Jafri):** [+92 333 6457747](https://wa.me/923336457747)
+- **Branch Operations (Ansar Abbas Jafri):** [+92 333 6457747](https://wa.me/923336457747)
 - **Official Gmail:** [impactenterprise527@gmail.com](mailto:impactenterprise527@gmail.com)
 
 ---

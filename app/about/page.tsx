@@ -34,7 +34,7 @@ export default function AboutPage() {
       desc: "Oversees financial strategy, capital efficiency, operational governance, and commercial planning.",
     },
     {
-      name: "M. ANSAR ABBAS JAFRI",
+      name: "ANSAR ABBAS JAFRI",
       role: "BRANCH MANAGER",
       initials: "AJ",
       phone: "+92 333 6457747",
@@ -219,7 +219,7 @@ export default function AboutPage() {
                         <span>{member.phone}</span>
                       </a>
                       <a
-                        href={`https://wa.me/${member.phone.replace(/[^0-9]/g, '')}?text=Hello%20M.%20Ansar%20Abbas%20Jafri,%20I%20would%20like%20to%20connect%20regarding%20IMPACT%20Enterprise.`}
+                        href={`https://wa.me/${member.phone.replace(/[^0-9]/g, '')}?text=Hello%20Ansar%20Abbas%20Jafri,%20I%20would%20like%20to%20connect%20regarding%20IMPACT%20Enterprise.`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="p-1 rounded-lg bg-[#25D366]/15 hover:bg-[#25D366]/25 border border-[#25D366]/30 text-[#128C7E] transition-colors"
