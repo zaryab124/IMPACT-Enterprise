@@ -1,5 +1,116 @@
 [
   {
+    "id": "IMP-MTXU6AL9-G1NV",
+    "submittedAt": "2026-09-12T03:39:23.805Z",
+    "projectType": "App & System Integration",
+    "goal": "Build something new",
+    "description": "Strategic scoping for App & System Integration. Goal: Build something new. Detailed specifications to be finalized during technical discovery.",
+    "currentSituation": "Idea only",
+    "timeline": "Flexible",
+    "budgetRange": "Flexible",
+    "contact": {
+      "name": "Live Web User",
+      "company": "Independent / Founder",
+      "email": "liveuser@impact.enterprise",
+      "phone": "+92 333 6457747",
+      "country": "Not provided"
+    },
+    "status": "received",
+    "source": "web_intake"
+  },
+  {
+    "id": "IMP-MTXU5ZAL-YZ9W",
+    "submittedAt": "2026-09-12T03:39:09.165Z",
+    "projectType": "Other: Autonomous Trading Bots",
+    "goal": "Other: Algorithmic Arbitrage",
+    "description": "Strategic scoping for Other: Autonomous Trading Bots. Goal: Other: Algorithmic Arbitrage. Detailed specifications to be finalized during technical discovery.",
+    "currentSituation": "Idea only",
+    "timeline": "Flexible",
+    "budgetRange": "Flexible",
+    "contact": {
+      "name": "Enterprise Client",
+      "company": "Independent / Founder",
+      "email": "enterprise@client.com",
+      "phone": "+92 314 7893907",
+      "country": "Not provided"
+    },
+    "status": "received",
+    "source": "web_intake"
+  },
+  {
+    "id": "IMP-MTXU5Z77-7LLL",
+    "submittedAt": "2026-09-12T03:39:09.043Z",
+    "projectType": "App & System Integration",
+    "goal": "Build something new / System Modernization",
+    "description": "Strategic scoping for App & System Integration. Goal: Build something new / System Modernization. Detailed specifications to be finalized during technical discovery.",
+    "currentSituation": "Idea only",
+    "timeline": "Flexible",
+    "budgetRange": "Flexible",
+    "contact": {
+      "name": "Muhammad Zaryab",
+      "company": "Independent / Founder",
+      "email": "zaryab@impact.enterprise",
+      "phone": "Not provided",
+      "country": "Not provided"
+    },
+    "status": "received",
+    "source": "web_intake"
+  },
+  {
+    "id": "IMP-MTXU1CK4-413O",
+    "submittedAt": "2026-09-12T03:35:33.076Z",
+    "projectType": "App & System Integration",
+    "goal": "Build something new",
+    "description": "Test with phone 📞 +92 333 6457747",
+    "currentSituation": "Idea only",
+    "timeline": "Flexible",
+    "budgetRange": "Flexible",
+    "contact": {
+      "name": "M. Ansar Abbas Jafri",
+      "company": "Independent / Founder",
+      "email": "ansar@impact.test",
+      "phone": "📞 +92 333 6457747",
+      "country": "Pakistan"
+    },
+    "status": "received"
+  },
+  {
+    "id": "IMP-MTXTZCWJ-D392",
+    "submittedAt": "2026-09-12T03:34:00.211Z",
+    "projectType": "App & System Integration",
+    "goal": "Build something new",
+    "description": "Custom test requirements",
+    "currentSituation": "Idea only",
+    "timeline": "Flexible",
+    "budgetRange": "Flexible",
+    "contact": {
+      "name": "Test User",
+      "company": "Independent / Founder",
+      "email": "test@example.com",
+      "phone": "Not provided",
+      "country": "Not provided"
+    },
+    "status": "received"
+  },
+  {
+    "id": "IMP-MTXTZ2PY-MQ9T",
+    "submittedAt": "2026-09-12T03:33:47.014Z",
+    "projectType": "App & System Integration",
+    "goal": "Build something new",
+    "description": "Custom test requirements",
+    "currentSituation": "Idea only",
+    "timeline": "Flexible",
+    "budgetRange": "Flexible",
+    "contact": {
+      "name": "Test User",
+      "company": "Independent / Founder",
+      "email": "test@example.com",
+      "phone": "Not provided",
+      "country": "Not provided"
+    },
+    "status": "received"
+  },
+  {
     "id": "IMP-MTUKF8UE-6KDO",
     "submittedAt": "2026-09-09T20:43:06.758Z",
     "projectType": "AI Agent",

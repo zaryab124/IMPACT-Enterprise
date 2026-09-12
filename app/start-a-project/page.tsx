@@ -15,6 +15,7 @@ import {
   Check,
   RotateCcw,
   MessageSquare,
+  MessageCircle,
   Mail,
 } from "lucide-react";
 
@@ -249,22 +250,66 @@ function IntakeFormInner() {
     }
   };
 
+  const generateWhatsAppIntakeUrl = () => {
+    const pType =
+      projectType === "Other"
+        ? (customProjectType.trim() ? `Other: ${customProjectType.trim()}` : "Custom Software")
+        : (projectType || "App & System Integration");
+    const pGoal =
+      goal === "Other"
+        ? (customGoal.trim() ? `Other: ${customGoal.trim()}` : "System Engineering")
+        : (goal || "Build something new / System Modernization");
+
+    const text = `Hello IMPACT Enterprise! I am submitting a project inquiry:\n\n• Client Name: ${name || "Client"}\n• Work Email: ${email || "Not specified"}\n• Phone: ${phone || "Not specified"}\n• Company: ${company || "Not specified"}\n• Project Category: ${pType}\n• Primary Objective: ${pGoal}\n• Expected Timeline: ${timeline || "Flexible"}\n• Budget Range: ${budgetRange || "Flexible"}\n• Project Scope: ${description || "To be reviewed during technical discovery"}`;
+
+    return `https://wa.me/923147893907?text=${encodeURIComponent(text)}`;
+  };
+
+  const generateGmailIntakeUrl = () => {
+    const pType =
+      projectType === "Other"
+        ? (customProjectType.trim() ? `Other: ${customProjectType.trim()}` : "Custom Software")
+        : (projectType || "App & System Integration");
+
+    const subject = `Project Inquiry: ${pType} - ${name || "New Client"}`;
+    const bodyText = `Hello IMPACT Engineering Team,\n\nI would like to submit my project inquiry for architectural review:\n\nName: ${name}\nEmail: ${email}\nPhone: ${phone || "N/A"}\nCompany: ${company || "N/A"}\nProject Category: ${pType}\nGoal: ${goal || "System Modernization"}\nTimeline: ${timeline || "Flexible"}\nBudget: ${budgetRange || "Flexible"}\n\nProject Scope:\n${description || "To be discussed during discovery call"}`;
+
+    return `mailto:impactenterprise527@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(bodyText)}`;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage("");
 
-    if (!name.trim() || !email.trim()) {
+    const cleanName = name.trim();
+    const cleanEmail = email.trim();
+
+    if (!cleanName || !cleanEmail) {
       setErrorMessage("Please provide at least your Name and Work Email address.");
       return;
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      setErrorMessage("Please enter a valid email address.");
+    if (!emailRegex.test(cleanEmail)) {
+      setErrorMessage("Please enter a valid email address (e.g. name@company.com).");
       return;
     }
 
     setIsSubmitting(true);
+
+    const resolvedProjectType =
+      projectType === "Other"
+        ? (customProjectType.trim() ? `Other: ${customProjectType.trim()}` : "Custom Software Solution")
+        : (projectType || "App & System Integration");
+
+    const resolvedGoal =
+      goal === "Other"
+        ? (customGoal.trim() ? `Other: ${customGoal.trim()}` : "System Engineering")
+        : (goal || "Build something new / Modernize existing systems");
+
+    const resolvedDescription =
+      description.trim() ||
+      `Scoping inquiry for ${resolvedProjectType}. Objective: ${resolvedGoal}. Full specifications to be refined during discovery.`;
 
     try {
       const response = await fetch("/api/intake", {
@@ -273,17 +318,19 @@ function IntakeFormInner() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          projectType: projectType === "Other" ? `Other: ${customProjectType}` : projectType,
-          goal: goal === "Other" ? `Other: ${customGoal}` : goal,
-          description: description || "Detailed requirements to be refined during discovery call",
-          currentSituation,
-          timeline,
-          budgetRange,
-          name,
-          company,
-          email,
-          phone,
-          country,
+          projectType: resolvedProjectType,
+          customProjectType,
+          goal: resolvedGoal,
+          customGoal,
+          description: resolvedDescription,
+          currentSituation: currentSituation || "Idea only",
+          timeline: timeline || "Flexible",
+          budgetRange: budgetRange || "Flexible",
+          name: cleanName,
+          company: company.trim(),
+          email: cleanEmail,
+          phone: phone.trim(),
+          country: country.trim(),
         }),
       });
 
@@ -293,10 +340,11 @@ function IntakeFormInner() {
         setSubmissionId(data.submissionId);
         setIsSubmitted(true);
       } else {
-        setErrorMessage(data.error || "Submission could not be completed. Please try again or message us on WhatsApp.");
+        setErrorMessage(data.error || "Submission could not be completed automatically. Please transmit directly via WhatsApp below.");
       }
-    } catch (err) {
-      setErrorMessage("Network error during submission. Please try again or email us directly at impactenterprise527@gmail.com.");
+    } catch (err: any) {
+      console.warn("Intake submission network/client error:", err);
+      setErrorMessage("Unable to connect to intake server. Please click below to send your project specifications directly via WhatsApp or Email.");
     } finally {
       setIsSubmitting(false);
     }
@@ -431,11 +479,38 @@ function IntakeFormInner() {
               </div>
             </div>
 
-            {/* Error Banner */}
+            {/* Error Banner with Instant 1-Click Fallback Options */}
             {errorMessage && (
-              <div className="mb-6 p-4 rounded-2xl bg-red-50 border border-red-200 text-red-800 text-xs font-semibold flex items-center gap-2 animate-in fade-in">
-                <AlertCircle className="w-4 h-4 flex-shrink-0" />
-                <span>{errorMessage}</span>
+              <div className="mb-6 p-5 rounded-2xl bg-red-50/90 border border-red-200 text-red-900 text-xs font-semibold animate-in fade-in space-y-3">
+                <div className="flex items-start gap-2.5">
+                  <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
+                  <div className="flex-1">
+                    <div className="font-bold text-sm text-red-800">Submission Notice</div>
+                    <div className="mt-0.5 text-red-700 leading-relaxed">{errorMessage}</div>
+                  </div>
+                </div>
+
+                <div className="pt-2 border-t border-red-200/70 flex flex-wrap items-center gap-2">
+                  <span className="text-[11px] font-bold text-brand-dark uppercase tracking-wider">
+                    Instant 1-Click Backup:
+                  </span>
+                  <a
+                    href={generateWhatsAppIntakeUrl()}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#25D366] hover:bg-[#1EBE5D] text-white font-bold text-xs uppercase tracking-wider transition-all shadow-xs"
+                  >
+                    <MessageCircle className="w-3.5 h-3.5 fill-current" />
+                    <span>Send via WhatsApp</span>
+                  </a>
+                  <a
+                    href={generateGmailIntakeUrl()}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#EA4335] hover:bg-[#D93025] text-white font-bold text-xs uppercase tracking-wider transition-all shadow-xs"
+                  >
+                    <Mail className="w-3.5 h-3.5" />
+                    <span>Send via Gmail</span>
+                  </a>
+                </div>
               </div>
             )}
 
