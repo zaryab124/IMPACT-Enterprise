@@ -220,36 +220,14 @@ export class GeminiClient {
         "[DEVELOPMENT MOCK: Gemini AI Engine]\n" +
         `Thank you, ${name}. I have recorded your requirements in our CRM database and assigned this to our technical scoping team.`;
     } else if (
-      lower.includes("lookup service") ||
-      lower.includes("lookupservice") ||
-      lower.includes("service catalog") ||
-      lower.includes("what services do you offer") ||
-      lower.includes("service capabilities")
-    ) {
-      let serviceName = "AI Agents & Autonomous Workflows";
-      if (lower.includes("voice")) serviceName = "AI Voice & Telephony Systems";
-      else if (lower.includes("automation")) serviceName = "Workflow Automation & System Integration";
-      else if (lower.includes("software") || lower.includes("custom")) serviceName = "Enterprise Full-Stack Software";
-
-      toolCalls = [
-        {
-          id: `mock-call-svc-${Date.now()}`,
-          name: "lookupService",
-          args: {
-            serviceName,
-            specificQuery: lastUserMessage.slice(0, 100),
-          },
-        },
-      ];
-      content =
-        "[DEVELOPMENT MOCK: Gemini AI Engine]\n" +
-        `Querying the verified IMPACT Enterprise service catalog for '${serviceName}'...`;
-    } else if (
+      lower.includes("case study") ||
+      lower.includes("case studies") ||
       lower.includes("querycasestudy") ||
       lower.includes("query case study") ||
       lower.includes("case study metrics") ||
-      lower.includes("show me case studies") ||
-      lower.includes("show me case study")
+      lower.includes("restaurant technology platform") ||
+      lower.includes("lead crm automation") ||
+      lower.includes("enterprise knowledge agent")
     ) {
       let slug: any = "all";
       if (lower.includes("restaurant") || lower.includes("dining")) slug = "restaurant-technology-platform";
@@ -266,6 +244,37 @@ export class GeminiClient {
       content =
         "[DEVELOPMENT MOCK: Gemini AI Engine]\n" +
         `Retrieving verified production case study metrics for '${slug}' from our knowledge repository...`;
+    } else if (
+      lower.includes("sub-400ms") ||
+      lower.includes("voice agent") ||
+      lower.includes("telephone agent") ||
+      lower.includes("lookup service") ||
+      lower.includes("lookupservice") ||
+      lower.includes("service catalog") ||
+      lower.includes("services do you offer") ||
+      lower.includes("service capabilities") ||
+      lower.includes("automation") ||
+      lower.includes("custom software") ||
+      lower.includes("pricing model")
+    ) {
+      let serviceName = "AI Agents & Autonomous Workflows";
+      if (lower.includes("voice") || lower.includes("sub-400ms") || lower.includes("telephone")) serviceName = "AI Voice & Telephony Systems";
+      else if (lower.includes("automation")) serviceName = "Workflow Automation & System Integration";
+      else if (lower.includes("software") || lower.includes("custom")) serviceName = "Enterprise Full-Stack Software";
+
+      toolCalls = [
+        {
+          id: `mock-call-svc-${Date.now()}`,
+          name: "lookupService",
+          args: {
+            serviceName,
+            specificQuery: lastUserMessage.slice(0, 100),
+          },
+        },
+      ];
+      content =
+        "[DEVELOPMENT MOCK: Gemini AI Engine]\n" +
+        `Querying the verified IMPACT Enterprise service catalog for '${serviceName}'...`;
     }
 
     // 1. Guardrail: Prompt injection defense
