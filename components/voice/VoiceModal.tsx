@@ -212,7 +212,11 @@ export const VoiceModal: React.FC<VoiceModalProps> = ({
 
       const data = await res.json();
       if (!data.success || !data.session) {
-        throw new Error(data.error || "Failed to acquire real-time voice session");
+        const errorText =
+          typeof data.error === "string"
+            ? data.error
+            : data.error?.message || data.details || "Failed to acquire real-time voice session";
+        throw new Error(errorText);
       }
 
       const activeSession: EphemeralTokenSession = data.session;
@@ -359,7 +363,13 @@ export const VoiceModal: React.FC<VoiceModalProps> = ({
         }
       };
     } catch (err: any) {
-      setErrorMessage(err.message || "Unable to start voice session");
+      const errMsg =
+        typeof err === "string"
+          ? err
+          : err?.message && err.message !== "[object Object]"
+          ? err.message
+          : "Unable to start voice session. Please verify connection.";
+      setErrorMessage(errMsg);
       setVoiceState("error");
     }
   }, [
@@ -367,7 +377,6 @@ export const VoiceModal: React.FC<VoiceModalProps> = ({
     conversationId,
     customerId,
     isMuted,
-    voiceState,
     runMockSpokenTurn,
     saveTranscriptToDatabase,
   ]);
@@ -382,7 +391,8 @@ export const VoiceModal: React.FC<VoiceModalProps> = ({
     return () => {
       cleanup();
     };
-  }, [isOpen, startCall, cleanup]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen]);
 
   if (!isOpen) return null;
 

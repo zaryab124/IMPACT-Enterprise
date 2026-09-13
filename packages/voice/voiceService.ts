@@ -52,10 +52,23 @@ export class VoiceService {
     const model = (config.model || this.defaultModel) as "gemini-3.1-flash-live-preview";
     const systemInstruction = config.systemInstruction || IMPACT_VOICE_SYSTEM_INSTRUCTION;
 
+    // Verify conversationId exists in database to prevent foreign key violations from stale sessions
+    let validConversationId: string | null = null;
+    if (config.conversationId) {
+      try {
+        const conv = await conversationRepository.findById(config.conversationId);
+        if (conv) {
+          validConversationId = conv.id;
+        }
+      } catch {
+        validConversationId = null;
+      }
+    }
+
     // Record session initialization in database
     await voiceSessionRepository.create({
       sessionId,
-      conversationId: config.conversationId || null,
+      conversationId: validConversationId,
       model,
       voiceName,
       metadata: {

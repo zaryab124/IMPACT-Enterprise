@@ -26,7 +26,7 @@ export class CsrfValidator {
     }
 
     const origin = req.headers.get("origin");
-    const host = req.headers.get("host");
+    const host = req.headers.get("x-forwarded-host") || req.headers.get("host");
     const referer = req.headers.get("referer");
     const secFetchSite = req.headers.get("sec-fetch-site");
 

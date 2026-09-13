@@ -45,7 +45,32 @@ export class CorsHandler {
       return true;
     }
 
-    // Same-origin check
+    try {
+      const parsedOrigin = new URL(origin);
+      const hostname = parsedOrigin.hostname;
+
+      // Allow all vercel.app domains (production and preview branches)
+      if (hostname === "vercel.app" || hostname.endsWith(".vercel.app")) {
+        return true;
+      }
+
+      // Allow localhost / loopback
+      if (hostname === "localhost" || hostname === "127.0.0.1") {
+        return true;
+      }
+
+      // Same-host match
+      if (host) {
+        const cleanHost = host.split(":")[0];
+        if (hostname === cleanHost) {
+          return true;
+        }
+      }
+    } catch {
+      // Malformed origin
+    }
+
+    // Fallback suffix match
     if (host && origin.endsWith(host)) {
       return true;
     }

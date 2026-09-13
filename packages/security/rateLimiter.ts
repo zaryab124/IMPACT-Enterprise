@@ -1,11 +1,11 @@
 import { RateLimitTier, RateLimitPolicy, RateLimitResult } from "./types";
 
 export const RATE_LIMIT_POLICIES: Record<RateLimitTier, RateLimitPolicy> = {
-  auth: { windowSeconds: 60, maxRequests: 5 }, // 5 requests per min (brute-force defense)
-  ai: { windowSeconds: 60, maxRequests: 30 }, // 30 requests per min (AI tokens/voice sessions)
-  api: { windowSeconds: 60, maxRequests: 60 }, // 60 requests per min (standard endpoints)
-  admin: { windowSeconds: 60, maxRequests: 120 }, // 120 requests per min (admin operators)
-  default: { windowSeconds: 60, maxRequests: 60 },
+  auth: { windowSeconds: 60, maxRequests: 15 }, // 15 requests per min
+  ai: { windowSeconds: 60, maxRequests: 120 }, // 120 requests per min (chat turns & voice sessions)
+  api: { windowSeconds: 60, maxRequests: 120 }, // 120 requests per min (standard endpoints)
+  admin: { windowSeconds: 60, maxRequests: 240 }, // 240 requests per min (admin operators)
+  default: { windowSeconds: 60, maxRequests: 120 },
 };
 
 interface MemoryRecord {

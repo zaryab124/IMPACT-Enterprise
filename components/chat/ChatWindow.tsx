@@ -129,7 +129,22 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
       });
 
       if (!res.ok) {
-        throw new Error(`Server returned HTTP ${res.status}`);
+        let errorDetail = `Server returned HTTP ${res.status}`;
+        try {
+          const errJson = await res.json();
+          if (errJson.error?.message) {
+            errorDetail = errJson.error.message;
+          } else if (typeof errJson.error === "string") {
+            errorDetail = errJson.error;
+          }
+        } catch {}
+
+        // If stale session caused error, reset local storage
+        if (res.status === 400 || res.status === 404) {
+          localStorage.removeItem(STORAGE_KEY);
+          setConversationId(null);
+        }
+        throw new Error(errorDetail);
       }
 
       const payload = await res.json();
@@ -167,7 +182,11 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
       }
     } catch (err: any) {
       console.error("Chat error:", err);
-      setErrorMsg("Failed to connect with IMPACT AI. Please retry or connect via WhatsApp.");
+      const msg =
+        err?.message && typeof err.message === "string" && !err.message.includes("Failed to fetch")
+          ? err.message
+          : "Failed to connect with IMPACT AI. Please retry or connect via WhatsApp.";
+      setErrorMsg(msg);
     } finally {
       setIsTyping(false);
     }
