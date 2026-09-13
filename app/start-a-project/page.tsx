@@ -71,7 +71,7 @@ function IntakeFormInner() {
       setCurrentSituation("Idea only");
     } else if (situationParam === "existing") {
       setCurrentSituation("Existing application");
-      if (!projectType) setProjectType("App & System Integration");
+      setProjectType((prev) => prev || "App & System Integration");
     }
 
     if (objectiveParam) {
