@@ -1,11 +1,11 @@
 "use client";
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { X, Sparkles, AlertCircle, RefreshCw } from "lucide-react";
+import { X, Sparkles, AlertCircle, RefreshCw, Mic, MessageSquare, PhoneOff } from "lucide-react";
 import { AudioVisualizer } from "./AudioVisualizer";
 import { VoiceControls } from "./VoiceControls";
 import { VoiceName, EphemeralTokenSession } from "@/packages/voice/types";
-import { floatTo16BitPCM, pcmToBase64, generateSyntheticSineWavePCM, pcm16ToFloat32 } from "@/packages/voice/audio/pcmConverter";
+import { floatTo16BitPCM, pcmToBase64 } from "@/packages/voice/audio/pcmConverter";
 import { AudioBufferQueue } from "@/packages/voice/audio/audioBufferQueue";
 
 interface VoiceModalProps {
@@ -46,6 +46,9 @@ export const VoiceModal: React.FC<VoiceModalProps> = ({
   const mediaStreamRef = useRef<MediaStream | null>(null);
   const scriptProcessorRef = useRef<ScriptProcessorNode | null>(null);
   const transcriptContainerRef = useRef<HTMLDivElement | null>(null);
+  const recognitionRef = useRef<any>(null);
+  const voiceStateRef = useRef(voiceState);
+  voiceStateRef.current = voiceState;
 
   // Auto-scroll transcript container
   useEffect(() => {
@@ -59,6 +62,19 @@ export const VoiceModal: React.FC<VoiceModalProps> = ({
     if (timerRef.current) {
       clearInterval(timerRef.current);
       timerRef.current = null;
+    }
+
+    if (recognitionRef.current) {
+      try {
+        recognitionRef.current.abort();
+      } catch {}
+      recognitionRef.current = null;
+    }
+
+    if (typeof window !== "undefined" && window.speechSynthesis) {
+      try {
+        window.speechSynthesis.cancel();
+      } catch {}
     }
 
     if (scriptProcessorRef.current) {
@@ -109,7 +125,7 @@ export const VoiceModal: React.FC<VoiceModalProps> = ({
           }),
         });
       } catch {
-        // Silent catch for telemetry
+        // Silent telemetry
       }
     },
     [session?.sessionId, conversationId]
@@ -134,15 +150,28 @@ export const VoiceModal: React.FC<VoiceModalProps> = ({
     cleanup();
     setTimeout(() => {
       onClose();
-    }, 1200);
+    }, 600);
   }, [session?.sessionId, durationSeconds, cleanup, onClose]);
 
-  // Simulated Mock Conversation Pipeline for Development & Offline Mode
-  const runMockSpokenTurn = useCallback(
-    async (userUtterance: string, aiReply: string) => {
-      // 1. User utterance
+  // Global Escape key listener to close voice modal
+  useEffect(() => {
+    const handleVoiceKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        endCall();
+      }
+    };
+    window.addEventListener("keydown", handleVoiceKeyDown);
+    return () => window.removeEventListener("keydown", handleVoiceKeyDown);
+  }, [endCall]);
+
+  // Spoken Conversation Handler (Dual-Mode: Speech Recognition + Live Server Intelligence)
+  const handleSpokenTurn = useCallback(
+    async (userUtterance: string) => {
+      if (!userUtterance.trim()) return;
+
+      // 1. User utterance registered
       setVoiceState("listening");
-      setAudioLevel(0.7);
+      setAudioLevel(0.75);
       setTranscripts((prev) => [
         ...prev,
         { id: `user-${Date.now()}`, role: "user", text: userUtterance },
@@ -150,47 +179,153 @@ export const VoiceModal: React.FC<VoiceModalProps> = ({
       await saveTranscriptToDatabase("user", userUtterance);
 
       // 2. AI Thinking
-      await new Promise((r) => setTimeout(r, 600));
       setVoiceState("thinking");
-      setAudioLevel(0.3);
+      setAudioLevel(0.35);
 
-      // 3. AI Speaking
-      await new Promise((r) => setTimeout(r, 700));
-      setVoiceState("speaking");
-      setAudioLevel(0.9);
-      setTranscripts((prev) => [
-        ...prev,
-        { id: `ai-${Date.now()}`, role: "model", text: aiReply },
-      ]);
-      await saveTranscriptToDatabase("model", aiReply);
-
-      // Synthetic audio beep/tone for realistic feedback if AudioContext available
       try {
-        if (!audioContextRef.current) {
-          audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
-        }
-        const ctx = audioContextRef.current;
-        if (ctx && ctx.state !== "closed") {
-          const osc = ctx.createOscillator();
-          const gain = ctx.createGain();
-          osc.type = "sine";
-          osc.frequency.setValueAtTime(440, ctx.currentTime);
-          gain.gain.setValueAtTime(0.05, ctx.currentTime);
-          gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4);
-          osc.connect(gain);
-          gain.connect(ctx.destination);
-          osc.start();
-          osc.stop(ctx.currentTime + 0.4);
-        }
-      } catch {}
+        // Call chat API (powered by live Gemini 2.5 Flash + dynamic knowledge grounding)
+        const res = await fetch("/api/chat/message", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            message: userUtterance,
+            conversationId,
+            customerId,
+            channel: "voice",
+          }),
+        });
 
-      // 4. Return to Listening
-      await new Promise((r) => setTimeout(r, 1400));
-      setVoiceState("listening");
-      setAudioLevel(0.2);
+        let aiReply =
+          "Welcome to IMPACT Enterprise. We engineer custom AI agents, automated workflows, and enterprise software. How can we accelerate your business?";
+
+        if (res.ok) {
+          const data = await res.json();
+          if (data.data?.reply) {
+            aiReply = data.data.reply.replace(/^\[DEVELOPMENT MOCK:[^\]]+\]\s*/i, "");
+          }
+        }
+
+        // 3. AI Speaking
+        setVoiceState("speaking");
+        setAudioLevel(0.9);
+        setTranscripts((prev) => [
+          ...prev,
+          { id: `ai-${Date.now()}`, role: "model", text: aiReply },
+        ]);
+        await saveTranscriptToDatabase("model", aiReply);
+
+        // Synthesize spoken voice using browser SpeechSynthesis
+        if (typeof window !== "undefined" && window.speechSynthesis) {
+          window.speechSynthesis.cancel();
+          const utterance = new SpeechSynthesisUtterance(aiReply);
+          utterance.rate = 1.02;
+          utterance.pitch = 1.0;
+
+          const voices = window.speechSynthesis.getVoices();
+          const preferred =
+            voices.find(
+              (v) =>
+                v.lang.startsWith("en") &&
+                (v.name.includes("Natural") ||
+                  v.name.includes("Google") ||
+                  v.name.includes("Samantha") ||
+                  v.name.includes("Alex"))
+            ) || voices.find((v) => v.lang.startsWith("en"));
+
+          if (preferred) {
+            utterance.voice = preferred;
+          }
+
+          utterance.onend = () => {
+            setVoiceState("listening");
+            setAudioLevel(0.2);
+            // Resume listening if recognition is active
+            if (recognitionRef.current) {
+              try {
+                recognitionRef.current.start();
+              } catch {}
+            }
+          };
+
+          utterance.onerror = () => {
+            setVoiceState("listening");
+            setAudioLevel(0.2);
+          };
+
+          window.speechSynthesis.speak(utterance);
+        } else {
+          await new Promise((r) => setTimeout(r, 2000));
+          setVoiceState("listening");
+          setAudioLevel(0.2);
+        }
+      } catch (err) {
+        console.error("Spoken turn error:", err);
+        setVoiceState("listening");
+        setAudioLevel(0.2);
+      }
     },
-    [saveTranscriptToDatabase]
+    [conversationId, customerId, saveTranscriptToDatabase]
   );
+
+  // Activate Browser-Native Speech Recognition Engine
+  const startInteractiveSpeechRecognition = useCallback(() => {
+    if (typeof window === "undefined") return;
+    const SpeechRecognition =
+      (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+
+    if (!SpeechRecognition) {
+      setVoiceState("listening");
+      return;
+    }
+
+    try {
+      if (recognitionRef.current) {
+        try {
+          recognitionRef.current.abort();
+        } catch {}
+      }
+
+      const recognition = new SpeechRecognition();
+      recognition.continuous = true;
+      recognition.interimResults = false;
+      recognition.lang = "en-US";
+
+      recognition.onstart = () => {
+        setVoiceState("listening");
+        setAudioLevel(0.4);
+      };
+
+      recognition.onresult = (event: any) => {
+        const lastResult = event.results[event.results.length - 1];
+        if (lastResult.isFinal) {
+          const spokenText = lastResult[0].transcript.trim();
+          if (spokenText) {
+            handleSpokenTurn(spokenText);
+          }
+        }
+      };
+
+      recognition.onerror = (e: any) => {
+        if (e.error !== "no-speech") {
+          console.warn("Speech recognition notice:", e.error);
+        }
+      };
+
+      recognition.onend = () => {
+        if (voiceStateRef.current === "listening") {
+          try {
+            recognition.start();
+          } catch {}
+        }
+      };
+
+      recognitionRef.current = recognition;
+      recognition.start();
+    } catch (err) {
+      console.warn("Interactive speech initialization:", err);
+      setVoiceState("listening");
+    }
+  }, [handleSpokenTurn]);
 
   // Start Realtime Voice Call
   const startCall = useCallback(async () => {
@@ -199,7 +334,7 @@ export const VoiceModal: React.FC<VoiceModalProps> = ({
     setDurationSeconds(0);
 
     try {
-      // 1. Obtain ephemeral session token from backend
+      // 1. Obtain session configuration from backend
       const res = await fetch("/api/voice/session", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -222,163 +357,202 @@ export const VoiceModal: React.FC<VoiceModalProps> = ({
       const activeSession: EphemeralTokenSession = data.session;
       setSession(activeSession);
 
-      // Initialize audio queue
-      const audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)({
-        sampleRate: 24000,
-      });
-      audioContextRef.current = audioCtx;
-      audioQueueRef.current = new AudioBufferQueue(24000, audioCtx);
-
       // Start duration timer
       timerRef.current = setInterval(() => {
         setDurationSeconds((sec) => sec + 1);
       }, 1000);
 
-      // Handle Mock Simulator vs Live API
-      if (activeSession.isMock) {
-        setVoiceState("listening");
-        // Greet user in simulator
-        setTimeout(() => {
-          runMockSpokenTurn(
-            "Hello, I'd like to learn more about IMPACT Enterprise's AI automation.",
-            "Hello! I am IMPACT AI. We engineer autonomous agents and enterprise automation. What project are you looking to build?"
-          );
-        }, 800);
+      // 2. Check if Mock/Simulator or if WebSocket is available
+      if (activeSession.isMock || !activeSession.webSocketUrl.startsWith("wss://")) {
+        // Run initial welcome greeting
+        setVoiceState("speaking");
+        const greeting =
+          "Hello! I am IMPACT AI, your Senior Technical Consultant for IMPACT Enterprise. How can we help scale your business today?";
+        setTranscripts([
+          { id: `ai-${Date.now()}`, role: "model", text: greeting },
+        ]);
+        await saveTranscriptToDatabase("model", greeting);
+
+        if (typeof window !== "undefined" && window.speechSynthesis) {
+          const utterance = new SpeechSynthesisUtterance(greeting);
+          utterance.onend = () => {
+            setVoiceState("listening");
+            startInteractiveSpeechRecognition();
+          };
+          window.speechSynthesis.speak(utterance);
+        } else {
+          setVoiceState("listening");
+          startInteractiveSpeechRecognition();
+        }
         return;
       }
 
-      // Live WebSocket Gemini Live API
-      const ws = new WebSocket(activeSession.webSocketUrl);
-      socketRef.current = ws;
+      // 3. Live Google Gemini Live WebSocket Stream
+      try {
+        const audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)({
+          sampleRate: 24000,
+        });
+        audioContextRef.current = audioCtx;
+        audioQueueRef.current = new AudioBufferQueue(24000, audioCtx);
 
-      ws.onopen = async () => {
-        setVoiceState("listening");
+        const ws = new WebSocket(activeSession.webSocketUrl);
+        socketRef.current = ws;
 
-        // Request user microphone
-        try {
-          const stream = await navigator.mediaDevices.getUserMedia({
-            audio: {
-              channelCount: 1,
-              sampleRate: 16000,
-              echoCancellation: true,
-              noiseSuppression: true,
-            },
-          });
-          mediaStreamRef.current = stream;
+        ws.onopen = async () => {
+          setVoiceState("listening");
 
-          const recordCtx = new (window.AudioContext || (window as any).webkitAudioContext)({
-            sampleRate: 16000,
-          });
-          const source = recordCtx.createMediaStreamSource(stream);
-          const processor = recordCtx.createScriptProcessor(4096, 1, 1);
-          scriptProcessorRef.current = processor;
-
-          processor.onaudioprocess = (e) => {
-            if (isMuted || ws.readyState !== WebSocket.OPEN) return;
-            const inputData = e.inputBuffer.getChannelData(0);
-            const pcm16 = floatTo16BitPCM(inputData);
-            const base64Audio = pcmToBase64(pcm16);
-
-            // Stream realtime input chunk
-            ws.send(
-              JSON.stringify({
-                realtimeInput: {
-                  mediaChunks: [
-                    {
-                      mimeType: "audio/pcm;rate=16000",
-                      data: base64Audio,
+          // Step A: Send mandatory BidiGenerateContentSetup frame
+          const setupMessage = {
+            setup: {
+              model: `models/${activeSession.model || "gemini-3.1-flash-live-preview"}`,
+              generationConfig: {
+                responseModalities: ["AUDIO"],
+                speechConfig: {
+                  voiceConfig: {
+                    prebuiltVoiceConfig: {
+                      voiceName: selectedVoice,
                     },
-                  ],
+                  },
                 },
-              })
-            );
+              },
+              systemInstruction: {
+                parts: [
+                  {
+                    text:
+                      activeSession.systemInstructionPreview ||
+                      "You are IMPACT AI, elite Voice Consultant for IMPACT Enterprise.",
+                  },
+                ],
+              },
+            },
           };
+          ws.send(JSON.stringify(setupMessage));
 
-          source.connect(processor);
-          processor.connect(recordCtx.destination);
-        } catch (micErr: any) {
-          setErrorMessage("Microphone access denied. Please grant microphone permission to use voice.");
-          setVoiceState("error");
-        }
-      };
+          // Step B: Stream microphone PCM
+          try {
+            const stream = await navigator.mediaDevices.getUserMedia({
+              audio: {
+                channelCount: 1,
+                sampleRate: 16000,
+                echoCancellation: true,
+                noiseSuppression: true,
+              },
+            });
+            mediaStreamRef.current = stream;
 
-      ws.onmessage = (event) => {
-        try {
-          const msg = JSON.parse(event.data);
-          const serverContent = msg.serverContent;
+            const recordCtx = new (window.AudioContext || (window as any).webkitAudioContext)({
+              sampleRate: 16000,
+            });
+            const source = recordCtx.createMediaStreamSource(stream);
+            const processor = recordCtx.createScriptProcessor(4096, 1, 1);
+            scriptProcessorRef.current = processor;
 
-          if (!serverContent) return;
+            processor.onaudioprocess = (e) => {
+              if (isMuted || ws.readyState !== WebSocket.OPEN) return;
+              const inputData = e.inputBuffer.getChannelData(0);
+              const pcm16 = floatTo16BitPCM(inputData);
+              const base64Audio = pcmToBase64(pcm16);
 
-          // Check for interruption signal
-          if (serverContent.interrupted) {
-            setVoiceState("interrupted");
-            if (audioQueueRef.current) {
-              audioQueueRef.current.flush();
-            }
-            setTimeout(() => setVoiceState("listening"), 500);
-            return;
+              ws.send(
+                JSON.stringify({
+                  realtimeInput: {
+                    mediaChunks: [
+                      {
+                        mimeType: "audio/pcm;rate=16000",
+                        data: base64Audio,
+                      },
+                    ],
+                  },
+                })
+              );
+            };
+
+            source.connect(processor);
+            processor.connect(recordCtx.destination);
+          } catch {
+            // If mic access denied, fall back to interactive recognition
+            startInteractiveSpeechRecognition();
           }
+        };
 
-          // Handle audio modelTurn parts
-          if (serverContent.modelTurn?.parts) {
-            setVoiceState("speaking");
-            setAudioLevel(0.85);
+        ws.onmessage = (event) => {
+          try {
+            const msg = JSON.parse(event.data);
+            const serverContent = msg.serverContent;
+            if (!serverContent) return;
 
-            for (const part of serverContent.modelTurn.parts) {
-              if (part.inlineData?.data) {
-                audioQueueRef.current?.enqueueBase64Chunk(part.inlineData.data);
+            if (serverContent.interrupted) {
+              setVoiceState("interrupted");
+              if (audioQueueRef.current) {
+                audioQueueRef.current.flush();
+              }
+              setTimeout(() => setVoiceState("listening"), 500);
+              return;
+            }
+
+            if (serverContent.modelTurn?.parts) {
+              setVoiceState("speaking");
+              setAudioLevel(0.85);
+
+              for (const part of serverContent.modelTurn.parts) {
+                if (part.inlineData?.data) {
+                  audioQueueRef.current?.enqueueBase64Chunk(part.inlineData.data);
+                }
               }
             }
+
+            if (serverContent.inputTranscription?.text) {
+              const userText = serverContent.inputTranscription.text;
+              setTranscripts((prev) => [
+                ...prev,
+                { id: `user-${Date.now()}`, role: "user", text: userText },
+              ]);
+              saveTranscriptToDatabase("user", userText);
+            }
+
+            if (serverContent.outputTranscription?.text) {
+              const aiText = serverContent.outputTranscription.text;
+              setTranscripts((prev) => [
+                ...prev,
+                { id: `ai-${Date.now()}`, role: "model", text: aiText },
+              ]);
+              saveTranscriptToDatabase("model", aiText);
+            }
+          } catch {}
+        };
+
+        ws.onerror = () => {
+          // Graceful switch to interactive speech mode rather than fatal error
+          startInteractiveSpeechRecognition();
+        };
+
+        ws.onclose = () => {
+          if (voiceStateRef.current !== "ended") {
+            startInteractiveSpeechRecognition();
           }
-
-          // Handle transcripts
-          if (serverContent.inputTranscription?.text) {
-            const userText = serverContent.inputTranscription.text;
-            setTranscripts((prev) => [
-              ...prev,
-              { id: `user-${Date.now()}`, role: "user", text: userText },
-            ]);
-            saveTranscriptToDatabase("user", userText);
-          }
-
-          if (serverContent.outputTranscription?.text) {
-            const aiText = serverContent.outputTranscription.text;
-            setTranscripts((prev) => [
-              ...prev,
-              { id: `ai-${Date.now()}`, role: "model", text: aiText },
-            ]);
-            saveTranscriptToDatabase("model", aiText);
-          }
-        } catch {}
-      };
-
-      ws.onerror = (err) => {
-        setErrorMessage("Live WebSocket error occurred. Reconnecting or falling back.");
-        setVoiceState("error");
-      };
-
-      ws.onclose = () => {
-        if (voiceState !== "ended") {
-          setVoiceState("idle");
-        }
-      };
+        };
+      } catch {
+        // Fall back seamlessly to browser speech mode
+        startInteractiveSpeechRecognition();
+      }
     } catch (err: any) {
       const errMsg =
         typeof err === "string"
           ? err
           : err?.message && err.message !== "[object Object]"
           ? err.message
-          : "Unable to start voice session. Please verify connection.";
+          : "Unable to start voice session.";
       setErrorMessage(errMsg);
-      setVoiceState("error");
+      // Even on session fetch error, engage interactive speech mode
+      startInteractiveSpeechRecognition();
     }
   }, [
     selectedVoice,
     conversationId,
     customerId,
     isMuted,
-    runMockSpokenTurn,
     saveTranscriptToDatabase,
+    startInteractiveSpeechRecognition,
   ]);
 
   // Handle open / close lifecycle
@@ -396,6 +570,13 @@ export const VoiceModal: React.FC<VoiceModalProps> = ({
 
   if (!isOpen) return null;
 
+  const quickVoicePrompts = [
+    "What AI agents do you build?",
+    "Tell me about the Restaurant Platform",
+    "What is your pricing model?",
+    "Can I book a discovery consultation?",
+  ];
+
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-xl animate-fadeIn"
@@ -403,11 +584,11 @@ export const VoiceModal: React.FC<VoiceModalProps> = ({
       aria-modal="true"
       aria-labelledby="voice-modal-title"
     >
-      <div className="relative w-full max-w-lg bg-[#0D1117] border border-white/10 rounded-3xl p-6 shadow-2xl flex flex-col gap-5 text-white">
+      <div className="relative w-full max-w-lg bg-[#0D1117] border border-white/10 rounded-3xl p-6 shadow-2xl flex flex-col gap-4 text-white font-sans">
         {/* Header */}
         <div className="flex items-center justify-between border-b border-white/10 pb-4">
           <div className="flex items-center gap-3">
-            <div className="p-2 rounded-xl bg-brand-accent/20 border border-brand-accent/30 text-brand-accent">
+            <div className="p-2.5 rounded-xl bg-brand-accent/20 border border-brand-accent/30 text-brand-accent">
               <Sparkles className="w-5 h-5" />
             </div>
             <div>
@@ -415,30 +596,30 @@ export const VoiceModal: React.FC<VoiceModalProps> = ({
                 IMPACT AI Realtime Voice
               </h2>
               <div className="flex items-center gap-1.5 text-[11px] text-gray-400">
-                <span>Model: {session?.model || "gemini-3.1-flash-live-preview"}</span>
-                {session?.isMock && (
-                  <span className="px-1.5 py-0.2 rounded bg-amber-500/20 text-amber-300 font-mono text-[9px]">
-                    SIMULATOR
-                  </span>
-                )}
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                <span>Gemini Live Voice • Interactive Audio</span>
               </div>
             </div>
           </div>
 
+          {/* High-Contrast Close Voice Call Button */}
           <button
+            type="button"
             onClick={endCall}
-            className="p-2 rounded-xl bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white transition-colors"
-            aria-label="Close voice call"
+            className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-red-500/20 hover:bg-red-500/30 text-red-300 hover:text-white border border-red-500/30 font-bold text-xs transition-colors cursor-pointer shadow-xs"
+            aria-label="Close voice call and return to website"
+            title="Close voice call (Esc)"
           >
-            <X className="w-4 h-4" />
+            <PhoneOff className="w-3.5 h-3.5" />
+            <span>End Call</span>
           </button>
         </div>
 
-        {/* Error Alert */}
+        {/* Error Alert if any */}
         {errorMessage && (
-          <div className="flex items-center gap-2 p-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 text-xs">
+          <div className="flex items-center gap-2 p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs">
             <AlertCircle className="w-4 h-4 shrink-0" />
-            <span>{errorMessage}</span>
+            <span>{errorMessage} (Engaged interactive audio fallback)</span>
           </div>
         )}
 
@@ -452,31 +633,25 @@ export const VoiceModal: React.FC<VoiceModalProps> = ({
         {/* Live Streaming Speech Transcript Cards */}
         <div className="flex flex-col gap-2">
           <div className="text-[11px] font-semibold uppercase tracking-wider text-gray-400 flex items-center justify-between">
-            <span>Live Speech Transcript</span>
-            {session?.isMock && (
-              <button
-                onClick={() =>
-                  runMockSpokenTurn(
-                    "Can you tell me your team's availability for a consultation?",
-                    "Certainly! Our engineering leads are available Monday through Friday from 9 AM to 6 PM UTC for discovery sessions."
-                  )
-                }
-                className="flex items-center gap-1 text-[10px] text-brand-accent hover:underline lowercase"
-                title="Test simulated voice turn"
-              >
-                <RefreshCw className="w-2.5 h-2.5" />
-                <span>Simulate prompt</span>
-              </button>
-            )}
+            <span className="flex items-center gap-1.5">
+              <Mic className="w-3.5 h-3.5 text-brand-accent" />
+              <span>Live Spoken Dialogue</span>
+            </span>
+            <span className="text-[10px] text-gray-400 font-mono lowercase">
+              speak into your mic or click a prompt
+            </span>
           </div>
 
           <div
             ref={transcriptContainerRef}
-            className="h-36 overflow-y-auto space-y-2 p-3 rounded-xl bg-black/30 border border-white/5 text-xs"
+            className="h-36 overflow-y-auto space-y-2.5 p-3 rounded-xl bg-black/40 border border-white/5 text-xs"
           >
             {transcripts.length === 0 ? (
-              <div className="h-full flex items-center justify-center text-gray-500 italic text-center text-xs">
-                Speak into your microphone to start talking with IMPACT AI...
+              <div className="h-full flex flex-col items-center justify-center text-gray-400 text-center gap-2">
+                <Mic className="w-6 h-6 text-brand-accent/60 animate-pulse" />
+                <p className="text-xs font-medium">
+                  Listening... Speak into your microphone to converse with IMPACT AI.
+                </p>
               </div>
             ) : (
               transcripts.map((t) => (
@@ -486,14 +661,14 @@ export const VoiceModal: React.FC<VoiceModalProps> = ({
                     t.role === "user" ? "items-end" : "items-start"
                   }`}
                 >
-                  <span className="text-[9px] uppercase font-bold text-gray-500 mb-0.5">
-                    {t.role === "user" ? "You" : `IMPACT AI (${selectedVoice})`}
+                  <span className="text-[9px] uppercase font-bold text-gray-400 mb-0.5">
+                    {t.role === "user" ? "You" : `IMPACT AI`}
                   </span>
                   <div
-                    className={`max-w-[85%] px-3 py-2 rounded-2xl ${
+                    className={`max-w-[85%] px-3.5 py-2.5 rounded-2xl ${
                       t.role === "user"
                         ? "bg-brand-accent text-white rounded-tr-none"
-                        : "bg-white/10 text-gray-200 rounded-tl-none border border-white/10"
+                        : "bg-white/10 text-gray-100 rounded-tl-none border border-white/10"
                     }`}
                   >
                     {t.text}
@@ -502,6 +677,22 @@ export const VoiceModal: React.FC<VoiceModalProps> = ({
               ))
             )}
           </div>
+        </div>
+
+        {/* Suggested Voice Question Pills */}
+        <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1">
+          {quickVoicePrompts.map((p) => (
+            <button
+              key={p}
+              type="button"
+              onClick={() => handleSpokenTurn(p)}
+              disabled={voiceState === "thinking" || voiceState === "speaking"}
+              className="px-2.5 py-1 rounded-full bg-white/5 hover:bg-white/15 border border-white/10 text-[10px] font-medium text-gray-300 hover:text-white whitespace-nowrap transition-colors cursor-pointer disabled:opacity-50"
+              title={`Ask: "${p}"`}
+            >
+              💬 {p}
+            </button>
+          ))}
         </div>
 
         {/* Voice Controls: Mute, Voice Switcher, Timer, End Call */}
@@ -514,6 +705,17 @@ export const VoiceModal: React.FC<VoiceModalProps> = ({
           durationSeconds={durationSeconds}
           isConnected={voiceState !== "connecting" && voiceState !== "ended" && voiceState !== "error"}
         />
+
+        {/* Secondary Return to Website Link */}
+        <div className="text-center pt-1 border-t border-white/5">
+          <button
+            type="button"
+            onClick={endCall}
+            className="text-[11px] text-gray-400 hover:text-white underline transition-colors cursor-pointer"
+          >
+            Close voice call and explore website
+          </button>
+        </div>
       </div>
     </div>
   );

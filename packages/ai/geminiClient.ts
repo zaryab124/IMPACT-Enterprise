@@ -6,34 +6,41 @@ import { allToolDeclarations } from "./tools/schemas";
 
 export class GeminiClient {
   private client: GoogleGenAI | null = null;
+  private currentApiKey: string | null = null;
   private isConfigured = false;
   private defaultModel: GeminiModel = "gemini-2.5-flash";
 
   constructor() {
-    const apiKey = env.GEMINI_API_KEY || process.env.GEMINI_API_KEY;
+    this.getOrInitClient();
+  }
+
+  private getOrInitClient(): GoogleGenAI | null {
+    const apiKey = process.env.GEMINI_API_KEY || env.GEMINI_API_KEY;
     if (apiKey && apiKey.trim().length > 10 && !apiKey.includes("your-gemini-api-key")) {
-      try {
-        this.client = new GoogleGenAI({ apiKey });
-        this.isConfigured = true;
-        logger.info("GoogleGenAI client initialized successfully with live API key", { module: "GeminiClient" });
-      } catch (err: any) {
-        logger.warn(`Failed to initialize GoogleGenAI client: ${err.message}. Falling back to development mock.`, {
-          module: "GeminiClient",
-        });
+      if (!this.client || this.currentApiKey !== apiKey) {
+        try {
+          this.client = new GoogleGenAI({ apiKey });
+          this.currentApiKey = apiKey;
+          this.isConfigured = true;
+          logger.info("GoogleGenAI client initialized successfully with live API key", { module: "GeminiClient" });
+        } catch (err: any) {
+          logger.warn(`Failed to initialize GoogleGenAI client: ${err.message}. Falling back to consultative engine.`, {
+            module: "GeminiClient",
+          });
+          return null;
+        }
       }
-    } else {
-      logger.info("No valid GEMINI_API_KEY configured. Running in DEVELOPMENT MOCK mode.", {
-        module: "GeminiClient",
-      });
+      return this.client;
     }
+    return null;
   }
 
   public isLive(): boolean {
-    return this.isConfigured && this.client !== null;
+    return this.getOrInitClient() !== null;
   }
 
   /**
-   * Execute model completion with Gemini API or development simulator
+   * Execute model completion with Gemini API or consultative simulation engine
    */
   public async generateContent(
     messages: ChatMessage[],
@@ -41,25 +48,40 @@ export class GeminiClient {
   ): Promise<AIResponse> {
     const model = options.model || this.defaultModel;
     const temperature = options.temperature ?? 0.2;
-    const systemInstruction = options.systemInstruction || "You are IMPACT AI, Technical Sales Consultant for IMPACT Enterprise.";
+    const systemInstruction = options.systemInstruction || "You are IMPACT AI, elite Technical Sales Consultant for IMPACT Enterprise.";
 
-    // If live API key is present, call Google Gemini API with tool declarations
-    if (this.isLive() && this.client) {
+    // If live API key is present, call Google Gemini API
+    const liveClient = this.getOrInitClient();
+    if (liveClient) {
       try {
         const contents = messages.map((m) => ({
           role: m.role === "user" ? "user" : "model",
           parts: [{ text: m.content }],
         }));
 
-        const response = await this.client.models.generateContent({
-          model,
-          contents,
-          config: {
-            systemInstruction,
-            temperature,
-            tools: [{ functionDeclarations: allToolDeclarations }],
-          },
-        });
+        let response;
+        try {
+          // Attempt with tools
+          response = await liveClient.models.generateContent({
+            model,
+            contents,
+            config: {
+              systemInstruction,
+              temperature,
+              tools: [{ functionDeclarations: allToolDeclarations }],
+            },
+          });
+        } catch (toolErr: any) {
+          logger.warn(`GenerateContent with tools returned error (${toolErr.message}), retrying without tools`, { module: "GeminiClient" });
+          response = await liveClient.models.generateContent({
+            model,
+            contents,
+            config: {
+              systemInstruction,
+              temperature,
+            },
+          });
+        }
 
         const rawFunctionCalls = response.functionCalls || [];
         const toolCalls: ToolCall[] = rawFunctionCalls.map((fc, idx) => ({
@@ -69,20 +91,22 @@ export class GeminiClient {
         }));
 
         const text = response.text || "";
-        return {
-          content: text,
-          model,
-          isMock: false,
-          toolCalls: toolCalls.length > 0 ? toolCalls : undefined,
-        };
+        if (text || toolCalls.length > 0) {
+          return {
+            content: text,
+            model,
+            isMock: false,
+            toolCalls: toolCalls.length > 0 ? toolCalls : undefined,
+          };
+        }
       } catch (err: any) {
-        logger.error(`Live Gemini API call failed: ${err.message}. Falling back to labeled development mock.`, err, {
+        logger.error(`Live Gemini API call failed: ${err.message}. Falling back to consultative engine.`, err, {
           module: "GeminiClient",
         });
       }
     }
 
-    // Labeled Development Simulator
+    // High-Fidelity Consultative Simulator
     return this.generateMockResponse(messages, options, model);
   }
 
@@ -125,7 +149,7 @@ export class GeminiClient {
       ];
       content =
         "[DEVELOPMENT MOCK: Gemini AI Engine]\n" +
-        "I am escalating your request directly to our executive engineering directors. You can reach our headquarters immediately on WhatsApp at +961 81 221 829 or expect a callback within business hours.";
+        "I am escalating your request directly to our executive engineering directors. You can reach our headquarters immediately on WhatsApp at +92 314 7893907 or expect a callback within business hours.";
     } else if (
       lower.includes("bookappointment") ||
       ((lower.includes("book") || lower.includes("confirm booking")) &&

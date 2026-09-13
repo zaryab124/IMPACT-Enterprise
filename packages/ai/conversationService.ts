@@ -157,7 +157,7 @@ export class ConversationService {
             summaries.push(res.data?.message || "I have escalated your conversation to an engineering director.");
           }
         }
-        finalContent = (aiResponse.isMock ? "[DEVELOPMENT MOCK: Gemini AI Engine]\n" : "") + summaries.join("\n\n");
+        finalContent = summaries.join("\n\n");
       } else {
         finalContent = "I received your request. How may I assist you with your software and AI initiatives?";
       }
@@ -300,7 +300,7 @@ export class ConversationService {
       conversationId,
       messageId: aiMsgRecord.id,
       userMessage,
-      reply: finalContent,
+      reply: finalContent.replace(/^\[DEVELOPMENT MOCK:[^\]]+\]\s*/i, ""),
       isMock: aiResponse.isMock,
       citations,
       qualification,

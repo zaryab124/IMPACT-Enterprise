@@ -100,6 +100,17 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isTyping, showLeadCard]);
 
+  // Global Escape key listener to close chat and return to website
+  useEffect(() => {
+    const handleGlobalKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        onClose();
+      }
+    };
+    window.addEventListener("keydown", handleGlobalKeyDown);
+    return () => window.removeEventListener("keydown", handleGlobalKeyDown);
+  }, [onClose]);
+
   const handleSendMessage = async (textToSend?: string) => {
     const text = (textToSend || inputText).trim();
     if (!text || isTyping) return;
@@ -278,17 +289,35 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
             <ChevronDown className="w-4 h-4" />
           </button>
 
-          {/* Close */}
+          {/* High-Visibility Close & Explore Website Button */}
           <button
             type="button"
             onClick={onClose}
-            className="p-1.5 rounded-lg text-brand-muted hover:text-brand-dark hover:bg-brand-surface transition-colors"
-            title="Close Chat"
+            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-gray-100 hover:bg-red-50 text-gray-700 hover:text-red-600 font-bold text-xs border border-gray-200 hover:border-red-200 transition-all shadow-2xs ml-1 cursor-pointer"
+            title="Close Chat & Explore Website (Esc)"
+            aria-label="Close Chat and Explore Website"
           >
-            <X className="w-4 h-4" />
+            <X className="w-3.5 h-3.5" />
+            <span>Close</span>
           </button>
         </div>
       </header>
+
+      {/* Dismiss / Return to Website Navigation Sub-Bar */}
+      <div className="px-3.5 py-1.5 bg-brand-surface/80 border-b border-brand-border/60 flex items-center justify-between text-[11px] text-brand-muted shrink-0">
+        <span className="flex items-center gap-1.5 truncate">
+          <span>💬 Consulting with IMPACT AI</span>
+        </span>
+        <button
+          type="button"
+          onClick={onClose}
+          className="font-bold text-brand-accent hover:text-brand-dark transition-colors cursor-pointer flex items-center gap-1 shrink-0 ml-2"
+          title="Return to browsing the website"
+        >
+          <span>Explore Website</span>
+          <span>→</span>
+        </button>
+      </div>
 
       {/* Message Stream */}
       <div className="flex-1 overflow-y-auto p-4 space-y-3">
@@ -359,7 +388,14 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
             <ShieldCheck className="w-3 h-3 text-brand-accent" />
             Zero Hallucination Grounding
           </span>
-          <span>Shift+Enter for new line</span>
+          <button
+            type="button"
+            onClick={onClose}
+            className="hover:text-brand-dark underline cursor-pointer transition-colors"
+            title="Close chat window"
+          >
+            Close chat & explore website
+          </button>
         </div>
       </footer>
 

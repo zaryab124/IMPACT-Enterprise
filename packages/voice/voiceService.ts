@@ -12,33 +12,40 @@ import { IMPACT_VOICE_SYSTEM_INSTRUCTION, getCustomizedVoicePrompt } from "./per
 
 export class VoiceService {
   private client: GoogleGenAI | null = null;
+  private currentApiKey: string | null = null;
   private isConfigured = false;
   private defaultVoice: VoiceName = "Puck";
   private defaultModel = "gemini-3.1-flash-live-preview";
 
   constructor() {
-    const apiKey = env.GEMINI_API_KEY || process.env.GEMINI_API_KEY;
+    this.getOrInitClient();
+  }
+
+  private getOrInitClient(): GoogleGenAI | null {
+    const apiKey = process.env.GEMINI_API_KEY || env.GEMINI_API_KEY;
     if (apiKey && apiKey.trim().length > 10 && !apiKey.includes("your-gemini-api-key")) {
-      try {
-        this.client = new GoogleGenAI({ apiKey });
-        this.isConfigured = true;
-        logger.info("GoogleGenAI client initialized successfully for Gemini Live API", {
-          module: "VoiceService",
-        });
-      } catch (err: any) {
-        logger.warn(`Failed to initialize GoogleGenAI client for voice: ${err.message}. Falling back to mock.`, {
-          module: "VoiceService",
-        });
+      if (!this.client || this.currentApiKey !== apiKey) {
+        try {
+          this.client = new GoogleGenAI({ apiKey, apiVersion: "v1alpha" });
+          this.currentApiKey = apiKey;
+          this.isConfigured = true;
+          logger.info("GoogleGenAI client initialized successfully for Gemini Live API", {
+            module: "VoiceService",
+          });
+        } catch (err: any) {
+          logger.warn(`Failed to initialize GoogleGenAI client for voice: ${err.message}. Falling back to mock.`, {
+            module: "VoiceService",
+          });
+          return null;
+        }
       }
-    } else {
-      logger.info("No valid GEMINI_API_KEY configured for Live API. Running in DEVELOPMENT MOCK mode.", {
-        module: "VoiceService",
-      });
+      return this.client;
     }
+    return null;
   }
 
   public isLive(): boolean {
-    return this.isConfigured && this.client !== null;
+    return this.getOrInitClient() !== null;
   }
 
   /**
@@ -78,13 +85,14 @@ export class VoiceService {
     });
 
     // Try live ephemeral token creation if live credentials are configured
-    if (this.isLive() && this.client) {
+    const liveClient = this.getOrInitClient();
+    if (liveClient) {
       try {
         const now = Date.now();
         const expireTime = new Date(now + 30 * 60 * 1000).toISOString(); // 30 minutes
         const newSessionExpireTime = new Date(now + 2 * 60 * 1000).toISOString(); // 2 minutes
 
-        const tokenResult = await this.client.authTokens.create({
+        const tokenResult = await liveClient.authTokens.create({
           config: {
             uses: 1,
             expireTime,
@@ -121,7 +129,7 @@ export class VoiceService {
             voiceName,
             expireTime,
             newSessionExpireTime,
-            webSocketUrl: `wss://generativelanguage.googleapis.com/ws/google.ai.generativelanguage.v1alpha.GenerativeService.BidiGenerateContentConstrained?access_token=${token}`,
+            webSocketUrl: `wss://generativelanguage.googleapis.com/ws/google.ai.generativelanguage.v1beta.GenerativeService.BidiGenerateContentConstrained?access_token=${token}`,
             isMock: false,
             systemInstructionPreview: systemInstruction.substring(0, 120) + "...",
           };

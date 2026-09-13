@@ -17,17 +17,36 @@ export const ChatWidget: React.FC = () => {
 
   return (
     <>
+      {/* Mobile Backdrop to allow tapping anywhere outside to close and explore website */}
+      {isOpen && (
+        <div
+          onClick={() => setIsOpen(false)}
+          className="sm:hidden fixed inset-0 bg-black/40 backdrop-blur-xs z-40 transition-opacity animate-fadeIn"
+          aria-hidden="true"
+        />
+      )}
+
       <aside
         aria-label="IMPACT AI Sales & Communication Agent"
         className="fixed bottom-5 right-5 z-50 flex flex-col items-end gap-3 font-sans"
       >
         {/* Expanded Interactive AI Chat Window */}
         {isOpen ? (
-          <ChatWindow
-            onClose={() => setIsOpen(false)}
-            onMinimize={() => setIsOpen(false)}
-            onOpenVoice={() => setIsVoiceOpen(true)}
-          />
+          <>
+            <ChatWindow
+              onClose={() => setIsOpen(false)}
+              onMinimize={() => setIsOpen(false)}
+              onOpenVoice={() => setIsVoiceOpen(true)}
+            />
+            {/* Quick-Dismiss Floating Action Pill */}
+            <button
+              onClick={() => setIsOpen(false)}
+              className="flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-brand-dark hover:bg-black text-white text-xs font-bold shadow-xl hover:scale-105 transition-all cursor-pointer border border-white/20"
+              title="Close chat window and explore website"
+            >
+              <span>✕ Close Chat & Explore Website</span>
+            </button>
+          </>
         ) : (
           /* Floating Launcher Pills */
           <div className="flex items-center gap-2 animate-fadeIn">

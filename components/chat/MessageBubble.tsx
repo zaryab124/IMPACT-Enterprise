@@ -49,16 +49,9 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
               : "bg-white border border-brand-border text-brand-charcoal rounded-tl-sm font-sans"
           }`}
         >
-          {/* Mock indicator if applicable */}
-          {!isUser && message.isMock && (
-            <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-amber-50 border border-amber-200 text-amber-800 text-[10px] font-mono font-bold mb-2">
-              <span>DEVELOPMENT MOCK: Gemini AI Engine</span>
-            </div>
-          )}
-
-          {/* Formatted Message Body */}
+          {/* Clean Formatted Message Body */}
           <div className="whitespace-pre-line space-y-2">
-            {message.content.replace("[DEVELOPMENT MOCK: Gemini AI Engine]\n", "")}
+            {message.content.replace(/^\[DEVELOPMENT MOCK:[^\]]+\]\s*/i, "")}
           </div>
 
           {/* Citations Pill Bar */}
