@@ -1,5 +1,6 @@
 import React from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { ArrowRight, Sparkles, CheckCircle2, ShieldCheck, Users, Target, Rocket, Lightbulb, Compass, Award, Phone, MessageCircle } from "lucide-react";
 import { Metadata } from "next";
 import { FinalCtaBanner } from "@/components/conversion/FinalCtaBanner";
@@ -13,30 +14,35 @@ export const metadata: Metadata = {
 export default function AboutPage() {
   const leadership = [
     {
-      name: "MUHAMMAD ZARYAB HASSAN",
-      role: "CEO",
+      name: "Muhammad Zaryab Hassan",
+      role: "Chief Executive Officer",
+      shortRole: "CEO",
       initials: "ZH",
       focusAreas: ["Vision", "Strategy", "AI Systems", "Client Partnerships"],
       desc: "Directs company vision, strategic technology positioning, client partnerships, and intelligent system innovation.",
     },
     {
-      name: "MAHAD AZIZ",
-      role: "CGO",
+      name: "Mahad Aziz",
+      role: "Chief Growth Officer",
+      shortRole: "CGO",
       initials: "MA",
       focusAreas: ["Growth Strategy", "Market Expansion", "Solutions", "Operations"],
       desc: "Leads commercial growth, enterprise partnerships, strategic distribution, and market expansion.",
     },
     {
-      name: "MUHAMMAD ISMAIL",
-      role: "CFO",
+      name: "Muhammad Ismail",
+      role: "Chief Financial Officer",
+      shortRole: "CFO",
       initials: "MI",
       focusAreas: ["Finance", "Commercial Strategy", "Capital Allocation", "Operations"],
       desc: "Oversees financial strategy, capital efficiency, operational governance, and commercial planning.",
     },
     {
-      name: "ANSAR ABBAS JAFRI",
-      role: "BRANCH MANAGER",
+      name: "Ansar Abbas Jafri",
+      role: "Branch Manager",
+      shortRole: "Branch Manager",
       initials: "AJ",
+      image: "/team/ansar-abbas-jafri.jpg",
       phone: "+92 333 6457747",
       focusAreas: ["Branch Operations", "Client Relations", "Project Delivery", "Regional Support"],
       desc: "Manages regional branch operations, on-ground client relationships, deployment coordination, and local project execution.",
@@ -85,20 +91,20 @@ export default function AboutPage() {
             <Sparkles className="w-4 h-4" />
             Company Purpose
           </div>
-          <h1 className="text-4xl sm:text-6xl font-black tracking-tight text-brand-dark">
-            WHY IMPACT EXISTS.
+          <h1 className="text-3xl sm:text-5xl font-bold tracking-tight text-brand-dark">
+            Why IMPACT Exists.
           </h1>
-          <div className="mt-6 space-y-4 text-lg sm:text-xl font-medium text-brand-charcoal leading-relaxed">
-            <p className="text-2xl font-bold text-brand-dark">
+          <div className="mt-6 space-y-4 text-base sm:text-lg font-normal text-brand-charcoal leading-relaxed">
+            <p className="text-xl sm:text-2xl font-semibold text-brand-dark">
               The world has no shortage of ideas.
             </p>
             <p>
               The challenge is turning those ideas into systems that actually work.
             </p>
-            <p className="text-brand-accent font-bold">
+            <p className="text-brand-accent font-semibold">
               IMPACT exists to bridge that gap.
             </p>
-            <p className="text-base sm:text-lg text-brand-muted font-normal">
+            <p className="text-sm sm:text-base text-brand-muted font-normal">
               We combine intelligence, automation and software engineering to transform ideas and business problems into real-world technology.
             </p>
           </div>
@@ -106,7 +112,7 @@ export default function AboutPage() {
 
         {/* The Philosophy Transformation Flow */}
         <div className="bg-white border border-brand-border rounded-3xl p-8 sm:p-12 shadow-card mb-16">
-          <div className="text-xs font-bold uppercase tracking-wider text-brand-subtle mb-2">
+          <div className="text-xs font-semibold uppercase tracking-wider text-brand-subtle mb-2">
             The Core Philosophy
           </div>
           <h2 className="text-2xl sm:text-3xl font-bold text-brand-dark mb-6">
@@ -129,10 +135,10 @@ export default function AboutPage() {
                   <span className="text-xs font-mono font-bold text-brand-accent">
                     0{item.step}
                   </span>
-                  <div className="text-base font-black text-brand-dark uppercase mt-1">
+                  <div className="text-sm sm:text-base font-bold text-brand-dark uppercase mt-1">
                     {item.name}
                   </div>
-                  <p className="text-xs text-brand-muted mt-1 leading-relaxed">
+                  <p className="text-xs text-brand-muted mt-1 leading-relaxed font-normal">
                     {item.desc}
                   </p>
                 </div>
@@ -148,10 +154,10 @@ export default function AboutPage() {
         {/* 6 Guiding Pillars */}
         <div className="mb-16">
           <div className="mb-10">
-            <div className="text-xs font-bold uppercase tracking-wider text-brand-subtle mb-1">
+            <div className="text-xs font-semibold uppercase tracking-wider text-brand-subtle mb-1">
               Guiding Principles
             </div>
-            <h2 className="text-3xl font-bold text-brand-dark">
+            <h2 className="text-2xl sm:text-3xl font-bold text-brand-dark">
               How We Think & Operate
             </h2>
           </div>
@@ -160,15 +166,15 @@ export default function AboutPage() {
             {pillars.map((pil) => (
               <div
                 key={pil.num}
-                className="bg-white border border-brand-border rounded-2xl p-7 shadow-card hover:shadow-cardHover transition-all"
+                className="bg-white border border-brand-border rounded-2xl p-6 sm:p-7 shadow-card hover:shadow-cardHover transition-all"
               >
-                <span className="text-xs font-mono font-black text-brand-accent">
+                <span className="text-xs font-mono font-bold text-brand-accent">
                   {pil.num}
                 </span>
-                <h3 className="text-lg font-bold text-brand-dark uppercase tracking-tight mt-2 mb-2">
+                <h3 className="text-base font-semibold text-brand-dark uppercase tracking-tight mt-2 mb-1.5">
                   {pil.title}
                 </h3>
-                <p className="text-sm text-brand-muted leading-relaxed">
+                <p className="text-xs sm:text-sm text-brand-muted leading-relaxed font-normal">
                   {pil.desc}
                 </p>
               </div>
@@ -179,13 +185,13 @@ export default function AboutPage() {
         {/* Leadership Section */}
         <div id="leadership" className="mb-16">
           <div className="mb-10">
-            <div className="text-xs font-bold uppercase tracking-wider text-brand-subtle mb-1">
+            <div className="text-xs font-semibold uppercase tracking-wider text-brand-subtle mb-1">
               Executive Leadership
             </div>
-            <h2 className="text-3xl font-bold text-brand-dark">
+            <h2 className="text-2xl sm:text-3xl font-bold text-brand-dark">
               The Team Behind IMPACT
             </h2>
-            <p className="text-base text-brand-muted mt-2">
+            <p className="text-sm text-brand-muted mt-2">
               Technology, commercial strategy, and engineering leadership.
             </p>
           </div>
@@ -194,25 +200,37 @@ export default function AboutPage() {
             {leadership.map((member) => (
               <div
                 key={member.name}
-                className="bg-white border border-brand-border rounded-3xl p-6 sm:p-7 shadow-card hover:shadow-cardHover transition-all flex flex-col justify-between"
+                className="bg-white border border-brand-border/80 rounded-2xl p-6 shadow-card hover:shadow-cardHover transition-all flex flex-col justify-between group"
               >
                 <div>
-                  <div className="w-14 h-14 rounded-2xl bg-brand-surface border border-brand-border text-brand-dark flex items-center justify-center font-black text-xl mb-5 shadow-xs">
-                    {member.initials}
-                  </div>
+                  {member.image ? (
+                    <div className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-2xl overflow-hidden border border-brand-border/80 shadow-xs mb-4 bg-slate-100 flex-shrink-0">
+                      <Image
+                        src={member.image}
+                        alt={member.name}
+                        fill
+                        className="object-cover object-top"
+                        sizes="(max-width: 768px) 96px, 96px"
+                      />
+                    </div>
+                  ) : (
+                    <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-gradient-to-br from-slate-50 to-slate-100 border border-brand-border text-brand-dark flex items-center justify-center font-semibold text-lg sm:text-xl mb-4 shadow-xs flex-shrink-0">
+                      {member.initials}
+                    </div>
+                  )}
 
-                  <h3 className="text-xl font-black text-brand-dark tracking-tight">
+                  <h3 className="text-base sm:text-lg font-semibold text-brand-dark tracking-tight leading-snug">
                     {member.name}
                   </h3>
-                  <div className="text-xs font-bold uppercase tracking-widest text-brand-accent mb-3">
+                  <div className="text-xs font-medium uppercase tracking-wider text-brand-accent mb-2.5">
                     {member.role}
                   </div>
 
                   {member.phone && (
-                    <div className="mb-4 flex flex-wrap items-center gap-1.5">
+                    <div className="mb-3.5 flex flex-wrap items-center gap-1.5">
                       <a
                         href={`tel:${member.phone.replace(/\s+/g, '')}`}
-                        className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-emerald-800 text-xs font-mono font-bold transition-colors"
+                        className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-emerald-800 text-xs font-mono font-medium transition-colors"
                         title="Call Branch Manager"
                       >
                         <Phone className="w-3 h-3 text-emerald-600" />
@@ -230,20 +248,20 @@ export default function AboutPage() {
                     </div>
                   )}
 
-                  <p className="text-xs text-brand-muted leading-relaxed mb-6">
+                  <p className="text-xs text-brand-muted leading-relaxed font-normal mb-5">
                     {member.desc}
                   </p>
                 </div>
 
-                <div className="pt-4 border-t border-brand-border">
-                  <div className="text-[10px] font-mono font-bold uppercase tracking-wider text-brand-subtle mb-2">
+                <div className="pt-3.5 border-t border-brand-border/70">
+                  <div className="text-[10px] font-mono font-medium uppercase tracking-wider text-brand-subtle mb-1.5">
                     Areas of Responsibility
                   </div>
-                  <div className="flex flex-wrap gap-1.5 text-xs font-medium text-brand-charcoal">
+                  <div className="flex flex-wrap gap-1 text-[11px] font-normal text-brand-charcoal">
                     {member.focusAreas.map((area, aIdx) => (
                       <span
                         key={aIdx}
-                        className="px-2 py-0.5 rounded bg-brand-surface border border-brand-border text-[11px]"
+                        className="px-2 py-0.5 rounded bg-brand-surface border border-brand-border/70"
                       >
                         {area}
                       </span>

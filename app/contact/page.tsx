@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { Mail, MessageSquare, ArrowRight, CheckCircle2, Sparkles, Send, RefreshCcw, AlertCircle, ShieldCheck, MessageCircle, Phone } from "lucide-react";
 
 export default function ContactPage() {
@@ -32,9 +33,8 @@ export default function ContactPage() {
         body: JSON.stringify({ name, email, subject, message }),
       });
 
-      const data = await res.json();
       if (!res.ok) {
-        throw new Error(data.error || "Failed to send message.");
+        throw new Error("Failed to submit inquiry.");
       }
 
       setIsSubmitted(true);
@@ -50,14 +50,14 @@ export default function ContactPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="max-w-3xl mb-16">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-brand-accentSoft text-brand-accent text-xs font-bold uppercase tracking-wider mb-4">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-brand-accentSoft text-brand-accent text-xs font-semibold uppercase tracking-wider mb-4">
             <Sparkles className="w-3.5 h-3.5" />
             Connect with IMPACT
           </div>
-          <h1 className="text-4xl sm:text-6xl font-black tracking-tight text-brand-dark leading-tight">
-            LET&apos;S BUILD SOMETHING THAT MATTERS.
+          <h1 className="text-3xl sm:text-5xl font-bold tracking-tight text-brand-dark leading-tight">
+            Let&apos;s Build Something That Matters.
           </h1>
-          <p className="mt-4 text-lg sm:text-xl text-brand-muted leading-relaxed">
+          <p className="mt-4 text-base sm:text-lg text-brand-muted leading-relaxed font-normal">
             Whether you have an idea, an inefficient workflow, or an enterprise platform to engineer, our team is ready to review your requirements.
           </p>
         </div>
@@ -144,39 +144,45 @@ export default function ContactPage() {
               </div>
 
               {/* Branch Operations: Ansar Abbas Jafri */}
-              <div className="p-4 rounded-2xl bg-emerald-50/70 border border-emerald-200 space-y-2.5">
+              <div className="p-4 rounded-2xl bg-emerald-50/70 border border-emerald-200/80 space-y-3">
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2.5">
-                    <div className="w-8 h-8 rounded-lg bg-emerald-600 text-white flex items-center justify-center shadow-xs">
-                      <Phone className="w-4 h-4" />
+                  <div className="flex items-center gap-3">
+                    <div className="relative w-11 h-11 rounded-xl overflow-hidden border border-emerald-300 shadow-xs flex-shrink-0 bg-slate-100">
+                      <Image
+                        src="/team/ansar-abbas-jafri.jpg"
+                        alt="Ansar Abbas Jafri"
+                        fill
+                        className="object-cover object-top"
+                        sizes="44px"
+                      />
                     </div>
                     <div>
-                      <div className="font-bold text-brand-dark text-sm">Branch Operations</div>
-                      <div className="text-xs font-medium text-brand-charcoal">
-                        Ansar Abbas Jafri <span className="text-brand-muted font-normal">• Branch Manager</span>
+                      <div className="font-semibold text-brand-dark text-sm leading-tight">Ansar Abbas Jafri</div>
+                      <div className="text-xs text-brand-muted font-normal leading-tight mt-0.5">
+                        Branch Manager • Regional Operations
                       </div>
-                      <div className="text-xs font-mono text-emerald-800 font-bold">+92 333 6457747</div>
+                      <div className="text-xs font-mono text-emerald-800 font-medium mt-0.5">+92 333 6457747</div>
                     </div>
                   </div>
-                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">
+                  <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200">
                     Regional
                   </span>
                 </div>
                 <div className="grid grid-cols-2 gap-2 pt-1">
                   <a
                     href="tel:+923336457747"
-                    className="inline-flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs uppercase tracking-wider shadow-xs transition-all"
+                    className="inline-flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-xs uppercase tracking-wider shadow-xs transition-all"
                   >
-                    <Phone className="w-3 h-3" />
+                    <Phone className="w-3.5 h-3.5" />
                     <span>Call Direct</span>
                   </a>
                   <a
                     href="https://wa.me/923336457747?text=Hello%20Ansar%20Abbas%20Jafri,%20I%20would%20like%20to%20connect%20regarding%20IMPACT%20Enterprise."
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-[#25D366] hover:bg-[#1EBE5D] text-white font-bold text-xs uppercase tracking-wider shadow-xs transition-all"
+                    className="inline-flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-[#25D366] hover:bg-[#1EBE5D] text-white font-medium text-xs uppercase tracking-wider shadow-xs transition-all"
                   >
-                    <MessageCircle className="w-3 h-3 fill-current" />
+                    <MessageCircle className="w-3.5 h-3.5 fill-current" />
                     <span>WhatsApp</span>
                   </a>
                 </div>

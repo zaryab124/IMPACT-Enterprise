@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Image from "next/image";
 import { X, MessageCircle, Phone, Mail, ShieldAlert, ArrowRight } from "lucide-react";
 
 interface HumanHandoffModalProps {
@@ -71,11 +72,17 @@ export const HumanHandoffModal: React.FC<HumanHandoffModalProps> = ({
             className="flex items-center justify-between p-3.5 rounded-xl bg-emerald-50 hover:bg-emerald-600 border border-emerald-200 text-brand-dark hover:text-white transition-all shadow-xs group"
           >
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-lg bg-emerald-600 text-white flex items-center justify-center shadow-xs group-hover:bg-white group-hover:text-emerald-600 transition-colors">
-                <Phone className="w-4 h-4" />
+              <div className="relative w-9 h-9 rounded-lg overflow-hidden border border-emerald-300 shadow-xs flex-shrink-0 bg-slate-100">
+                <Image
+                  src="/team/ansar-abbas-jafri.jpg"
+                  alt="Ansar Abbas Jafri"
+                  fill
+                  className="object-cover object-top"
+                  sizes="36px"
+                />
               </div>
               <div>
-                <div className="text-xs font-bold leading-tight">Branch Manager: Ansar Abbas Jafri</div>
+                <div className="text-xs font-semibold leading-tight">Branch Manager: Ansar Abbas Jafri</div>
                 <div className="text-[11px] font-mono text-brand-muted group-hover:text-white/90">
                   +92 333 6457747
                 </div>
