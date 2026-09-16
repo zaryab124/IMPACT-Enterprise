@@ -18,6 +18,7 @@ export default function AboutPage() {
       role: "Chief Executive Officer",
       shortRole: "CEO",
       initials: "ZH",
+      image: "/team/muhammad-zaryab-hassan.jpg",
       focusAreas: ["Vision", "Strategy", "AI Systems", "Client Partnerships"],
       desc: "Directs company vision, strategic technology positioning, client partnerships, and intelligent system innovation.",
     },
@@ -189,11 +190,74 @@ export default function AboutPage() {
               Executive Leadership
             </div>
             <h2 className="text-2xl sm:text-3xl font-bold text-brand-dark">
-              The Team Behind IMPACT
+              The Leadership Behind IMPACT
             </h2>
             <p className="text-sm text-brand-muted mt-2">
               Technology, commercial strategy, and engineering leadership.
             </p>
+          </div>
+
+          {/* Featured CEO & Founder Section */}
+          <div id="ceo-section" className="mb-12 bg-white border border-brand-border/80 rounded-3xl p-6 sm:p-10 shadow-card">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+              {/* CEO Photo Frame */}
+              <div className="lg:col-span-5">
+                <div className="relative aspect-[4/5] w-full max-w-sm mx-auto rounded-2xl overflow-hidden border border-brand-border/80 shadow-md bg-slate-100 group">
+                  <Image
+                    src="/team/muhammad-zaryab-hassan.jpg"
+                    alt="Muhammad Zaryab Hassan - Chief Executive Officer of IMPACT Enterprise"
+                    fill
+                    className="object-cover object-top hover:scale-[1.02] transition-transform duration-500"
+                    sizes="(max-width: 1024px) 100vw, 380px"
+                    priority
+                  />
+                </div>
+              </div>
+
+              {/* CEO Narrative & Quote */}
+              <div className="lg:col-span-7 space-y-4">
+                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-brand-accentSoft text-brand-accent text-xs font-semibold uppercase tracking-wider">
+                  <Sparkles className="w-3.5 h-3.5" />
+                  Office of the CEO
+                </div>
+
+                <div>
+                  <h3 className="text-2xl sm:text-3xl font-bold text-brand-dark tracking-tight">
+                    Muhammad Zaryab Hassan
+                  </h3>
+                  <div className="text-sm font-medium uppercase tracking-wider text-brand-accent mt-0.5">
+                    Founder & Chief Executive Officer
+                  </div>
+                </div>
+
+                <blockquote className="text-base sm:text-lg text-brand-charcoal leading-relaxed font-normal italic border-l-2 border-brand-accent/50 pl-4 py-1">
+                  &ldquo;Technology should never be engineered for mere novelty. At IMPACT Enterprise, we obsess over the critical leap from raw concepts to production-grade systems. Every agent, workflow, and platform we design must eliminate friction, operate autonomously, and deliver measurable enterprise impact.&rdquo;
+                </blockquote>
+
+                <p className="text-xs sm:text-sm text-brand-muted leading-relaxed font-normal">
+                  Leading strategic technology vision, autonomous AI agent architecture, and enterprise partnerships. Under his engineering leadership, IMPACT Enterprise bridges the gap between ideas and high-performance intelligent software.
+                </p>
+
+                <div className="pt-2 flex flex-wrap items-center gap-3">
+                  <Link
+                    href="/start-a-project"
+                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-brand-accent hover:bg-brand-accentHover text-white text-xs font-semibold uppercase tracking-wider shadow-sm transition-all"
+                  >
+                    <span>Discuss a Project</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </Link>
+                  <a
+                    href="https://wa.me/923147893907?text=Hello%20Muhammad%20Zaryab%20Hassan,%20I%20would%20like%20to%20connect%20regarding%20IMPACT%20Enterprise."
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#25D366]/10 hover:bg-[#25D366]/20 border border-[#25D366]/30 text-[#128C7E] text-xs font-semibold uppercase tracking-wider transition-colors"
+                  >
+                    <MessageCircle className="w-3.5 h-3.5 fill-current" />
+                    <span>Connect on WhatsApp</span>
+                  </a>
+                </div>
+              </div>
+            </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
