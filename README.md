@@ -212,7 +212,9 @@ During database seeding (`npm run db:seed`), three primary operational accounts 
 ## 👥 Authentic Leadership
 
 - **Muhammad Zaryab Hassan** — Chief Executive Officer (CEO)
-- **Tariq Al-Mansoor** — Director of Enterprise AI Solutions
+- **Mahad Aziz** — Chief Growth Officer (CGO)
+- **Muhammad Ismail** — Chief Financial Officer (CFO)
+- **Ansar Abbas Jafri** — Branch Manager (`📞 +92 333 6457747`)
 
 ---
 
