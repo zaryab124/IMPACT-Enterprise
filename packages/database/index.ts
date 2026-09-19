@@ -116,9 +116,10 @@ class DatabaseManager {
 
     if (this.pgliteInstance) {
       const result = await this.pgliteInstance.query<T>(text, params);
+      const affected = (result as any).affectedRows ?? (result as any).rowCount;
       return {
         rows: result.rows,
-        rowCount: result.rows.length,
+        rowCount: typeof affected === "number" ? affected : result.rows.length,
       };
     }
 

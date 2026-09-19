@@ -63,20 +63,20 @@ class Logger {
     }
   }
 
-  public debug(message: string, meta?: { module?: string; data?: unknown }) {
-    this.write("debug", message, meta?.module, meta?.data);
+  public debug(message: string, meta?: { module?: string; data?: unknown; [key: string]: any }) {
+    this.write("debug", message, meta?.module, meta?.data ?? meta);
   }
 
-  public info(message: string, meta?: { module?: string; data?: unknown }) {
-    this.write("info", message, meta?.module, meta?.data);
+  public info(message: string, meta?: { module?: string; data?: unknown; [key: string]: any }) {
+    this.write("info", message, meta?.module, meta?.data ?? meta);
   }
 
-  public warn(message: string, meta?: { module?: string; data?: unknown }) {
-    this.write("warn", message, meta?.module, meta?.data);
+  public warn(message: string, meta?: { module?: string; data?: unknown; [key: string]: any }) {
+    this.write("warn", message, meta?.module, meta?.data ?? meta);
   }
 
-  public error(message: string, error?: unknown, meta?: { module?: string; data?: unknown }) {
-    this.write("error", message, meta?.module, meta?.data, error);
+  public error(message: string, error?: unknown, meta?: { module?: string; data?: unknown; [key: string]: any }) {
+    this.write("error", message, meta?.module, meta?.data ?? meta, error);
   }
 }
 

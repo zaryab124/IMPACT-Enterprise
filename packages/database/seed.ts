@@ -4,6 +4,7 @@ import { migrator } from "./migrator";
 import { logger } from "../logging/logger";
 import { ROLE_PERMISSIONS, UserRole } from "../auth/roles";
 import { APPROVED_KNOWLEDGE_DOCUMENTS } from "../knowledge/data/approvedKnowledge";
+import { CryptoVault } from "../growth-os/publishing/cryptoVault";
 
 async function hashPassword(password: string): Promise<string> {
   return bcrypt.hash(password, 10);
@@ -18,11 +19,14 @@ export async function seedDevelopmentDatabase(): Promise<void> {
   // 1. Seed Roles
   const roles: { id: UserRole; name: string; description: string }[] = [
     { id: "SUPER_ADMIN", name: "Super Administrator", description: "Full system administration, audit logs, AI configuration" },
-    { id: "ADMIN", name: "Administrator", description: "Operational management, knowledge base curation, team administration" },
+    { id: "CEO", name: "Chief Executive Officer", description: "Full CRM access, analytics, team management, campaigns, content approval" },
     { id: "SALES_MANAGER", name: "Sales Manager", description: "Sales pipeline oversight, appointment assignment, lead scoring" },
-    { id: "SALES_AGENT", name: "Sales Agent", description: "Direct customer conversations, assigned lead qualification, human handoff" },
-    { id: "SUPPORT_AGENT", name: "Support Agent", description: "Inquiry triage and customer assistance" },
-    { id: "VIEWER", name: "Viewer", description: "Read-only access to operational reports and telemetry" },
+    { id: "SALES_AGENT", name: "Sales Agent", description: "Assigned leads, contacts, activities, tasks, deals, communication history" },
+    { id: "MARKETING_MANAGER", name: "Marketing Manager", description: "Campaigns, content calendar, social publishing, analytics" },
+    { id: "CONTENT_MANAGER", name: "Content Manager", description: "Social media content generation, publishing queue, campaign content" },
+    { id: "SUPPORT_AGENT", name: "Support Agent", description: "Inquiry triage, messages, calls, contacts" },
+    { id: "VIEWER", name: "Viewer", description: "Strictly read-only access to operational reports and telemetry" },
+    { id: "ADMIN", name: "Administrator", description: "Operational management, knowledge base curation, team administration" },
   ];
 
   for (const r of roles) {
@@ -61,8 +65,14 @@ export async function seedDevelopmentDatabase(): Promise<void> {
   // 3. Seed Development Users for each enterprise role
   const devUsers: { email: string; pass: string; first: string; last: string; role: UserRole }[] = [
     { email: "admin@impact.enterprise", pass: "AdminPassword2026!", first: "System", last: "SuperAdmin", role: "SUPER_ADMIN" },
+    { email: "ceo@impact.enterprise", pass: "CeoPassword2026!", first: "Claire", last: "CEO", role: "CEO" },
+    { email: "sales.manager@impact.enterprise", pass: "SalesManagerPassword2026!", first: "Sarah", last: "SalesManager", role: "SALES_MANAGER" },
     { email: "manager@impact.enterprise", pass: "ManagerPassword2026!", first: "Sarah", last: "SalesManager", role: "SALES_MANAGER" },
+    { email: "sales.agent@impact.enterprise", pass: "SalesAgentPassword2026!", first: "Alex", last: "SalesAgent", role: "SALES_AGENT" },
     { email: "agent@impact.enterprise", pass: "AgentPassword2026!", first: "Alex", last: "SalesAgent", role: "SALES_AGENT" },
+    { email: "marketing.manager@impact.enterprise", pass: "MarketingManagerPassword2026!", first: "Maya", last: "MarketingManager", role: "MARKETING_MANAGER" },
+    { email: "content.manager@impact.enterprise", pass: "ContentManagerPassword2026!", first: "Chris", last: "ContentManager", role: "CONTENT_MANAGER" },
+    { email: "support.agent@impact.enterprise", pass: "SupportAgentPassword2026!", first: "Sam", last: "SupportAgent", role: "SUPPORT_AGENT" },
     { email: "support@impact.enterprise", pass: "SupportPassword2026!", first: "Sam", last: "SupportAgent", role: "SUPPORT_AGENT" },
     { email: "viewer@impact.enterprise", pass: "ViewerPassword2026!", first: "Victor", last: "Viewer", role: "VIEWER" },
   ];
@@ -238,8 +248,158 @@ export async function seedDevelopmentDatabase(): Promise<void> {
     );
   }
 
+  // 7. Seed IMPACT Growth OS Modules & Foundation Artifacts
+  const { GROWTH_OS_MODULES } = await import("../growth-os/constants");
+  for (const mod of GROWTH_OS_MODULES) {
+    await db.query(
+      `INSERT INTO growth_os_modules (id, code, name, suite, description, icon, is_active, min_permission, sort_order)
+       VALUES ($1, $2, $3, $4, $5, $6, TRUE, $7, $8)
+       ON CONFLICT (id) DO UPDATE SET
+         name = EXCLUDED.name,
+         description = EXCLUDED.description,
+         icon = EXCLUDED.icon,
+         min_permission = EXCLUDED.min_permission,
+         sort_order = EXCLUDED.sort_order;`,
+      [mod.id, mod.code, mod.name, mod.suite, mod.description, mod.icon, mod.minPermission, mod.sortOrder]
+    );
+  }
+
+  // Seed sample foundation campaign
+  await db.query(
+    `INSERT INTO content_campaigns (id, name, target_service, description, start_date, end_date, status)
+     VALUES ('10000000-0000-0000-0000-000000000001', 'Q4 Enterprise AI Deployment & Lead Automation', 'AI automation', 'Strategic content and omnichannel awareness initiative highlighting Make-based lead conversion and custom AI models.', CURRENT_DATE, CURRENT_DATE + INTERVAL '30 days', 'active')
+     ON CONFLICT (id) DO NOTHING;`
+  );
+
+  // Seed sample foundation task
+  await db.query(
+    `INSERT INTO crm_tasks (id, title, description, priority, status, due_date)
+     VALUES ('20000000-0000-0000-0000-000000000001', 'Verify IMPACT Growth OS Foundation Telemetry', 'Perform Phase 0 health checks, verify module registry synchronization, and confirm zero-leakage security posture.', 'HIGH', 'PENDING', NOW() + INTERVAL '2 days')
+     ON CONFLICT (id) DO NOTHING;`
+  );
+
+  // 8. Seed CRM Default Teams, Sources, Pipelines & Stages (Phase 1)
+  // 8.1 Teams
+  await db.query(`
+    INSERT INTO crm_teams (id, name, description)
+    VALUES 
+      ('30000000-0000-0000-0000-000000000001', 'Enterprise AI Sales', 'Core commercial team focusing on AI models, chat agents, and call agents.'),
+      ('30000000-0000-0000-0000-000000000002', 'Business Automation & Solutions', 'Engineering team delivering custom Make-based lead automations and software.')
+    ON CONFLICT (id) DO NOTHING;
+  `);
+
+  // 8.2 Lead Sources
+  const leadSources = [
+    { id: "website", name: "Website Direct" },
+    { id: "web_chat", name: "AI Web Chat" },
+    { id: "whatsapp", name: "WhatsApp Inbound" },
+    { id: "linkedin", name: "LinkedIn Campaign" },
+    { id: "referral", name: "Client Referral" },
+    { id: "outbound", name: "Outbound SDR" },
+    { id: "inbound_call", name: "Voice Inbound Call" },
+    { id: "event", name: "Executive Tech Summit" },
+  ];
+  for (const src of leadSources) {
+    await db.query(
+      `INSERT INTO crm_lead_sources (id, name, is_active) VALUES ($1, $2, TRUE) ON CONFLICT (id) DO NOTHING;`,
+      [src.id, src.name]
+    );
+  }
+
+  // 8.3 Standard Pipeline & Stages
+  const pipelineId = "40000000-0000-0000-0000-000000000001";
+  await db.query(`
+    INSERT INTO crm_pipelines (id, name, description, is_default)
+    VALUES ('${pipelineId}', 'Standard Enterprise Sales Pipeline', 'Default deal progression for IMPACT Enterprise business services.', TRUE)
+    ON CONFLICT (id) DO NOTHING;
+  `);
+
+  const stages = [
+    { code: "NEW", name: "New Lead", order: 1, prob: 10 },
+    { code: "CONTACTED", name: "Contacted", order: 2, prob: 20 },
+    { code: "QUALIFIED", name: "Qualified (BANT)", order: 3, prob: 40 },
+    { code: "PROPOSAL", name: "Proposal Scoped", order: 4, prob: 60 },
+    { code: "NEGOTIATION", name: "Negotiation", order: 5, prob: 80 },
+    { code: "WON", name: "Closed Won", order: 6, prob: 100 },
+    { code: "LOST", name: "Closed Lost", order: 7, prob: 0 },
+    { code: "NURTURE", name: "Long-term Nurture", order: 8, prob: 15 },
+  ];
+
+  for (const stg of stages) {
+    await db.query(`
+      INSERT INTO crm_pipeline_stages (pipeline_id, name, code, order_index, probability_percent)
+      VALUES ('${pipelineId}', '${stg.name}', '${stg.code}', ${stg.order}, ${stg.prob})
+      ON CONFLICT DO NOTHING;
+    `);
+  }
+
+  // 8.4 Default CRM Tags
+  const defaultTags = [
+    { name: "Enterprise", color: "#4F46E5" },
+    { name: "High Intent", color: "#EF4444" },
+    { name: "Make.com Automation", color: "#10B981" },
+    { name: "Voice AI Agent", color: "#F59E0B" },
+    { name: "Q4 Target", color: "#8B5CF6" },
+  ];
+  for (const tag of defaultTags) {
+    await db.query(
+      `INSERT INTO crm_tags (name, color) VALUES ($1, $2) ON CONFLICT (name) DO NOTHING;`,
+      [tag.name, tag.color]
+    );
+  }
+
+  // 8.5 Seed Default Enterprise Social Media Accounts Linked to AI Agent
+  const defaultSocialAccounts = [
+    {
+      platform: "linkedin",
+      name: "IMPACT Enterprise Official",
+      pageId: "urn:li:organization:impact-enterprise-ai",
+      token: "simulated_oauth_linkedin_token_enterprise_live_999",
+      metadata: { handle: "impact-enterprise", followers: "14,250", is_ai_agent_linked: true },
+    },
+    {
+      platform: "twitter",
+      name: "IMPACT Enterprise AI",
+      pageId: "@ImpactEntAI",
+      token: "simulated_bearer_twitter_token_enterprise_live_888",
+      metadata: { handle: "@ImpactEntAI", followers: "8,900", is_ai_agent_linked: true },
+    },
+    {
+      platform: "instagram",
+      name: "impact.enterprise.official",
+      pageId: "ig_impact_enterprise_official",
+      token: "simulated_graph_instagram_token_enterprise_live_777",
+      metadata: { handle: "@impact.enterprise.official", followers: "5,400", is_ai_agent_linked: true },
+    },
+    {
+      platform: "facebook",
+      name: "IMPACT Enterprise Global",
+      pageId: "fb_impact_enterprise_page_official",
+      token: "simulated_graph_facebook_token_enterprise_live_666",
+      metadata: { handle: "IMPACTEnterpriseGlobal", followers: "6,100", is_ai_agent_linked: true },
+    },
+  ];
+
+  for (const sa of defaultSocialAccounts) {
+    const existing = await db.query(
+      `SELECT id FROM social_accounts WHERE platform = $1 AND account_name = $2;`,
+      [sa.platform, sa.name]
+    );
+    if (existing.rows.length === 0) {
+      const encrypted = CryptoVault.encrypt(sa.token);
+      await db.query(
+        `INSERT INTO social_accounts (
+          platform, account_name, account_or_page_id, encrypted_access_token,
+          connection_status, metadata
+        ) VALUES ($1, $2, $3, $4, 'CONNECTED', $5);`,
+        [sa.platform, sa.name, sa.pageId, encrypted, JSON.stringify(sa.metadata)]
+      );
+    }
+  }
+
   logger.info("Development database seeding completed successfully.", { module: "Seed" });
 }
+
 
 // CLI Entrypoint
 if (require.main === module) {

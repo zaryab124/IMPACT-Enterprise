@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";
+import { LeadIntakeService } from "@/packages/growth-os/crm/services/leadIntakeService";
+import { AutomationEngine } from "@/packages/growth-os/automation/automationEngine";
 
 export async function POST(req: NextRequest) {
   try {
@@ -24,8 +26,45 @@ export async function POST(req: NextRequest) {
 
     const inquiryId = `INQ-${Date.now().toString(36).toUpperCase()}`;
 
+    // 1. Ingest into CRM & AI Qualification Pipeline
+    const nameParts = (name || "").trim().split(" ");
+    const firstName = nameParts[0] || "Inquiry";
+    const lastName = nameParts.slice(1).join(" ") || "Contact";
+
+    let crmLeadId = null;
+
+    try {
+      const intakeResult = await LeadIntakeService.ingestLead({
+        first_name: firstName,
+        last_name: lastName,
+        email,
+        source: "contact_form",
+        landing_page: "https://impact-enterprise.com/contact",
+        problem_statement: `Subject: ${subject || "General Inquiry"}\n\nMessage: ${message}`,
+        service_interest: subject || undefined,
+      });
+
+      crmLeadId = intakeResult.lead?.id;
+
+      // Trigger NEW_LEAD automation pipeline (AI qualification, owner assignment, follow-up task)
+      if (crmLeadId) {
+        await AutomationEngine.triggerEvent(
+          "NEW_LEAD",
+          "lead",
+          crmLeadId,
+          { lead: intakeResult.lead, source: "contact_form" }
+        ).catch((autoErr: any) => {
+          console.warn("Automation trigger non-blocking warning:", autoErr.message);
+        });
+      }
+    } catch (crmErr: any) {
+      console.warn("CRM intake non-blocking notice (fallback to local inquiry):", crmErr.message);
+    }
+
+    // 2. Backup Record in local inquiries store
     const record = {
       id: inquiryId,
+      crmLeadId,
       submittedAt: new Date().toISOString(),
       name,
       email,
@@ -53,8 +92,9 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      message: "Your message has been received. An IMPACT team member will be in touch shortly.",
+      message: "Your message has been received. Our team and AI sales intelligence have processed your inquiry.",
       inquiryId,
+      crmLeadId,
     });
   } catch (error) {
     console.error("Error submitting contact form:", error);

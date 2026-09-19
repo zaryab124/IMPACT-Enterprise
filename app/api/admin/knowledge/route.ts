@@ -2,14 +2,34 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { requireAuth, requireRole } from "@/packages/auth/session";
 import { knowledgeService } from "@/packages/knowledge";
-import { db } from "@/packages/database";
 import { handleApiError } from "@/packages/errors/errorHandler";
 import { auditRepository } from "@/packages/database/repositories/auditRepository";
 
 export const dynamic = "force-dynamic";
 
 const createDocumentSchema = z.object({
-  category: z.enum(["SERVICES", "CASE_STUDIES", "LEADERSHIP", "POLICIES", "CONTACT", "FAQ", "TECHNICAL"]),
+  category: z.enum([
+    "COMPANY",
+    "SERVICES",
+    "SERVICE_DESCRIPTIONS",
+    "TARGET_INDUSTRIES",
+    "TARGET_CUSTOMERS",
+    "FAQS",
+    "TEAM",
+    "PROJECTS",
+    "CASE_STUDIES",
+    "BRAND_GUIDELINES",
+    "CONTACT_INFORMATION",
+    "SALES_POLICIES",
+    "PRICING_RULES",
+    "APPROVED_CLAIMS",
+    "RESTRICTED_CLAIMS",
+    "LEADERSHIP",
+    "POLICIES",
+    "CONTACT",
+    "FAQ",
+    "TECHNICAL",
+  ]),
   title: z.string().min(3, "Title must be at least 3 characters"),
   content: z.string().min(10, "Content must be at least 10 characters"),
   source: z.string().min(3, "Source is required"),
@@ -21,8 +41,9 @@ export async function GET(req: NextRequest) {
     const session = await requireAuth(req);
     const { searchParams } = new URL(req.url);
     const category = searchParams.get("category") as any;
+    const includeArchived = searchParams.get("includeArchived") === "true";
 
-    const documents = await knowledgeService.listDocuments(category);
+    const documents = await knowledgeService.listDocuments(category, includeArchived);
 
     return NextResponse.json({
       success: true,
@@ -40,24 +61,25 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
-    const session = await requireRole(req, ["SUPER_ADMIN", "ADMIN"]);
+    const session = await requireRole(req, ["SUPER_ADMIN", "CEO", "CONTENT_MANAGER"]);
     const body = await req.json();
     const validated = createDocumentSchema.parse(body);
 
-    const res = await db.query(
-      `INSERT INTO knowledge_documents (category, title, content, source, version, metadata, is_active)
-       VALUES ($1, $2, $3, $4, 1, $5, TRUE)
-       RETURNING *;`,
-      [
-        validated.category,
-        validated.title,
-        validated.content,
-        validated.source,
-        JSON.stringify(validated.metadata),
-      ]
-    );
-
-    const createdDoc = res.rows[0];
+    const docId = `doc-${Date.now()}`;
+    const createdDoc = await knowledgeService.createDocument({
+      id: docId,
+      category: validated.category as any,
+      title: validated.title,
+      content: validated.content,
+      source: validated.source,
+      metadata: {
+        tags: validated.metadata.tags || [],
+        summary: validated.metadata.summary || validated.title,
+        ...validated.metadata,
+      },
+      reviewStatus: "APPROVED",
+      isActive: true,
+    });
 
     // Audit log
     await auditRepository.log({

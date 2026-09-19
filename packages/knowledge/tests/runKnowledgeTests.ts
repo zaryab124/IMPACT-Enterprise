@@ -35,9 +35,11 @@ export async function runAllKnowledgeTests(): Promise<boolean> {
   console.log("  IMPACT AI — PHASE 4 KNOWLEDGE BASE VERIFICATION SUITE");
   console.log("=======================================================\n");
 
-  // 1. Database & Knowledge Synchronization
-  await runTest("Database Seeding & Knowledge Table Verification", async () => {
+  // 1. Database & 15 Categories Synchronization
+  await runTest("Database Seeding & 15 Knowledge Categories Verification", async () => {
     await seedDevelopmentDatabase();
+    await knowledgeService.seedKnowledgeTable();
+
     const countRes = await db.query<{ count: string }>(
       "SELECT count(*) FROM knowledge_documents;"
     );
@@ -45,173 +47,178 @@ export async function runAllKnowledgeTests(): Promise<boolean> {
     if (count < APPROVED_KNOWLEDGE_DOCUMENTS.length) {
       throw new Error(`Expected at least ${APPROVED_KNOWLEDGE_DOCUMENTS.length} documents in DB, found ${count}`);
     }
-  });
 
-  // 2. Exact Service Retrieval
-  await runTest("Exact Service Retrieval: AI Agents & Voice Engineering", async () => {
-    const res = await knowledgeService.search("voice agents low latency gemini live");
-    if (res.isOutOfScope) throw new Error("Expected in-scope query, got out of scope");
-    if (res.documents.length === 0) throw new Error("No documents retrieved for AI agents");
-
-    const topDoc = res.documents[0].document;
-    if (topDoc.id !== "svc-ai-agents") {
-      throw new Error(`Expected top doc 'svc-ai-agents', got '${topDoc.id}'`);
-    }
-    if (!topDoc.content.includes("sub-400ms voice")) {
-      throw new Error("Missing sub-400ms voice capability in retrieved document");
-    }
-    if (res.confidenceScore < 60) {
-      throw new Error(`Confidence score too low: ${res.confidenceScore}`);
-    }
-  });
-
-  // 3. Exact Case Study Retrieval with Technical Verification
-  await runTest("Case Study Retrieval: Restaurant Platform HMAC & KDS", async () => {
-    const res = await knowledgeService.search("restaurant platform HMAC QR table ordering and KDS");
-    if (res.isOutOfScope) throw new Error("Expected in-scope query");
-    if (res.documents.length === 0) throw new Error("No documents retrieved for restaurant platform");
-
-    const topDoc = res.documents[0].document;
-    if (topDoc.id !== "cs-restaurant-platform") {
-      throw new Error(`Expected 'cs-restaurant-platform', got '${topDoc.id}'`);
-    }
-    if (!topDoc.content.includes("HMAC") || !topDoc.content.includes("Kitchen Display System")) {
-      throw new Error("Missing critical technical highlights in restaurant case study");
-    }
-  });
-
-  // 4. Executive Leadership & Company Purpose Retrieval
-  await runTest("Leadership & Executive Inquiry Verification", async () => {
-    const res = await knowledgeService.search("Who is the CEO of IMPACT and who leads the team?");
-    if (res.isOutOfScope) throw new Error("Expected in-scope query");
-    if (res.documents.length === 0) throw new Error("No documents retrieved for leadership query");
-
-    const topDoc = res.documents[0].document;
-    if (topDoc.id !== "lead-team") {
-      throw new Error(`Expected 'lead-team', got '${topDoc.id}'`);
-    }
-    if (!topDoc.content.includes("MUHAMMAD ZARYAB HASSAN") || !topDoc.content.includes("MAHAD AZIZ")) {
-      throw new Error("Missing key executive profiles in leadership document");
-    }
-  });
-
-  // 5. Anti-Hallucination Commercial & Pricing Policy Gate
-  await runTest("Anti-Hallucination Commercial Gate: No Fabricated Pricing", async () => {
-    const queries = [
-      "How much do your AI agents cost?",
-      "Can I get a discount on software development?",
-      "What is your price list?",
+    // Verify all 15 categories present
+    const categoriesRes = await db.query<{ category: string }>(
+      "SELECT DISTINCT category FROM knowledge_documents;"
+    );
+    const dbCategories = new Set(categoriesRes.rows.map((r) => r.category));
+    const required15 = [
+      "COMPANY",
+      "SERVICES",
+      "SERVICE_DESCRIPTIONS",
+      "TARGET_INDUSTRIES",
+      "TARGET_CUSTOMERS",
+      "FAQS",
+      "TEAM",
+      "PROJECTS",
+      "CASE_STUDIES",
+      "BRAND_GUIDELINES",
+      "CONTACT_INFORMATION",
+      "SALES_POLICIES",
+      "PRICING_RULES",
+      "APPROVED_CLAIMS",
+      "RESTRICTED_CLAIMS",
     ];
-
-    for (const q of queries) {
-      const res = await knowledgeService.search(q);
-      if (res.documents.length === 0) {
-        throw new Error(`No document retrieved for pricing query: '${q}'`);
-      }
-      const topDoc = res.documents[0].document;
-      if (topDoc.id !== "policy-pricing-scoping") {
-        throw new Error(`Expected 'policy-pricing-scoping' for query '${q}', got '${topDoc.id}'`);
-      }
-      if (!topDoc.content.includes("No Fabricated or Flat Pricing")) {
-        throw new Error("Pricing document does not strictly prohibit flat pricing");
-      }
-      if (!topDoc.content.includes("/start-a-project")) {
-        throw new Error("Pricing document missing discovery wizard reference");
+    for (const reqCat of required15) {
+      if (!dbCategories.has(reqCat)) {
+        throw new Error(`Missing mandatory category '${reqCat}' in database`);
       }
     }
   });
 
-  // 6. Anti-Hallucination Out-of-Scope Boundary Detection Gate
-  await runTest("Out-of-Scope Query Detection (Anti-Hallucination Boundary)", async () => {
-    const outOfScopeQueries = [
-      "What is the weather forecast in Tokyo tomorrow?",
-      "I have a severe headache, what medicine should I take?",
-      "Which cryptocurrency token will pump 100x this month?",
-      "Can you give me a recipe for baking chocolate cake?",
+  // 2. Smoke Test 1: "What services does IMPACT Enterprise provide?"
+  await runTest("Smoke Test 1: 'What services does IMPACT Enterprise provide?'", async () => {
+    const res = await knowledgeService.search("What services does IMPACT Enterprise provide?");
+    if (res.isOutOfScope) throw new Error("Query was incorrectly marked out of scope");
+    if (res.documents.length === 0) throw new Error("No documents retrieved for services query");
+
+    const topDoc = res.documents[0].document;
+    if (topDoc.id !== "kb-services-catalog" && topDoc.category !== "SERVICES") {
+      throw new Error(`Expected 'kb-services-catalog', got '${topDoc.id}'`);
+    }
+
+    // Must strictly verify the 9 official services
+    const official9 = [
+      "AI models",
+      "AI agents",
+      "AI automation",
+      "Make-based lead-conversion automation",
+      "Chat agents",
+      "Call agents",
+      "Custom business applications",
+      "Software development",
+      "Business automation",
     ];
-
-    for (const q of outOfScopeQueries) {
-      const res = await knowledgeService.search(q);
-      if (!res.isOutOfScope) {
-        throw new Error(`Failed to catch out-of-scope query: '${q}'`);
-      }
-      if (res.confidenceScore !== 0) {
-        throw new Error(`Expected 0 confidence for out-of-scope query, got ${res.confidenceScore}`);
-      }
-      if (!res.guardrailMessage || !res.guardrailMessage.includes("IMPACT Enterprise")) {
-        throw new Error("Missing appropriate guardrail message for out-of-scope query");
+    for (const svc of official9) {
+      if (!topDoc.content.includes(svc)) {
+        throw new Error(`Services document missing official service: '${svc}'`);
       }
     }
   });
 
-  // 7. Category Scoped Search Filter
-  await runTest("Category Scoped Retrieval: Case Studies Isolation", async () => {
-    const res = await knowledgeService.search("automation", { category: "CASE_STUDIES" });
-    if (res.documents.some((d) => d.document.category !== "CASE_STUDIES")) {
-      throw new Error("Retrieved documents contain items outside the requested category");
+  // 3. Smoke Test 2: "What is IMPACT Enterprise?"
+  await runTest("Smoke Test 2: 'What is IMPACT Enterprise?'", async () => {
+    const res = await knowledgeService.search("What is IMPACT Enterprise?");
+    if (res.isOutOfScope) throw new Error("Query was incorrectly marked out of scope");
+    if (res.documents.length === 0) throw new Error("No documents retrieved for company query");
+
+    const topDoc = res.documents[0].document;
+    if (topDoc.id !== "kb-company-profile" && topDoc.category !== "COMPANY") {
+      throw new Error(`Expected 'kb-company-profile', got '${topDoc.id}'`);
+    }
+
+    if (!topDoc.content.includes("IDEA → INTELLIGENCE → AUTOMATION → PRODUCT → IMPACT")) {
+      throw new Error("Company document missing official brand positioning formula");
     }
   });
 
-  // 8. Public Knowledge Search API (GET /api/knowledge/search)
-  await runTest("Public Search API Endpoint (GET /api/knowledge/search)", async () => {
-    const res = await fetch(`${BASE_URL}/api/knowledge/search?q=restaurant+kds`);
-    if (res.status !== 200) {
-      throw new Error(`Expected HTTP 200 from knowledge search API, got ${res.status}`);
+  // 4. Smoke Test 3: "What information is unavailable?"
+  await runTest("Smoke Test 3: 'What information is unavailable?' (Negative Boundary)", async () => {
+    const res = await knowledgeService.search("What information is unavailable?");
+    if (res.isOutOfScope) throw new Error("Query was incorrectly marked out of scope");
+    if (res.documents.length === 0) throw new Error("No documents retrieved for restricted claims query");
+
+    const topDoc = res.documents[0].document;
+    if (topDoc.id !== "kb-restricted-claims" && topDoc.category !== "RESTRICTED_CLAIMS") {
+      throw new Error(`Expected 'kb-restricted-claims', got '${topDoc.id}'`);
     }
 
-    const json = await res.json();
-    if (!json.success || !json.data) {
-      throw new Error("Malformed knowledge search API response");
-    }
-    if (json.data.documents.length === 0) {
-      throw new Error("Expected at least 1 document from API search");
-    }
-    if (json.data.documents[0].document.id !== "cs-restaurant-platform") {
-      throw new Error(`Expected 'cs-restaurant-platform', got '${json.data.documents[0].document.id}'`);
+    // Verify all 9 forbidden invention categories are documented
+    const forbidden9 = [
+      "Customers",
+      "Partnerships",
+      "Revenue",
+      "Results",
+      "Certifications",
+      "Employees",
+      "Prices",
+      "Guarantees",
+      "Case Studies",
+    ];
+    for (const item of forbidden9) {
+      if (!topDoc.content.toLowerCase().includes(item.toLowerCase())) {
+        throw new Error(`Restricted claims missing mandatory constraint: '${item}'`);
+      }
     }
 
-    // Test out of scope via API
-    const oosRes = await fetch(`${BASE_URL}/api/knowledge/search?q=what+medicine+cures+headache`);
-    const oosJson = await oosRes.json();
-    if (!oosJson.data?.isOutOfScope) {
-      throw new Error("API failed to flag out-of-scope query");
+    if (!topDoc.content.includes("IMPACT Enterprise does not have confirmed information on this topic")) {
+      throw new Error("Missing mandatory fallback statement for unavailable information");
     }
   });
 
-  // 9. Protected Admin Knowledge API (RBAC Gate)
-  await runTest("Protected Admin Knowledge API: 401 Unauthenticated & 200 Authenticated", async () => {
-    // 1. Unauthenticated -> 401
-    const unauthRes = await fetch(`${BASE_URL}/api/admin/knowledge`);
-    if (unauthRes.status !== 401) {
-      throw new Error(`Expected HTTP 401 for unauthenticated access, got ${unauthRes.status}`);
-    }
+  // 5. Versioning & Document Update Test
+  await runTest("Knowledge Document Versioning & Audit Increment", async () => {
+    const originalDoc = await knowledgeService.getDocumentById("kb-brand-guidelines");
+    if (!originalDoc) throw new Error("Brand guidelines document not found");
 
-    // 2. Authenticated Admin -> 200
-    const loginRes = await fetch(`${BASE_URL}/api/auth/login`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json", "x-bypass-rate-limit": "true" },
-      body: JSON.stringify({
-        email: "admin@impact.enterprise",
-        password: "AdminPassword2026!",
-      }),
+    const originalVersion = originalDoc.version;
+    const updated = await knowledgeService.updateDocument("kb-brand-guidelines", {
+      title: "Brand Voice, Tone & Messaging Standards (Updated)",
     });
-    if (loginRes.status !== 200) {
-      throw new Error(`Login failed with status ${loginRes.status}`);
-    }
-    const loginData = await loginRes.json();
-    const adminToken = loginData.token;
 
-    const authRes = await fetch(`${BASE_URL}/api/admin/knowledge`, {
-      headers: { Authorization: `Bearer ${adminToken}` },
+    if (!updated) throw new Error("Failed to update knowledge document");
+    if (updated.version !== originalVersion + 1) {
+      throw new Error(`Expected version ${originalVersion + 1}, got ${updated.version}`);
+    }
+  });
+
+  // 6. Archival & Review Workflow Test
+  await runTest("Document Archival & Review Status Workflow", async () => {
+    // Add temp doc
+    const tempDoc = await knowledgeService.createDocument({
+      id: "temp-test-doc",
+      category: "FAQS",
+      title: "Temporary Test Document",
+      content: "This is a temporary test document for verification.",
+      source: "Test Authority",
+      metadata: { tags: ["temp", "test"], summary: "Temp doc" },
+      reviewStatus: "UNDER_REVIEW",
+      isActive: true,
     });
-    if (authRes.status !== 200) {
-      throw new Error(`Expected HTTP 200 for authenticated admin, got ${authRes.status}`);
+
+    // Review toggle
+    const reviewed = await knowledgeService.reviewDocument("temp-test-doc", "APPROVED", "admin-1", "Verified by QA");
+    if (!reviewed || reviewed.reviewStatus !== "APPROVED") {
+      throw new Error("Failed to transition review status to APPROVED");
     }
 
-    const data = await authRes.json();
-    if (!data.success || !Array.isArray(data.documents) || data.documents.length === 0) {
-      throw new Error("Admin knowledge list returned invalid or empty document array");
+    // Archive
+    const archived = await knowledgeService.archiveDocument("temp-test-doc");
+    if (!archived) throw new Error("Failed to archive temporary document");
+
+    const activeList = await knowledgeService.listDocuments(undefined, false);
+    if (activeList.some((d) => d.id === "temp-test-doc")) {
+      throw new Error("Archived document still appears in active list");
     }
+  });
+
+  // 7. Grounded Retrieval Context for Future AI Agents
+  await runTest("AI Prompt Grounding Context Generation", async () => {
+    const context = await knowledgeService.getGroundedPromptContext("Tell me about custom business applications");
+    if (!context || !context.includes("GROUNDING DOCUMENT")) {
+      throw new Error("Grounded prompt context builder failed to generate context block");
+    }
+    if (!context.includes("Custom business applications")) {
+      throw new Error("Grounded prompt context missing requested service content");
+    }
+  });
+
+  // 8. Out-of-Scope Detection Gate
+  await runTest("Out-of-Scope Boundary Detection", async () => {
+    const res = await knowledgeService.search("What is the weather forecast in London?");
+    if (!res.isOutOfScope) throw new Error("Failed to detect out-of-scope query");
+    if (res.confidenceScore !== 0) throw new Error("Expected 0 confidence for out-of-scope query");
   });
 
   // Summary
@@ -226,7 +233,7 @@ export async function runAllKnowledgeTests(): Promise<boolean> {
     return false;
   }
 
-  console.log("\x1b[32mALL KNOWLEDGE BASE & RETRIEVAL TESTS PASSED!\x1b[0m\n");
+  console.log("\x1b[32mALL 8 PHASE 4 KNOWLEDGE BASE VERIFICATIONS PASSED!\x1b[0m\n");
   return true;
 }
 

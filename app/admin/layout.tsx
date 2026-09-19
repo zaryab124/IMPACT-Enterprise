@@ -67,6 +67,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   }
 
   const navItems = [
+    { label: "CRM Portal", href: "/admin/crm/dashboard", icon: Sparkles },
+    { label: "Growth OS", href: "/admin/growth-os", icon: Sparkles },
     { label: "Dashboard", href: "/admin/dashboard", icon: LayoutDashboard },
     { label: "Leads CRM", href: "/admin/leads", icon: Users },
     { label: "Customers", href: "/admin/customers", icon: Building2 },

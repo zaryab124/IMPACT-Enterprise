@@ -69,11 +69,57 @@ export async function requirePermission(
   const user = await requireAuth(req);
   const permitted = user.roles.some((role) => hasPermission(role, permission));
   if (!permitted) {
+    import("./auditLogger").then(({ logSecurityEvent }) => {
+      logSecurityEvent({
+        actorId: user.id,
+        actorEmail: user.email,
+        action: "ACCESS_DENIED",
+        resource: req.url,
+        details: { requiredPermission: permission, userRoles: user.roles },
+      }).catch(() => {});
+    });
+
     throw new ForbiddenError(
       `Access denied. Requires permission: '${permission}'. Current roles: [${user.roles.join(", ")}].`
     );
   }
   return user;
+}
+
+export async function requireAnyPermission(
+  req: Request,
+  permissions: Permission[]
+): Promise<UserWithRoles> {
+  const user = await requireAuth(req);
+  const permitted = user.roles.some((role) => permissions.some((p) => hasPermission(role, p)));
+  if (!permitted) {
+    import("./auditLogger").then(({ logSecurityEvent }) => {
+      logSecurityEvent({
+        actorId: user.id,
+        actorEmail: user.email,
+        action: "ACCESS_DENIED",
+        resource: req.url,
+        details: { requiredAnyOf: permissions, userRoles: user.roles },
+      }).catch(() => {});
+    });
+
+    throw new ForbiddenError(
+      `Access denied. Requires one of permissions: [${permissions.join(", ")}]. Current roles: [${user.roles.join(", ")}].`
+    );
+  }
+  return user;
+}
+
+export function canAccessLead(user: UserWithRoles, lead: { assigned_salesperson?: string | null }): boolean {
+  // If user has global view permission, allow
+  if (user.roles.some((r) => hasPermission(r, "crm:view_all") || hasPermission(r, "leads:view_all"))) {
+    return true;
+  }
+  // Otherwise, if Sales Agent, only allowed if assigned
+  if (user.roles.includes("SALES_AGENT")) {
+    return lead.assigned_salesperson === user.id;
+  }
+  return false;
 }
 
 export function setSessionCookie(res: NextResponse, token: string): void {

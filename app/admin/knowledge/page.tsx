@@ -12,6 +12,11 @@ import {
   ExternalLink,
   CheckCircle2,
   RefreshCw,
+  Plus,
+  Edit3,
+  Archive,
+  Check,
+  X,
   Layers,
 } from "lucide-react";
 
@@ -29,12 +34,14 @@ interface KnowledgeDocument {
     keyPoints?: string[];
     [key: string]: any;
   };
+  reviewStatus?: "APPROVED" | "UNDER_REVIEW" | "ARCHIVED";
   isActive: boolean;
 }
 
 interface TestSearchResult {
   query: string;
   isOutOfScope: boolean;
+  isRestrictedTopic?: boolean;
   confidenceScore: number;
   documents: {
     document: KnowledgeDocument;
@@ -43,6 +50,25 @@ interface TestSearchResult {
   }[];
   guardrailMessage?: string;
 }
+
+const ALL_15_CATEGORIES = [
+  "ALL",
+  "COMPANY",
+  "SERVICES",
+  "SERVICE_DESCRIPTIONS",
+  "TARGET_INDUSTRIES",
+  "TARGET_CUSTOMERS",
+  "FAQS",
+  "TEAM",
+  "PROJECTS",
+  "CASE_STUDIES",
+  "BRAND_GUIDELINES",
+  "CONTACT_INFORMATION",
+  "SALES_POLICIES",
+  "PRICING_RULES",
+  "APPROVED_CLAIMS",
+  "RESTRICTED_CLAIMS",
+];
 
 export default function AdminKnowledgePage() {
   const [documents, setDocuments] = useState<KnowledgeDocument[]>([]);
@@ -56,6 +82,21 @@ export default function AdminKnowledgePage() {
   const [testing, setTesting] = useState(false);
   const [testResult, setTestResult] = useState<TestSearchResult | null>(null);
 
+  // Modals
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [actionLoading, setActionLoading] = useState(false);
+
+  // Form State
+  const [formData, setFormData] = useState({
+    category: "COMPANY",
+    title: "",
+    content: "",
+    source: "",
+    summary: "",
+    tags: "",
+  });
+
   const fetchDocuments = useCallback(async () => {
     setLoading(true);
     try {
@@ -68,7 +109,10 @@ export default function AdminKnowledgePage() {
         const data = await res.json();
         setDocuments(data.documents || []);
         if (data.documents && data.documents.length > 0) {
-          setSelectedDoc((prev) => prev ?? data.documents[0]);
+          setSelectedDoc((prev) => {
+            const stillExists = data.documents.find((d: any) => d.id === prev?.id);
+            return stillExists || data.documents[0];
+          });
         }
       }
     } catch (err) {
@@ -82,21 +126,126 @@ export default function AdminKnowledgePage() {
     fetchDocuments();
   }, [fetchDocuments]);
 
-  const handleTestSearch = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!testQuery.trim()) return;
+  const handleTestSearch = async (queryToRun?: string) => {
+    const q = queryToRun ?? testQuery;
+    if (!q.trim()) return;
+    setTestQuery(q);
     setTesting(true);
     try {
-      const res = await fetch(`/api/knowledge/search?q=${encodeURIComponent(testQuery)}`);
+      const res = await fetch("/api/knowledge/retrieve", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ query: q }),
+      });
       if (res.ok) {
-        const data = await res.json();
-        setTestResult(data.data);
+        const json = await res.json();
+        setTestResult(json.data);
       }
     } catch (err) {
       console.error("Search test failed:", err);
     } finally {
       setTesting(false);
     }
+  };
+
+  const handleCreateDocument = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setActionLoading(true);
+    try {
+      const res = await fetch("/api/admin/knowledge", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          category: formData.category,
+          title: formData.title,
+          content: formData.content,
+          source: formData.source,
+          metadata: {
+            summary: formData.summary,
+            tags: formData.tags.split(",").map((t) => t.trim()).filter(Boolean),
+          },
+        }),
+      });
+      if (res.ok) {
+        setShowAddModal(false);
+        setFormData({ category: "COMPANY", title: "", content: "", source: "", summary: "", tags: "" });
+        await fetchDocuments();
+      }
+    } catch (err) {
+      console.error("Failed to create document:", err);
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const handleEditDocument = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedDoc) return;
+    setActionLoading(true);
+    try {
+      const res = await fetch(`/api/admin/knowledge/${selectedDoc.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title: formData.title,
+          content: formData.content,
+          source: formData.source,
+          metadata: {
+            ...selectedDoc.metadata,
+            summary: formData.summary,
+            tags: formData.tags.split(",").map((t) => t.trim()).filter(Boolean),
+          },
+        }),
+      });
+      if (res.ok) {
+        setShowEditModal(false);
+        await fetchDocuments();
+      }
+    } catch (err) {
+      console.error("Failed to edit document:", err);
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const handleArchiveDocument = async (id: string) => {
+    if (!confirm("Are you sure you want to archive this knowledge document?")) return;
+    try {
+      const res = await fetch(`/api/admin/knowledge/${id}`, { method: "DELETE" });
+      if (res.ok) {
+        await fetchDocuments();
+      }
+    } catch (err) {
+      console.error("Failed to archive document:", err);
+    }
+  };
+
+  const handleToggleReview = async (id: string, currentStatus?: string) => {
+    const nextStatus = currentStatus === "APPROVED" ? "UNDER_REVIEW" : "APPROVED";
+    try {
+      const res = await fetch(`/api/admin/knowledge/${id}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: nextStatus }),
+      });
+      if (res.ok) {
+        await fetchDocuments();
+      }
+    } catch (err) {
+      console.error("Failed to update review status:", err);
+    }
+  };
+
+  const openEditModal = (doc: KnowledgeDocument) => {
+    setFormData({
+      category: doc.category,
+      title: doc.title,
+      content: doc.content,
+      source: doc.source,
+      summary: doc.metadata.summary || "",
+      tags: doc.metadata.tags ? doc.metadata.tags.join(", ") : "",
+    });
+    setShowEditModal(true);
   };
 
   const filteredDocs = documents.filter((doc) => {
@@ -109,16 +258,6 @@ export default function AdminKnowledgePage() {
     );
   });
 
-  const categories = [
-    "ALL",
-    "SERVICES",
-    "CASE_STUDIES",
-    "LEADERSHIP",
-    "POLICIES",
-    "CONTACT",
-    "FAQ",
-  ];
-
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -126,44 +265,90 @@ export default function AdminKnowledgePage() {
         <div>
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-accentSoft text-brand-accent text-xs font-bold uppercase tracking-wider mb-2">
             <BookOpen className="w-3.5 h-3.5" />
-            Knowledge Governance & Anti-Hallucination
+            Phase 4 Knowledge Governance & Anti-Hallucination
           </div>
           <h1 className="text-2xl sm:text-3xl font-black text-brand-dark tracking-tight">
-            IMPACT Knowledge Base
+            IMPACT Enterprise AI Knowledge Base
           </h1>
           <p className="text-sm text-brand-muted mt-1">
-            Curated, verified corporate truths used to ground Gemini AI sales conversations with zero hallucination.
+            Official 15-category corporate source of truth used to ground future AI agents with zero hallucination.
           </p>
         </div>
 
-        <button
-          onClick={fetchDocuments}
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-brand-border text-xs font-bold text-brand-charcoal hover:text-brand-accent hover:border-brand-accent transition-all shadow-xs"
-        >
-          <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} />
-          <span>Refresh Knowledge</span>
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => {
+              setFormData({ category: "COMPANY", title: "", content: "", source: "", summary: "", tags: "" });
+              setShowAddModal(true);
+            }}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-brand-accent text-white text-xs font-bold hover:bg-brand-accentHover transition-all shadow-xs"
+          >
+            <Plus className="w-4 h-4" />
+            <span>Add Record</span>
+          </button>
+          <button
+            onClick={fetchDocuments}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-brand-border text-xs font-bold text-brand-charcoal hover:text-brand-accent hover:border-brand-accent transition-all shadow-xs"
+          >
+            <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} />
+            <span>Refresh</span>
+          </button>
+        </div>
       </div>
 
       {/* Interactive Anti-Hallucination & Retrieval Testing Console */}
-      <div className="bg-white border border-brand-border rounded-2xl p-5 shadow-xs">
-        <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-brand-accent mb-2">
-          <Sparkles className="w-4 h-4" />
-          Realtime Semantic Query Tester
+      <div className="bg-white border border-brand-border rounded-2xl p-5 shadow-xs space-y-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-brand-accent">
+            <Sparkles className="w-4 h-4" />
+            Realtime Retrieval & Anti-Hallucination Tester
+          </div>
+          <div className="text-[11px] font-mono text-brand-muted">
+            Model: Grounded Knowledge Engine
+          </div>
         </div>
-        <p className="text-xs text-brand-muted mb-4">
-          Test queries against the knowledge retrieval engine to verify exact document matching, anti-hallucination guardrails, and out-of-scope detection.
-        </p>
 
-        <form onSubmit={handleTestSearch} className="flex gap-2">
+        {/* 3 Smoke Test Action Pills */}
+        <div className="flex flex-wrap items-center gap-2 pt-1">
+          <span className="text-xs font-bold text-brand-muted mr-1">Run Smoke Tests:</span>
+          <button
+            type="button"
+            onClick={() => handleTestSearch("What services does IMPACT Enterprise provide?")}
+            className="px-3 py-1 rounded-lg bg-brand-surface border border-brand-border text-xs font-medium text-brand-dark hover:border-brand-accent hover:text-brand-accent transition-all"
+          >
+            1. What services does IMPACT Enterprise provide?
+          </button>
+          <button
+            type="button"
+            onClick={() => handleTestSearch("What is IMPACT Enterprise?")}
+            className="px-3 py-1 rounded-lg bg-brand-surface border border-brand-border text-xs font-medium text-brand-dark hover:border-brand-accent hover:text-brand-accent transition-all"
+          >
+            2. What is IMPACT Enterprise?
+          </button>
+          <button
+            type="button"
+            onClick={() => handleTestSearch("What information is unavailable?")}
+            className="px-3 py-1 rounded-lg bg-red-50 border border-red-200 text-xs font-medium text-red-700 hover:bg-red-100 transition-all"
+          >
+            3. What information is unavailable?
+          </button>
+        </div>
+
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleTestSearch();
+          }}
+          className="flex gap-2"
+        >
           <div className="relative flex-1">
             <Search className="w-4 h-4 text-brand-muted absolute left-3.5 top-3" />
             <input
               type="text"
               value={testQuery}
               onChange={(e) => setTestQuery(e.target.value)}
-              placeholder="e.g. 'What is the pricing for custom AI agents?' or 'What did you build for the restaurant?' or 'What's the weather in Tokyo?'"
-              className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-brand-border text-xs focus:outline-none focus:ring-2 focus:ring-brand-accent focus:border-transparent font-medium"
+              placeholder="Ask the knowledge base any enterprise question..."
+              className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-brand-border text-xs focus:outline-hidden focus:ring-2 focus:ring-brand-accent focus:border-transparent font-medium"
             />
           </div>
           <button
@@ -176,13 +361,17 @@ export default function AdminKnowledgePage() {
         </form>
 
         {testResult && (
-          <div className="mt-4 p-4 rounded-xl border border-brand-border bg-brand-surface text-xs space-y-2">
+          <div className="p-4 rounded-xl border border-brand-border bg-brand-surface text-xs space-y-3">
             <div className="flex items-center justify-between">
               <span className="font-bold text-brand-dark">Query Evaluation Result:</span>
               <div className="flex items-center gap-2">
                 {testResult.isOutOfScope ? (
                   <span className="px-2.5 py-0.5 rounded-full bg-red-100 text-red-700 font-bold font-mono">
                     OUT OF SCOPE (GUARDRAIL ACTIVE)
+                  </span>
+                ) : testResult.isRestrictedTopic ? (
+                  <span className="px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-800 font-bold font-mono">
+                    RESTRICTED CLAIMS BOUNDARY VERIFIED
                   </span>
                 ) : (
                   <span className="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-700 font-bold font-mono">
@@ -192,38 +381,43 @@ export default function AdminKnowledgePage() {
               </div>
             </div>
 
-            {testResult.isOutOfScope ? (
-              <div className="p-3 rounded-lg bg-red-50 border border-red-200 text-red-700 font-medium">
+            {testResult.guardrailMessage && (
+              <div className="p-3 rounded-lg bg-amber-50 border border-amber-200 text-amber-900 font-medium whitespace-pre-line leading-relaxed">
                 {testResult.guardrailMessage}
               </div>
-            ) : (
-              <div>
-                <span className="text-brand-muted">Retrieved Grounding Documents:</span>
-                <div className="mt-1.5 space-y-1.5">
-                  {testResult.documents.map((d, i) => (
-                    <div
-                      key={d.document.id}
-                      className="flex items-center justify-between p-2 rounded-lg bg-white border border-brand-border font-mono"
-                    >
-                      <span className="font-semibold text-brand-dark">
+            )}
+
+            {testResult.documents && testResult.documents.length > 0 && (
+              <div className="space-y-1.5">
+                <span className="text-brand-muted font-bold block">Retrieved Passages:</span>
+                {testResult.documents.map((d, i) => (
+                  <div
+                    key={d.document.id}
+                    className="p-3 rounded-lg bg-white border border-brand-border space-y-1"
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="font-bold text-brand-dark">
                         #{i + 1} {d.document.title} ({d.document.category})
                       </span>
-                      <span className="text-brand-accent font-bold">
-                        Score: {d.score} | Terms: [{d.matchedTerms.join(", ")}]
+                      <span className="text-brand-accent font-bold font-mono text-[10px]">
+                        Source: {d.document.source} | Score: {d.score}
                       </span>
                     </div>
-                  ))}
-                </div>
+                    <p className="text-[11px] text-brand-charcoal whitespace-pre-line line-clamp-3">
+                      {d.document.content}
+                    </p>
+                  </div>
+                ))}
               </div>
             )}
           </div>
         )}
       </div>
 
-      {/* Category Pills & Local Filter */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0">
-          {categories.map((cat) => (
+      {/* 15 Category Pills & Search Filter */}
+      <div className="space-y-3">
+        <div className="flex items-center gap-1.5 overflow-x-auto pb-1">
+          {ALL_15_CATEGORIES.map((cat) => (
             <button
               key={cat}
               onClick={() => setSelectedCategory(cat)}
@@ -233,19 +427,19 @@ export default function AdminKnowledgePage() {
                   : "bg-white border border-brand-border text-brand-charcoal hover:bg-brand-surface"
               }`}
             >
-              {cat}
+              {cat.replace(/_/g, " ")}
             </button>
           ))}
         </div>
 
-        <div className="relative w-full sm:w-64">
-          <Search className="w-3.5 h-3.5 text-brand-muted absolute left-3 top-2.5" />
+        <div className="relative w-full">
+          <Search className="w-3.5 h-3.5 text-brand-muted absolute left-3 top-3" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Filter documents..."
-            className="w-full pl-9 pr-3 py-1.5 rounded-xl border border-brand-border bg-white text-xs focus:outline-none focus:ring-2 focus:ring-brand-accent"
+            placeholder="Search records by title, content, or tag..."
+            className="w-full pl-9 pr-4 py-2 rounded-xl border border-brand-border bg-white text-xs focus:outline-hidden focus:ring-2 focus:ring-brand-accent font-medium"
           />
         </div>
       </div>
@@ -277,11 +471,22 @@ export default function AdminKnowledgePage() {
                 >
                   <div className="flex items-center justify-between gap-2 mb-1.5">
                     <span className="px-2 py-0.5 rounded-md bg-brand-surface border border-brand-border text-[10px] font-mono font-bold text-brand-accent uppercase">
-                      {doc.category}
+                      {doc.category.replace(/_/g, " ")}
                     </span>
-                    <span className="text-[10px] font-mono text-brand-muted">
-                      v{doc.version}
-                    </span>
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-brand-surface text-brand-muted font-bold">
+                        v{doc.version}
+                      </span>
+                      <span
+                        className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full ${
+                          doc.reviewStatus === "APPROVED"
+                            ? "bg-emerald-100 text-emerald-800"
+                            : "bg-amber-100 text-amber-800"
+                        }`}
+                      >
+                        {doc.reviewStatus || "APPROVED"}
+                      </span>
+                    </div>
                   </div>
                   <h3 className="font-bold text-xs text-brand-dark line-clamp-1 mb-1">
                     {doc.title}
@@ -314,11 +519,11 @@ export default function AdminKnowledgePage() {
                 <div>
                   <div className="flex items-center gap-2 mb-2">
                     <span className="px-2.5 py-0.5 rounded-md bg-brand-accentSoft text-brand-accent text-xs font-mono font-bold uppercase">
-                      {selectedDoc.category}
+                      {selectedDoc.category.replace(/_/g, " ")}
                     </span>
                     <span className="inline-flex items-center gap-1 text-xs text-emerald-600 font-bold">
                       <ShieldCheck className="w-3.5 h-3.5" />
-                      Verified Source
+                      Verified Source v{selectedDoc.version}
                     </span>
                   </div>
                   <h2 className="text-lg font-black text-brand-dark tracking-tight">
@@ -329,10 +534,31 @@ export default function AdminKnowledgePage() {
                   </p>
                 </div>
 
-                <div className="text-right">
-                  <span className="text-xs font-mono font-bold px-2 py-1 rounded bg-brand-surface border border-brand-border">
-                    ID: {selectedDoc.id}
-                  </span>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => openEditModal(selectedDoc)}
+                    className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl border border-brand-border bg-white text-xs font-bold text-brand-charcoal hover:text-brand-accent hover:border-brand-accent shadow-xs"
+                  >
+                    <Edit3 className="w-3.5 h-3.5" />
+                    <span>Edit</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleToggleReview(selectedDoc.id, selectedDoc.reviewStatus)}
+                    className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl border border-brand-border bg-white text-xs font-bold text-brand-charcoal hover:text-brand-accent shadow-xs"
+                  >
+                    <Check className="w-3.5 h-3.5" />
+                    <span>Review</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleArchiveDocument(selectedDoc.id)}
+                    className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl border border-red-200 bg-red-50 text-xs font-bold text-red-700 hover:bg-red-100 shadow-xs"
+                  >
+                    <Archive className="w-3.5 h-3.5" />
+                    <span>Archive</span>
+                  </button>
                 </div>
               </div>
 
@@ -346,7 +572,7 @@ export default function AdminKnowledgePage() {
                 </div>
               </div>
 
-              {/* Key Points & Metadata */}
+              {/* Key Facts */}
               {selectedDoc.metadata.keyPoints && selectedDoc.metadata.keyPoints.length > 0 && (
                 <div>
                   <h4 className="text-xs font-bold uppercase tracking-wider text-brand-subtle mb-2">
@@ -389,6 +615,126 @@ export default function AdminKnowledgePage() {
           )}
         </div>
       </div>
+
+      {/* Add / Edit Modal */}
+      {(showAddModal || showEditModal) && (
+        <div className="fixed inset-0 bg-brand-dark/50 backdrop-blur-xs flex items-center justify-center z-50 p-4">
+          <div className="bg-white border border-brand-border rounded-2xl max-w-lg w-full p-6 shadow-xl space-y-4">
+            <div className="flex items-center justify-between pb-3 border-b border-brand-border">
+              <h3 className="text-base font-black text-brand-dark">
+                {showAddModal ? "Add Knowledge Record" : `Edit Record (v${selectedDoc?.version ?? 1} → v${(selectedDoc?.version ?? 1) + 1})`}
+              </h3>
+              <button
+                type="button"
+                onClick={() => {
+                  setShowAddModal(false);
+                  setShowEditModal(false);
+                }}
+                className="text-brand-muted hover:text-brand-dark"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <form onSubmit={showAddModal ? handleCreateDocument : handleEditDocument} className="space-y-3 text-xs">
+              {showAddModal && (
+                <div>
+                  <label className="font-bold text-brand-dark block mb-1">Category (15 Categories)</label>
+                  <select
+                    value={formData.category}
+                    onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                    className="w-full px-3 py-2 rounded-xl border border-brand-border"
+                  >
+                    {ALL_15_CATEGORIES.filter((c) => c !== "ALL").map((cat) => (
+                      <option key={cat} value={cat}>
+                        {cat.replace(/_/g, " ")}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
+
+              <div>
+                <label className="font-bold text-brand-dark block mb-1">Title</label>
+                <input
+                  type="text"
+                  required
+                  value={formData.title}
+                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                  className="w-full px-3 py-2 rounded-xl border border-brand-border"
+                  placeholder="e.g. Official Service Catalog"
+                />
+              </div>
+
+              <div>
+                <label className="font-bold text-brand-dark block mb-1">Source / Reference</label>
+                <input
+                  type="text"
+                  required
+                  value={formData.source}
+                  onChange={(e) => setFormData({ ...formData, source: e.target.value })}
+                  className="w-full px-3 py-2 rounded-xl border border-brand-border font-mono"
+                  placeholder="e.g. IMPACT Operations Manual v2.0"
+                />
+              </div>
+
+              <div>
+                <label className="font-bold text-brand-dark block mb-1">Verified Content</label>
+                <textarea
+                  required
+                  rows={5}
+                  value={formData.content}
+                  onChange={(e) => setFormData({ ...formData, content: e.target.value })}
+                  className="w-full px-3 py-2 rounded-xl border border-brand-border font-mono leading-relaxed"
+                  placeholder="Enter official verified company text..."
+                />
+              </div>
+
+              <div>
+                <label className="font-bold text-brand-dark block mb-1">Summary</label>
+                <input
+                  type="text"
+                  value={formData.summary}
+                  onChange={(e) => setFormData({ ...formData, summary: e.target.value })}
+                  className="w-full px-3 py-2 rounded-xl border border-brand-border"
+                  placeholder="Concise summary for AI search"
+                />
+              </div>
+
+              <div>
+                <label className="font-bold text-brand-dark block mb-1">Tags (Comma-separated)</label>
+                <input
+                  type="text"
+                  value={formData.tags}
+                  onChange={(e) => setFormData({ ...formData, tags: e.target.value })}
+                  className="w-full px-3 py-2 rounded-xl border border-brand-border font-mono"
+                  placeholder="services, catalog, official"
+                />
+              </div>
+
+              <div className="flex justify-end gap-2 pt-3 border-t border-brand-border">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowAddModal(false);
+                    setShowEditModal(false);
+                  }}
+                  className="px-4 py-2 rounded-xl border border-brand-border text-xs font-bold text-brand-muted"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={actionLoading}
+                  className="px-5 py-2 rounded-xl bg-brand-accent text-white text-xs font-bold hover:bg-brand-accentHover"
+                >
+                  {actionLoading ? "Saving..." : showAddModal ? "Create Record" : "Save Updates (Increment Version)"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -1,349 +1,489 @@
 import { KnowledgeDocument } from "../types";
 
 export const APPROVED_KNOWLEDGE_DOCUMENTS: KnowledgeDocument[] = [
-  // 1. SERVICES
+  // 1. COMPANY
   {
-    id: "svc-ai-agents",
-    category: "SERVICES",
-    title: "AI & Intelligent Agents",
-    source: "IMPACT Solutions Matrix — AI Agents",
+    id: "kb-company-profile",
+    category: "COMPANY",
+    title: "IMPACT Enterprise: Company Profile & Positioning",
+    source: "IMPACT Enterprise Charter & Corporate Mandate v2.0",
     version: 1,
-    content: `IMPACT Technologies engineers production-grade AI & Autonomous Agents. Moving beyond passive chatbots to proactive intelligent systems that understand business goals, formulate multi-step plans, call external APIs, query knowledge bases, and execute business actions.
-Key capabilities include:
-- Low-latency sub-400ms voice and telephone agents (powered by Gemini Live WebSocket architecture).
-- Autonomous inbound sales qualification and CRM contact synchronization.
-- Customer support and automated tier-1 triage agents.
-- Deep research agents and internal document intelligence with hybrid vector search.
-- Deterministic schema-validated tool and function calling.
-Typical delivery timeline: 2 to 6 weeks depending on integration complexity.
-Target audience: Enterprises, fast-scaling startups, multi-branch service businesses, and sales operations.`,
+    content: `IMPACT Enterprise is a premier artificial intelligence, software engineering, and business automation enterprise.
+The company transforms business ideas into measurable real-world operational and commercial impact.
+
+Core Brand Positioning Formula:
+IDEA → INTELLIGENCE → AUTOMATION → PRODUCT → IMPACT
+
+Company Philosophy:
+- Problem-First: We begin with the operational bottleneck, not the technology.
+- Intelligence-First: Deploying state-of-the-art AI models and agents where they yield measurable value.
+- Automation-First: Eliminating fragile manual tasks through event-driven automation.
+- Product-Minded: Building production-ready, durable software platforms rather than throwaway demos.
+- Real-World Impact: Measuring success by conversion velocity, hours reclaimed, and operational efficiency.`,
     metadata: {
-      tags: ["ai", "agents", "voice", "gemini", "gemini-live", "sales-agent", "support", "rag"],
-      summary: "Autonomous intelligent agents for voice, chat, sales qualification, and workflow execution.",
-      timeline: "2 to 6 weeks",
-      targetAudience: "Enterprises, fast-scaling startups, multi-branch businesses",
+      tags: ["company", "about", "positioning", "mission", "vision", "impact", "brand"],
+      summary: "Official profile and brand positioning formula for IMPACT Enterprise.",
       keyPoints: [
-        "Sub-400ms voice latency",
-        "Autonomous lead qualification & CRM sync",
-        "Deterministic tool execution",
-        "Custom knowledge grounding",
+        "Brand formula: IDEA → INTELLIGENCE → AUTOMATION → PRODUCT → IMPACT",
+        "Focus on production-grade AI, automation, and full-stack software",
+        "Measurable operational business outcomes",
       ],
     },
-    isActive: true,
-  },
-  {
-    id: "svc-automation",
-    category: "SERVICES",
-    title: "Business Process Automation",
-    source: "IMPACT Solutions Matrix — Automation",
-    version: 1,
-    content: `IMPACT replaces fragile, repetitive manual operations with resilient, event-driven automations connecting your leads, CRMs, internal databases, messaging channels, and operations teams.
-Key capabilities include:
-- Multi-channel webhook ingestion with dead-letter queue (DLQ) retry mechanisms.
-- Automated lead capture to CRM synchronization (HubSpot, Salesforce, PostgreSQL, Custom CRMs).
-- Instant multi-channel follow-up engagement via WhatsApp Cloud API and transactional email under 60 seconds.
-- Operational inventory synchronization, kitchen display dispatch, and order event streams.
-Typical delivery timeline: 1 to 3 weeks.
-Target audience: B2B sales teams, agencies, e-commerce brands, commercial multi-branch operations.`,
-    metadata: {
-      tags: ["automation", "crm", "webhooks", "whatsapp", "email", "pipeline", "integration"],
-      summary: "End-to-end event-driven business process automation and CRM integrations.",
-      timeline: "1 to 3 weeks",
-      targetAudience: "B2B sales teams, agencies, e-commerce, commercial operations",
-      keyPoints: [
-        "Sub-60s follow-up trigger",
-        "Idempotent webhook ingestion",
-        "Resilient error handling with DLQ",
-        "Bidirectional CRM synchronization",
-      ],
-    },
-    isActive: true,
-  },
-  {
-    id: "svc-software",
-    category: "SERVICES",
-    title: "Custom Software & Web Applications",
-    source: "IMPACT Solutions Matrix — Full-Stack Software",
-    version: 1,
-    content: `IMPACT builds robust, high-performance digital platforms engineered with modern frameworks, high-throughput APIs, and role-based administrative portals.
-Key capabilities include:
-- Next.js & React custom web applications with responsive Tailwind design and 3D WebGL graphics.
-- Cross-platform iOS and Android mobile applications.
-- Multi-role administrative dashboards with granular 6-to-8 tier RBAC and audit logging.
-- High-throughput backend microservices using Node.js / TypeScript / Python FastAPI / PostgreSQL / Redis.
-- Real-time WebSocket streaming architectures.
-Typical delivery timeline: 4 to 12 weeks.
-Target audience: Founders, enterprise teams modernizing legacy software, platforms requiring bespoke customer workflows.`,
-    metadata: {
-      tags: ["software", "web", "nextjs", "react", "typescript", "fastapi", "mobile", "fullstack"],
-      summary: "Full-stack web and mobile application engineering with modern architecture.",
-      timeline: "4 to 12 weeks",
-      targetAudience: "Founders, enterprise teams replacing legacy portals, growing platforms",
-      keyPoints: [
-        "Next.js App Router & React 18+",
-        "Role-based security & audit logging",
-        "Clean REST & WebSocket APIs",
-        "Scalable database modeling",
-      ],
-    },
-    isActive: true,
-  },
-  {
-    id: "svc-products",
-    category: "SERVICES",
-    title: "Product Studio & Ventures",
-    source: "IMPACT Solutions Matrix — Product Studio",
-    version: 1,
-    content: `IMPACT partners with ambitious founders and enterprise organizations to architect, build, launch, and scale proprietary digital products and SaaS engines.
-Key capabilities include:
-- Zero-to-one rapid MVP commercialization and technical roadmapping.
-- Multi-tenant SaaS architectures with strict database tenant isolation.
-- Cryptographic verification mechanisms and real-time transaction processing.
-- Long-term technical stewardship, feature velocity, and platform scaling.
-Typical delivery timeline: 6 to 16 weeks.
-Target audience: Startups, early-stage founders, strategic corporate venture units.`,
-    metadata: {
-      tags: ["product-studio", "ventures", "saas", "mvp", "multitenant", "startup"],
-      summary: "Commercial venture creation, SaaS architecture, and zero-to-one product development.",
-      timeline: "6 to 16 weeks",
-      targetAudience: "Startups, early-stage founders, corporate venture teams",
-      keyPoints: [
-        "Rapid commercial MVP build",
-        "Multi-tenant tenant isolation",
-        "Scalable cloud infrastructure",
-        "Strategic product alignment",
-      ],
-    },
+    reviewStatus: "APPROVED",
     isActive: true,
   },
 
-  // 2. CASE STUDIES
+  // 2. SERVICES
   {
-    id: "cs-restaurant-platform",
-    category: "CASE_STUDIES",
-    title: "Case Study: Restaurant Technology Platform",
-    source: "IMPACT Case Studies — Case Study #1",
+    id: "kb-services-catalog",
+    category: "SERVICES",
+    title: "Official Catalog of Core Services",
+    source: "IMPACT Enterprise Solutions Matrix 2026",
     version: 1,
-    content: `Commercial multi-branch restaurant management, digital ordering, and kitchen dispatch ecosystem.
-Problem: Chaotic paper tickets causing kitchen delays, 30% aggregator commission fees on third-party delivery apps, vulnerability to table spoofing in QR ordering, and lack of unified branch P&L visibility.
-Solution Delivered: Full-stack commercial ordering, kitchen dispatch, delivery, and financial analytics platform uniting 6 isolated branches in real time.
-Key Technical Highlights:
-- Cryptographic HMAC QR table ordering completely eliminating table spoofing.
-- Redis Pub/Sub WebSocket Kitchen Display System (KDS) with sub-second order dispatch.
-- Server-isolated 6-branch database partitioning with 8 RBAC security roles (Owner, Admin, Branch Manager, Chef, Waiter, Cashier, Rider, Auditor).
-- Automated deal engine enforcing a strict 25% maximum custom discount cutoff.
-Outcome: Unified 6 physical branches, eliminated paper ticket lag, achieved sub-second kitchen communication, and saved thousands in third-party aggregator commissions.`,
+    content: `IMPACT Enterprise exclusively provides 9 official core services:
+1. AI models — Domain-tuned foundation models, parameter-efficient fine-tuning, and bespoke neural architectures.
+2. AI agents — Autonomous goal-directed software agents with schema-validated tool-calling and API execution.
+3. AI automation — Intelligent cognitive automation uniting unstructured document parsing, decision logic, and CRM sync.
+4. Make-based lead-conversion automation — High-throughput Make.com enterprise scenarios routing inbound inquiries, scoring intent, and triggering sub-60s cadences.
+5. Chat agents — Grounded conversational multi-channel web chat and WhatsApp agents driving qualified discovery appointments.
+6. Call agents — Sub-400ms full-duplex conversational voice agents powered by Gemini Live WebSocket architecture with real-time transcription.
+7. Custom business applications — Production-grade internal enterprise systems, customer portals, and tailored business workflows.
+8. Software development — Full-stack software engineering, high-concurrency Node.js/Next.js backends, and microservice architectures.
+9. Business automation — End-to-end operational automation eliminating manual back-office bottlenecks across enterprise pipelines.`,
     metadata: {
-      tags: ["case-study", "restaurant", "hmac", "kds", "websockets", "redis", "fastapi", "nextjs", "rbac"],
-      summary: "Multi-branch restaurant tech platform with HMAC QR ordering and sub-second KDS dispatch.",
-      technologies: ["Next.js 14", "FastAPI", "PostgreSQL", "Redis Pub/Sub", "WebSockets", "HMAC"],
+      tags: ["services", "catalog", "core-services", "offerings", "capabilities"],
+      summary: "Complete authoritative catalog of the 9 official services provided by IMPACT Enterprise.",
       keyPoints: [
-        "HMAC QR table ordering",
-        "Sub-second KDS dispatch",
-        "6 branch server isolation",
-        "8-tier RBAC security",
-        "0% third-party aggregator commission",
+        "1. AI models",
+        "2. AI agents",
+        "3. AI automation",
+        "4. Make-based lead-conversion automation",
+        "5. Chat agents",
+        "6. Call agents",
+        "7. Custom business applications",
+        "8. Software development",
+        "9. Business automation",
       ],
     },
-    isActive: true,
-  },
-  {
-    id: "cs-lead-crm-automation",
-    category: "CASE_STUDIES",
-    title: "Case Study: Automated Lead Capture & CRM Pipeline",
-    source: "IMPACT Case Studies — Case Study #2",
-    version: 1,
-    content: `Zero-delay automated inbound conversion pipeline ingesting webhooks and dispatching WhatsApp follow-ups.
-Problem: High-intent inbound leads waiting hours for sales reps to manually reply, resulting in lost conversions, while sales teams wasted 10+ hours per week typing contact details into CRMs.
-Solution Delivered: Automated conversion engine that ingests webhook payloads, scores lead intent, synchronizes bidirectional CRM contacts, and dispatches personalized WhatsApp follow-ups in under 60 seconds.
-Key Technical Highlights:
-- Idempotent multi-channel webhook ingestion with signature verification.
-- Algorithmic lead intent qualification and scoring based on urgency, budget, and authority.
-- Real-time bidirectional CRM database synchronization.
-- Automated WhatsApp Cloud API and transactional email delivery triggers.
-Outcome: Slashed inbound lead response time from hours to under 60 seconds, dramatically lifting conversion rates and reclaiming 10+ hours per week for sales agents.`,
-    metadata: {
-      tags: ["case-study", "crm", "automation", "whatsapp", "lead-scoring", "webhooks"],
-      summary: "Instant lead qualification and WhatsApp follow-up engine under 60 seconds.",
-      technologies: ["Python", "FastAPI", "Webhooks", "CRM APIs", "WhatsApp Cloud API", "PostgreSQL"],
-      keyPoints: [
-        "Sub-60 second follow-up",
-        "Idempotent webhook handling",
-        "Automated lead intent scoring",
-        "Reclaimed 10+ hours/week per agent",
-      ],
-    },
-    isActive: true,
-  },
-  {
-    id: "cs-enterprise-knowledge-agent",
-    category: "CASE_STUDIES",
-    title: "Case Study: Enterprise Knowledge & Autonomous Research Agent",
-    source: "IMPACT Case Studies — Case Study #3",
-    version: 1,
-    content: `Hallucination-resistant enterprise RAG agent with hybrid vector search and strict citation grounding.
-Problem: Enterprise employees wasting hundreds of hours searching disjointed technical manuals, SOPs, and policy documents, while generic AI models hallucinated false operational procedures.
-Solution Delivered: Enterprise RAG agent utilizing dense vector embeddings and sparse BM25 keyword hybrid search with strict citation grounding and role-based access gates.
-Key Technical Highlights:
-- Dense semantic and sparse keyword hybrid vector search.
-- Zero-hallucination citation grounding linking every response to verified source paragraphs.
-- Deterministic JSON-schema tool calling for database lookups and compliance checks.
-- Role-scoped access control preventing lower-tier staff from querying confidential executive data.
-Outcome: Reduced internal technical document retrieval time by 90% while enforcing complete information security and zero hallucinations.`,
-    metadata: {
-      tags: ["case-study", "rag", "knowledge-agent", "vector-search", "embeddings", "citation-grounding"],
-      summary: "Enterprise RAG agent with hybrid vector search and zero-hallucination citation grounding.",
-      technologies: ["LLM Orchestration", "Python", "FastAPI", "pgvector", "PostgreSQL", "Next.js"],
-      keyPoints: [
-        "Hybrid dense/sparse search",
-        "Strict citation grounding",
-        "90% reduction in query times",
-        "Zero hallucination guarantee",
-      ],
-    },
+    reviewStatus: "APPROVED",
     isActive: true,
   },
 
-  // 3. LEADERSHIP & PILLARS
+  // 3. SERVICE DESCRIPTIONS
   {
-    id: "lead-team",
-    category: "LEADERSHIP",
-    title: "Executive Leadership Team & Company Purpose",
-    source: "IMPACT Company Overview — Leadership",
+    id: "kb-service-descriptions-deep-dive",
+    category: "SERVICE_DESCRIPTIONS",
+    title: "Detailed Service Descriptions, Stacks & Timelines",
+    source: "IMPACT Engineering Handbook — Service Delivery",
     version: 1,
-    content: `IMPACT Technologies exists to turn ideas into measurable business impact by combining artificial intelligence, workflow automation, and custom software engineering.
-Executive Leadership:
+    content: `Comprehensive technical breakdown and delivery specifications for IMPACT Enterprise services:
+1. AI Models:
+   - Deliverables: Custom LoRA fine-tuning, retrieval-augmented embeddings, evaluation harnesses.
+   - Timeline: 3 to 8 weeks.
+2. AI Agents & Intelligent Systems:
+   - Deliverables: Autonomous workflow agents, multi-agent orchestration, tool calling with schema validation.
+   - Timeline: 2 to 6 weeks.
+3. AI Automation:
+   - Deliverables: Cognitive pipeline processing, invoice/document parsing, decision trees, CRM sync.
+   - Timeline: 1 to 4 weeks.
+4. Make-Based Lead-Conversion Automation:
+   - Deliverables: Enterprise Make.com scenarios, webhook routing, WhatsApp and email instant triggers.
+   - Timeline: 1 to 3 weeks.
+5. Chat Agents:
+   - Deliverables: Website widgets, WhatsApp Business Cloud API integration, CRM appointment booking.
+   - Timeline: 1 to 3 weeks.
+6. Call Agents:
+   - Deliverables: Gemini Live WebSocket voice engine, telephony SIP trunking, sub-400ms latency, CRM diarization.
+   - Timeline: 3 to 6 weeks.
+7. Custom Business Applications:
+   - Deliverables: Bespoke ERPs, client portals, inventory systems, 8-tier RBAC security.
+   - Timeline: 4 to 12 weeks.
+8. Software Development:
+   - Deliverables: Next.js 14 App Router, TypeScript, Node.js, Python FastAPI, PostgreSQL, Redis.
+   - Timeline: 4 to 16 weeks.
+9. Business Automation:
+   - Deliverables: End-to-end data pipeline automation, dead-letter queue retries, legacy system connectors.
+   - Timeline: 2 to 5 weeks.`,
+    metadata: {
+      tags: ["service-descriptions", "timelines", "deliverables", "tech-stack"],
+      summary: "Deep-dive specifications, deliverables, and typical delivery timelines for all 9 services.",
+      keyPoints: [
+        "Documented delivery timelines from 1 to 16 weeks",
+        "Full-stack and AI engineering architectures",
+        "Robust enterprise tool integrations",
+      ],
+    },
+    reviewStatus: "APPROVED",
+    isActive: true,
+  },
+
+  // 4. TARGET INDUSTRIES
+  {
+    id: "kb-target-industries",
+    category: "TARGET_INDUSTRIES",
+    title: "Target Industries & Vertical Specializations",
+    source: "IMPACT Market Strategy & Industry Alignment 2026",
+    version: 1,
+    content: `IMPACT Enterprise focuses on industries where automation, conversational intelligence, and custom software deliver outsized operational leverage:
+1. E-Commerce & Retail: Omnichannel lead capture, abandoned cart WhatsApp re-engagement, inventory sync.
+2. Multi-Branch Food & Hospitality: Digital ordering, kitchen display systems (KDS), branch financial partitioning.
+3. B2B Professional & Corporate Services: Lead qualification pipelines, automated proposal drafting, CRM hygiene.
+4. Healthcare & Wellness Clinics: Inbound appointment scheduling via voice agents, patient intake automation.
+5. Real Estate & Property Development: Automated property inquiry qualification, virtual tour scheduling.
+6. Logistics & Commercial Operations: Dispatch tracking, webhook-driven status notifications, operational dashboards.`,
+    metadata: {
+      tags: ["target-industries", "verticals", "ecommerce", "hospitality", "b2b", "healthcare", "real-estate"],
+      summary: "Core industry verticals and use-case focus areas.",
+      keyPoints: [
+        "Focus on high-volume inquiry and manual workflow verticals",
+        "Deep expertise in multi-branch food/hospitality tech",
+        "High-intent B2B sales automation",
+      ],
+    },
+    reviewStatus: "APPROVED",
+    isActive: true,
+  },
+
+  // 5. TARGET CUSTOMERS
+  {
+    id: "kb-target-customers",
+    category: "TARGET_CUSTOMERS",
+    title: "Ideal Customer Profile (ICP)",
+    source: "IMPACT Commercial Strategy — ICP Guidelines",
+    version: 1,
+    content: `IMPACT Enterprise delivers maximum value to organizations meeting these profiles:
+- Ambitious Founders & Tech Leaders: Building zero-to-one MVPs, proprietary SaaS platforms, or custom software requiring rapid execution and robust architecture.
+- Enterprise Sales & Marketing Directors: Organizations struggling with lead response lag, manual CRM data entry, or low conversion rates on high-volume advertising campaigns.
+- Multi-Branch Business Operators: Businesses managing multiple physical locations (restaurants, clinics, retail branches) needing centralized visibility, ordering, and dispatch.
+- Operations Executives: Companies seeking to eliminate hundreds of monthly hours spent on spreadsheet wrangling, manual invoice entry, and disconnected tools.`,
+    metadata: {
+      tags: ["target-customers", "icp", "founders", "sales-leaders", "operators"],
+      summary: "Customer profiles, decision makers, and organizational criteria best served by IMPACT.",
+      keyPoints: [
+        "Founders launching new digital platforms",
+        "Sales teams needing sub-60s lead response",
+        "Multi-branch operators seeking unified dispatch",
+      ],
+    },
+    reviewStatus: "APPROVED",
+    isActive: true,
+  },
+
+  // 6. FAQS
+  {
+    id: "kb-corporate-faqs",
+    category: "FAQS",
+    title: "Frequently Asked Questions: Engagement, Security & Process",
+    source: "IMPACT Client Engagement FAQ v2.0",
+    version: 1,
+    content: `Frequently Asked Questions regarding working with IMPACT Enterprise:
+
+Q: How do we initiate a project with IMPACT?
+A: You can start immediately by completing our 2-minute interactive project intake wizard at /start-a-project or connecting with our engineering team via WhatsApp (+92 314 7893907). We schedule a 30-minute technical discovery session and provide a milestone-based scope within 24 business hours.
+
+Q: How does IMPACT ensure data security and tenant privacy?
+A: We build with zero-trust principles: database-level tenant isolation, signed JWT session tokens, 8-tier Role-Based Access Control (RBAC), tamper-proof HMAC request signing, and immutable audit logs.
+
+Q: Can IMPACT integrate with our existing software tools?
+A: Yes. We regularly build event-driven integrations with HubSpot, Salesforce, PostgreSQL, WhatsApp Cloud API, Stripe, Google Sheets, Make.com, and bespoke legacy internal APIs.
+
+Q: How is project delivery structured?
+A: Projects follow milestone-based sprints with continuous staging deployments, weekly video syncs, and direct Slack/WhatsApp developer communication channels.`,
+    metadata: {
+      tags: ["faqs", "process", "security", "engagement", "integrations"],
+      summary: "Client questions on onboarding, project timelines, security, and tool integrations.",
+      keyPoints: [
+        "2-minute intake at /start-a-project",
+        "24-hour scoping turnaround",
+        "Zero-trust security and tenant isolation",
+        "Milestone-based delivery",
+      ],
+    },
+    reviewStatus: "APPROVED",
+    isActive: true,
+  },
+
+  // 7. TEAM
+  {
+    id: "kb-team-leadership",
+    category: "TEAM",
+    title: "Executive Leadership Team",
+    source: "IMPACT Corporate Registry — Leadership Directory",
+    version: 1,
+    content: `The Executive Leadership of IMPACT Enterprise:
 1. MUHAMMAD ZARYAB HASSAN — Chief Executive Officer (CEO):
-   Directs company vision, strategic technology positioning, enterprise client partnerships, and intelligent systems innovation. Focus: Vision, Strategy, AI Systems, Enterprise Partnerships.
+   - Directs company vision, strategic technology architecture, AI innovation, and enterprise client partnerships.
 2. MAHAD AZIZ — Chief Growth Officer (CGO):
-   Leads commercial growth, enterprise partnerships, strategic market expansion, and solution distribution. Focus: Growth Strategy, Market Expansion, Solutions, Operations.
+   - Leads commercial expansion, strategic marketing, go-to-market distribution, and enterprise relationships.
 3. MUHAMMAD ISMAIL — Chief Financial Officer (CFO):
-   Oversees financial governance, capital efficiency, commercial structuring, and operational planning. Focus: Finance, Commercial Strategy, Capital Allocation.
+   - Oversees financial governance, capital efficiency, commercial contract structuring, and milestone budgeting.
 4. ANSAR ABBAS JAFRI — Branch Manager:
-   Manages regional branch operations, on-ground client relationships, deployment coordination, and local project execution. Focus: Branch Operations, Client Relations, Regional Support. Direct contact: +92 333 6457747.
-
-Core Engineering Pillars:
-1. Problem-First: Start with the business problem, not the technology.
-2. Intelligence-First: Identify where AI creates tangible, measurable value.
-3. Automation-First: Eliminate unnecessary manual processes.
-4. Product-Minded: Build complete, usable products, not isolated throwaway demos.
-5. Scalable Engineering: Design modular architectures that evolve with business growth.
-6. Real-World Impact: Success is measured by operational improvement, not theoretical demos.`,
+   - Directs regional branch operations, local project execution, on-ground deployments, and client support. Direct contact: +92 333 6457747.`,
     metadata: {
-      tags: ["leadership", "executives", "ceo", "cgo", "cfo", "branch-manager", "pillars", "culture"],
-      summary: "Executive leadership profiles, engineering pillars, and company purpose.",
+      tags: ["team", "leadership", "ceo", "cgo", "cfo", "branch-manager", "executives"],
+      summary: "Verified executive leadership team members and operational roles.",
       keyPoints: [
         "Muhammad Zaryab Hassan (CEO)",
         "Mahad Aziz (CGO)",
         "Muhammad Ismail (CFO)",
         "Ansar Abbas Jafri (Branch Manager)",
-        "6 Core Engineering Pillars",
       ],
     },
+    reviewStatus: "APPROVED",
     isActive: true,
   },
 
-  // 4. COMMERCIAL & PRICING POLICIES (ANTI-HALLUCINATION)
+  // 8. PROJECTS
   {
-    id: "policy-pricing-scoping",
-    category: "POLICIES",
-    title: "Commercial & Pricing Policy: Custom Scoping & Proposals",
-    source: "IMPACT Commercial Governance — Pricing Policy",
+    id: "kb-internal-projects",
+    category: "PROJECTS",
+    title: "Flagship Platforms & Internal Ventures",
+    source: "IMPACT Technology Portfolio 2026",
     version: 1,
-    content: `IMPACT Technologies adheres to a strict commercial transparency and custom engineering policy.
-CRITICAL PRICING RULES:
-1. No Fabricated or Flat Pricing: IMPACT does NOT publish fixed or one-size-fits-all prices for custom software, AI agents, or automation pipelines. Every enterprise client has unique requirements, data volumes, security needs, and third-party integrations.
-2. Custom Technical Proposal: Pricing is calculated exclusively through structured technical discovery. Clients receive a comprehensive, milestone-based proposal outlining exact deliverables, architecture, timeline, and investment.
-3. How to Get a Proposal:
-   - Option A: Complete the 2-minute interactive project scoping wizard at /start-a-project.
-   - Option B: Schedule a 30-minute discovery consultation with the engineering leadership team.
-   - Option C: Connect directly with the team via WhatsApp (+92 314 7893907) or Email (impactenterprise527@gmail.com).
-4. No Unauthorized Discounts: AI agents and sales representatives are strictly prohibited from inventing discounts or promising off-the-cuff price cuts. Any commercial discounts must be formally authorized by executive leadership (CEO or CFO).
-5. Delivery Timelines Reference:
-   - Business Process Automation: 1 to 3 weeks.
-   - AI & Intelligent Agents: 2 to 6 weeks.
-   - Custom Web & Software Platforms: 4 to 12 weeks.
-   - Product Studio & SaaS Ventures: 6 to 16 weeks.`,
+    content: `Verified proprietary platforms and technology systems built by IMPACT Enterprise:
+1. IMPACT Growth OS:
+   - Internal business operating system unifying CRM, AI content generation, multi-channel calendar, automated lead intake, AI qualification, and executive command center.
+2. Multi-Branch Hospitality Operating System:
+   - Full-stack digital ordering, HMAC QR table ordering, and Redis Pub/Sub kitchen display system (KDS) for multi-location hospitality businesses.
+3. Sub-60s Inbound Lead Conversion Engine:
+   - Webhook-driven conversion pipeline orchestrating WhatsApp Cloud API, AI lead qualification, and CRM bidirectional synchronization.
+4. Enterprise RAG Knowledge Governance Engine:
+   - Hallucination-resistant retrieval engine with hybrid vector/keyword search, source citation grounding, and strict negative boundary enforcement.`,
     metadata: {
-      tags: ["pricing", "cost", "quote", "proposal", "budget", "policy", "scoping", "discount"],
-      summary: "Strict custom scoping policy; zero fabricated pricing; guided discovery requirement.",
+      tags: ["projects", "growth-os", "platforms", "hospitality", "rag", "automation"],
+      summary: "Proprietary platforms, internal systems, and flagship technical achievements.",
       keyPoints: [
-        "No flat or fabricated pricing",
-        "Proposals scoped via technical discovery",
-        "Take project intake at /start-a-project",
-        "Discounts require CEO/CFO authorization",
+        "IMPACT Growth OS",
+        "Multi-Branch Hospitality OS",
+        "Sub-60s Lead Conversion Engine",
+        "Enterprise RAG Governance Engine",
       ],
     },
+    reviewStatus: "APPROVED",
     isActive: true,
   },
 
-  // 5. CONTACT & REACHABILITY
+  // 9. CASE STUDIES
   {
-    id: "contact-channels",
-    category: "CONTACT",
-    title: "Official Contact Channels & Global Operations",
-    source: "IMPACT Contact Directory",
+    id: "kb-case-studies-verified",
+    category: "CASE_STUDIES",
+    title: "Verified Case Studies & Production Outcomes",
+    source: "IMPACT Case Studies Archives — Case Studies #1, #2, #3",
     version: 1,
-    content: `IMPACT Technologies operates globally with headquarters and regional offices in Pakistan.
-Official Contact Points:
-- Headquarters WhatsApp: +92 314 7893907 (Direct enterprise inquiries and sales conversations)
+    content: `Verified case studies demonstrating real-world technical implementation:
+1. Multi-Branch Restaurant Technology Platform:
+   - Challenge: Chaotic paper tickets, 30% third-party aggregator commissions, table spoofing vulnerabilities.
+   - Solution: HMAC QR ordering, Redis Pub/Sub kitchen display dispatch under 1 second, 8-tier RBAC security.
+   - Outcome: Unified 6 physical branches, eliminated order lag, saved thousands in aggregator commission fees.
+2. Automated Lead Capture & Instant WhatsApp Pipeline:
+   - Challenge: Sales agents taking hours to reply to inbound leads, losing high-intent customers.
+   - Solution: Event-driven webhook ingestion, algorithmic intent scoring, sub-60s WhatsApp follow-up.
+   - Outcome: Slashed response latency from hours to under 60 seconds; reclaimed 10+ weekly hours per sales rep.
+3. Enterprise RAG Knowledge Governance Agent:
+   - Challenge: Staff spending hours searching fragmented manuals; generic AI models hallucinating false procedures.
+   - Solution: Hybrid BM25 and vector search with strict source citation grounding and role-scoped access control.
+   - Outcome: Reduced document lookup time by 90% with zero hallucinations.`,
+    metadata: {
+      tags: ["case-studies", "results", "restaurant", "crm", "rag", "outcomes"],
+      summary: "Production case studies with verified architectural details and outcomes.",
+      keyPoints: [
+        "Restaurant tech platform (HMAC QR + KDS)",
+        "Sub-60s WhatsApp lead pipeline",
+        "Enterprise RAG agent with zero hallucinations",
+      ],
+    },
+    reviewStatus: "APPROVED",
+    isActive: true,
+  },
+
+  // 10. BRAND GUIDELINES
+  {
+    id: "kb-brand-guidelines",
+    category: "BRAND_GUIDELINES",
+    title: "Brand Voice, Tone & Messaging Standards",
+    source: "IMPACT Enterprise Brand Identity & Communication Charter",
+    version: 1,
+    content: `Official Brand Guidelines for IMPACT Enterprise:
+1. Brand Formula:
+   IDEA → INTELLIGENCE → AUTOMATION → PRODUCT → IMPACT
+2. Tone of Voice:
+   - Authoritative, precise, and engineering-driven.
+   - Rooted in measurable operational reality, never vague hype or buzzwords.
+   - Confident, consultative, and professional.
+3. Messaging Principles:
+   - Focus on tangible outcomes: hours reclaimed, latency reduced, revenue protected, and process bottlenecks eliminated.
+   - Emphasize durability, security, and production readiness over quick throwaway prototypes.
+   - Never use inflated, speculative, or unverified claims.`,
+    metadata: {
+      tags: ["brand", "guidelines", "tone", "voice", "messaging", "identity"],
+      summary: "Official tone, voice, brand formula, and communication standards.",
+      keyPoints: [
+        "Engineering-driven, outcome-focused voice",
+        "No buzzwords or theoretical hype",
+        "Authoritative consultative positioning",
+      ],
+    },
+    reviewStatus: "APPROVED",
+    isActive: true,
+  },
+
+  // 11. CONTACT INFORMATION
+  {
+    id: "kb-contact-information",
+    category: "CONTACT_INFORMATION",
+    title: "Official Contact Directory & Communication Channels",
+    source: "IMPACT Corporate Directory & Communications Desk",
+    version: 1,
+    content: `Official communication channels for IMPACT Enterprise:
+- Headquarters WhatsApp: +92 314 7893907 (Direct enterprise inquiries and executive conversations)
 - Branch Operations WhatsApp: +92 333 6457747 (Regional client relations, Managed by Ansar Abbas Jafri)
 - Official Email: impactenterprise527@gmail.com
-- Project Intake Wizard: https://impact-enterprise.vercel.app/start-a-project (2-minute interactive scoping)
-- Inquiry Form: https://impact-enterprise.vercel.app/contact
-Response Times:
+- Project Intake Wizard: https://impact-enterprise.vercel.app/start-a-project (2-minute interactive scoping wizard)
+- Official Website: https://impact-enterprise.vercel.app
+- Contact Page: https://impact-enterprise.vercel.app/contact
+
+Response SLAs:
 - WhatsApp inquiries: Typically responded to within 15 minutes during active business hours.
-- Project intake briefings: Reviewed and followed up with a technical scope within 24 business hours.
-- Emergency / high-priority clients: Immediate escalation to executive leadership.`,
+- Project intake briefings: Followed up with a custom technical scope within 24 business hours.`,
     metadata: {
-      tags: ["contact", "whatsapp", "email", "phone", "location", "hours", "support"],
-      summary: "Official communication channels, WhatsApp numbers, email, and response SLAs.",
+      tags: ["contact", "email", "phone", "whatsapp", "website", "support", "location"],
+      summary: "Verified contact numbers, email addresses, intake URLs, and response SLAs.",
       keyPoints: [
         "HQ WhatsApp: +92 314 7893907",
         "Branch WhatsApp: +92 333 6457747",
         "Email: impactenterprise527@gmail.com",
-        "Response time: <15 mins WhatsApp, <24h project scope",
+        "Intake Wizard: /start-a-project",
       ],
     },
+    reviewStatus: "APPROVED",
     isActive: true,
   },
 
-  // 6. FAQ & TECHNICAL GOVERNANCE
+  // 12. SALES POLICIES
   {
-    id: "faq-technical-stack",
-    category: "FAQ",
-    title: "Frequently Asked Questions: Technology Stack & Security",
-    source: "IMPACT Technical Whitepaper & Client FAQs",
+    id: "kb-sales-policies",
+    category: "SALES_POLICIES",
+    title: "Commercial Governance & Sales Policies",
+    source: "IMPACT Commercial Governance & Sales Charter 2026",
     version: 1,
-    content: `Frequently Asked Questions regarding IMPACT's technology stack, architecture, and security posture:
-Q: What technology stack does IMPACT specialize in?
-A: IMPACT specializes in modern, production-grade stacks:
-- Frontend: Next.js 14+ (App Router), React 18, TypeScript, Tailwind CSS, Three.js 3D graphics.
-- Backend & APIs: Node.js, TypeScript, Python FastAPI, RESTful & WebSocket real-time servers.
-- AI & Voice: Google Gemini API (gemini-2.5-flash / gemini-2.5-pro), Gemini Live WebSocket audio streaming, pgvector RAG.
-- Databases: PostgreSQL, Redis (Pub/Sub & caching).
-- Cloud & Infrastructure: Vercel, Docker, AWS, Cloudflare, Linux environments.
-
-Q: How does IMPACT ensure security and data confidentiality?
-A: We implement zero-trust enterprise security standards:
-- Cryptographic authentication with bcrypt and signed JWT tokens.
-- Strict 6-tier to 8-tier Role-Based Access Control (RBAC).
-- Complete tenant data isolation preventing cross-customer data access.
-- Tamper-proof HMAC verification for critical transaction flows.
-- Immutable security audit logging for all sensitive user and system events.
-
-Q: Can IMPACT integrate with existing enterprise tools?
-A: Yes. We build custom connectors and event-driven automations for CRM platforms (HubSpot, Salesforce, Zoho), communication APIs (WhatsApp Cloud API, SendGrid, Twilio), and bespoke internal legacy databases.`,
+    content: `Official sales and engagement policies for IMPACT Enterprise:
+1. Discovery-First Requirement:
+   Every engagement requires structured technical discovery before formal pricing is presented. This prevents cost overruns and architectural misalignments.
+2. Rapid Scoping Turnaround:
+   Following receipt of project details via the intake wizard or discovery call, a milestone-based technical proposal is delivered within 24 business hours.
+3. No Off-the-Cuff Commitments:
+   Sales staff and AI agents are strictly prohibited from offering informal, ad-hoc quotes or binding timelines without technical review.
+4. Milestone-Based Contracting:
+   Projects are structured into discrete, verifiable milestones (Discovery, Architecture, Core Build, Integration, QA, Deployment) with milestone billing.
+5. Discount Authorization:
+   Discounts are not standard and require written signoff from the CEO or CFO.`,
     metadata: {
-      tags: ["faq", "tech-stack", "security", "nextjs", "gemini", "fastapi", "postgresql", "redis", "rbac"],
-      summary: "Technical stack details, security architecture, and system integration capabilities.",
+      tags: ["sales", "policies", "governance", "scoping", "contracts", "milestones"],
+      summary: "Policies governing project discovery, proposal turnaround, contracts, and discounts.",
       keyPoints: [
-        "Modern stack: Next.js, FastAPI, PostgreSQL, Redis, Gemini",
-        "Zero-trust security with RBAC and HMAC",
-        "Enterprise CRM and WhatsApp API integrations",
-        "Immutable audit logging",
+        "Discovery-first scoping requirement",
+        "24-hour proposal delivery SLA",
+        "Milestone-based contracting",
+        "Executive approval required for discounts",
       ],
     },
+    reviewStatus: "APPROVED",
+    isActive: true,
+  },
+
+  // 13. PRICING RULES
+  {
+    id: "kb-pricing-rules",
+    category: "PRICING_RULES",
+    title: "Strict Commercial Pricing Rules & Scoping Standards",
+    source: "IMPACT Executive Board — Pricing Policy Directive",
+    version: 1,
+    content: `Mandatory pricing rules for IMPACT Enterprise:
+1. No Fabricated or Flat Pricing:
+   IMPACT Enterprise does NOT publish fixed or flat pricing. Enterprise software, AI systems, and automation pipelines vary significantly in integration depth, user concurrency, and data security requirements.
+2. Custom Milestone Investment:
+   Pricing is calculated strictly based on verified architectural requirements, estimated sprint velocity, and infrastructure scale.
+3. How to Obtain Pricing:
+   Clients must complete the 2-minute scoping wizard at /start-a-project or schedule an engineering consultation.
+4. Zero Off-the-Cuff Discounts:
+   AI agents and sales reps are strictly forbidden from inventing price cuts or negotiating speculative budgets.`,
+    metadata: {
+      tags: ["pricing", "cost", "rates", "quotes", "proposals", "rules", "anti-hallucination"],
+      summary: "Strict prohibition of flat/fabricated pricing; custom discovery requirement.",
+      keyPoints: [
+        "No flat or published price lists",
+        "Custom scoping based on architecture and milestones",
+        "Take project wizard at /start-a-project",
+      ],
+    },
+    reviewStatus: "APPROVED",
+    isActive: true,
+  },
+
+  // 14. APPROVED CLAIMS
+  {
+    id: "kb-approved-claims",
+    category: "APPROVED_CLAIMS",
+    title: "Verified & Approved Technical Claims",
+    source: "IMPACT Engineering Audit & Benchmarks 2026",
+    version: 1,
+    content: `Approved technical capabilities verified in IMPACT production systems:
+1. Voice Agent Latency:
+   - Sub-400ms voice conversational latency achieved via Gemini Live WebSocket audio streaming architecture.
+2. Automated Inbound Response:
+   - Sub-60 second lead ingestion, intent qualification, and WhatsApp follow-up execution.
+3. Security & Access Control:
+   - 8-tier Role-Based Access Control (RBAC) with bcrypt password hashing, signed JWT tokens, and immutable audit logging.
+4. Data Integrity:
+   - Dual-engine PostgreSQL relational architecture with tamper-proof HMAC verification for sensitive transactions.
+5. Hallucination Resistance:
+   - Hybrid vector/keyword retrieval augmented generation (RAG) with strict citation grounding.`,
+    metadata: {
+      tags: ["approved-claims", "benchmarks", "latency", "security", "performance"],
+      summary: "Verified technical benchmarks and capabilities approved for customer communications.",
+      keyPoints: [
+        "Sub-400ms voice latency with Gemini Live",
+        "Sub-60s automated lead follow-up",
+        "8-tier RBAC enterprise security",
+        "Zero-hallucination citation grounding",
+      ],
+    },
+    reviewStatus: "APPROVED",
+    isActive: true,
+  },
+
+  // 15. RESTRICTED CLAIMS (ANTI-HALLUCINATION NEGATIVE BOUNDARY)
+  {
+    id: "kb-restricted-claims",
+    category: "RESTRICTED_CLAIMS",
+    title: "Restricted Claims & Mandatory Anti-Hallucination Boundaries",
+    source: "IMPACT Legal & Compliance Mandate — Anti-Hallucination Rulebook",
+    version: 1,
+    content: `CRITICAL ANTI-HALLUCINATION NEGATIVE CONSTRAINTS:
+The AI and all representatives must NEVER invent, fabricate, or assume any of the following 9 categories:
+1. Customers: Never invent or name unconfirmed client brands, Fortune 500 logos, or customer relationships.
+2. Partnerships: Never claim official partnerships with third-party tech giants unless formally confirmed.
+3. Revenue: Never invent or disclose unverified company revenue, client billing totals, or financial statistics.
+4. Results: Never promise unverified metric gains, 100% ROI, or speculative performance multiples.
+5. Certifications: Never claim ISO, SOC-2, or third-party certifications unless officially documented in records.
+6. Employees: Never invent staff names, team headcounts, or executive profiles outside the official directory.
+7. Prices: Never invent flat rates, hourly rate cards, or off-the-cuff price quotes.
+8. Guarantees: Never provide blanket performance guarantees, zero-defect warranties, or risk-free promises.
+9. Case Studies: Never invent fictional client case studies or fabricated business scenarios.
+
+MANDATORY FALLBACK RULE:
+If information on any of the above topics is requested and unavailable in the verified knowledge base, the system MUST state:
+"IMPACT Enterprise does not have confirmed information on this topic."`,
+    metadata: {
+      tags: ["restricted-claims", "anti-hallucination", "negative-constraints", "prohibited", "rules"],
+      summary: "The 9 strictly forbidden hallucination categories and mandatory unavailable information fallback.",
+      keyPoints: [
+        "Never invent: customers, partnerships, revenue, results, certifications, employees, prices, guarantees, case studies",
+        "Mandatory fallback: 'IMPACT Enterprise does not have confirmed information on this topic.'",
+        "Strict compliance gate",
+      ],
+    },
+    reviewStatus: "APPROVED",
     isActive: true,
   },
 ];

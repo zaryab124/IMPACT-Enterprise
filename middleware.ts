@@ -86,7 +86,7 @@ export async function middleware(request: NextRequest) {
   // 5. Protected Admin and Internal Requests Route Gate
   const isProtectedPage =
     pathname === "/admin" ||
-    (pathname.startsWith("/admin/") && pathname !== "/admin/login") ||
+    (pathname.startsWith("/admin/") && pathname !== "/admin/login" && pathname !== "/admin/unauthorized") ||
     pathname === "/requests" ||
     pathname.startsWith("/requests/");
 
@@ -97,6 +97,58 @@ export async function middleware(request: NextRequest) {
       const loginUrl = new URL("/admin/login", request.url);
       loginUrl.searchParams.set("from", pathname);
       const redirectRes = NextResponse.redirect(loginUrl);
+      applySecurityHeaders(redirectRes.headers);
+      return redirectRes;
+    }
+
+    // Verify JWT payload and expiration in Edge-compatible manner
+    try {
+      const parts = sessionToken.split(".");
+      if (parts.length !== 3) {
+        throw new Error("Malformed JWT structure");
+      }
+      const base64 = parts[1].replace(/-/g, "+").replace(/_/g, "/");
+      const decodedPayload = JSON.parse(atob(base64));
+
+      // Session expiration check
+      if (decodedPayload.exp && Date.now() >= decodedPayload.exp * 1000) {
+        const loginUrl = new URL("/admin/login", request.url);
+        loginUrl.searchParams.set("from", pathname);
+        loginUrl.searchParams.set("reason", "expired");
+        const redirectRes = NextResponse.redirect(loginUrl);
+        redirectRes.cookies.delete("impact_session_token");
+        applySecurityHeaders(redirectRes.headers);
+        return redirectRes;
+      }
+
+      // Role-based route protection for administrative sections
+      const userRoles: string[] = Array.isArray(decodedPayload.roles) ? decodedPayload.roles : [];
+
+      if (pathname.startsWith("/admin/settings")) {
+        const allowed = ["SUPER_ADMIN", "CEO", "ADMIN"];
+        if (!userRoles.some((r) => allowed.includes(r))) {
+          const unauthUrl = new URL("/admin/unauthorized", request.url);
+          const redirectRes = NextResponse.redirect(unauthUrl);
+          applySecurityHeaders(redirectRes.headers);
+          return redirectRes;
+        }
+      }
+
+      if (pathname.startsWith("/admin/crm/team") || pathname === "/admin/team") {
+        const allowed = ["SUPER_ADMIN", "CEO", "ADMIN", "SALES_MANAGER"];
+        if (!userRoles.some((r) => allowed.includes(r))) {
+          const unauthUrl = new URL("/admin/unauthorized", request.url);
+          const redirectRes = NextResponse.redirect(unauthUrl);
+          applySecurityHeaders(redirectRes.headers);
+          return redirectRes;
+        }
+      }
+    } catch {
+      // If parsing fails, redirect to login
+      const loginUrl = new URL("/admin/login", request.url);
+      loginUrl.searchParams.set("from", pathname);
+      const redirectRes = NextResponse.redirect(loginUrl);
+      redirectRes.cookies.delete("impact_session_token");
       applySecurityHeaders(redirectRes.headers);
       return redirectRes;
     }
